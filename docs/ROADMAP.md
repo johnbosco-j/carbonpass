@@ -24,7 +24,7 @@
 | **1: Pilot** | Q1–Q2 2027 | 3–5 Turkish / Indian installations, 1 verifier, 2 EU importers. A permissioned EVM (Hyperledger Besu) or public L2. CBAM template export. Slither + external audit | First 2026 CBAM declarations (due 30 Sep 2027) filed on verified data |
 | **2: Registry interop** | H2 2027 | Feeds to the EU CBAM Registry, the Türkiye ETS registry (EXIST) and India's CCTS. W3C Verifiable Credentials. EBSI-compatible issuer identities | One dataset → three compliance regimes |
 | **3: All CBAM goods** | 2028 | Cement and fertilisers (indirect emissions chargeable) → **retire renewable-electricity certificates into batches** so they can't be double-claimed. Aluminium. Hydrogen | Multi-sector coverage |
-| **4: Supply-chain chaining** | 2028+ | **Precursor passports**: e.g. a pig-iron or alumina batch is consumed into a downstream batch, and embedded emissions propagate automatically. EU Digital Product Passport (ESPR) alignment | End-to-end product carbon footprint |
+| **4: Supply-chain chaining** | 2028+ | **Precursor passports** (pig iron → steel already works in the prototype): extend to alumina, clinker and ammonia, so any precursor batch is consumed into a downstream batch and embedded emissions propagate automatically. EU Digital Product Passport (ESPR) alignment | End-to-end product carbon footprint |
 
 ## Scalability
 

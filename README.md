@@ -27,7 +27,7 @@ To use **actual** emissions, that data must be checked by an accredited verifier
 
 ## What CarbonPass does
 
-One flow, four parties:
+One flow, five parties:
 
 1. **Producer** uploads energy and fuel invoices plus the production log. **AI extracts** every quantity and links it to its source document and page. A fixed calculator applies the CBAM methodology, and **statistical anomaly detection** flags anything implausible.
 2. Raw data **stays private**. Only a salted **Merkle root** and a report hash go on-chain.
@@ -35,7 +35,7 @@ One flow, four parties:
 4. **Precursors carry their own passports.** The mill's pig iron comes from a supplier's verified batch. At issuance the contract consumes (burns) those tonnes and won't accept a steel intensity below its inputs' emissions, so embedded emissions propagate on-chain and precursor tonnes can't be claimed twice.
 5. The producer **ships** tonnes to EU importers. The contract enforces **conservation**: verified tonnes can't be sold twice, a reporting period can't be certified twice, and an importer **surrenders** (burns) tonnes when filing a CBAM declaration so they can't be reused.
 6. Anyone can scan the **passport QR code** to see the verified intensity, the verifier, the on-chain trail and the **€ saved versus default values**. They can also check that any evidence file is unchanged (tamper check).
-7. The **[impact dashboard](https://carbonpass.vercel.app/impact)** shows what the ledger has already corrected (live from Sepolia) and scales it to an industry. Example: 5 Turkish mills save €224 M/yr by 2034, and verified data turns the value of cutting 0.1 tCO₂e/t from **€0** (default values) into **€8 M/yr**.
+7. The **[impact dashboard](https://carbonpass.vercel.app/impact)** shows what the ledger has already corrected (live from Sepolia) and scales it to an industry. Example: 5 Turkish mills save €226 M/yr by 2034, and verified data turns the value of cutting 0.1 tCO₂e/t from **€0** (default values) into **€8 M/yr**.
 
 ## Why blockchain, and why AI?
 
