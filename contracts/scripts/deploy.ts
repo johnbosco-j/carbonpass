@@ -25,7 +25,7 @@ export const SUPPLIER_INSTALLATION = {
   name: "Karadeniz Pig Iron A.Ş. — blast furnace, Samsun (fictional)",
 };
 const DEMO_VERIFIER_NAME = "EuroVerify Accredited Verification (fictional)";
-const FUND_AMOUNT = ethers.parseEther("0.008");
+const FUND_AMOUNT = ethers.parseEther("0.004");
 
 function roleAddresses(): Record<string, string> {
   if (network.name === "sepolia") {

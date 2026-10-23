@@ -9,7 +9,7 @@ import { ChecksList } from "@/components/checks-list";
 import { Stamp } from "@/components/stamp";
 import { Badge, Button, Card, Fictional, Field, HashChip, SectionHead, StatusBadge, cx, fmtDate, fmtT } from "@/components/ui";
 import { canonical, LEAF_TYPES, sha256 } from "@/lib/evidence";
-import { monthFromTs, monthLabel, PLANT } from "@/lib/demo";
+import { installationInfo, monthFromTs, monthLabel, PLANT } from "@/lib/demo";
 
 export default function VerifierPage() {
   return (
@@ -27,6 +27,8 @@ function Verifier() {
   const batchId = selected ?? pending.at(-1)?.id ?? null;
   const batch = state?.batches.find((b) => b.id === batchId) ?? null;
   const bundle = useMemo(() => (batchId ? loadBundle(batchId) : null), [batchId, loadBundle]);
+  // Precursor tonnes this batch claims; signing burns them from the producer.
+  const precursors = (batch?.precursors ?? []).map((p) => ({ ...p, batch: state?.batches.find((b) => b.id === p.batchId) }));
 
   const [integrity, setIntegrity] = useState<{ report: boolean; root: boolean } | null>(null);
   const [ack, setAck] = useState<Record<string, boolean>>({});
@@ -122,6 +124,38 @@ function Verifier() {
             <Field label="Report hash">
               <HashChip value={batch.reportHash} />
             </Field>
+            {precursors.length > 0 && (
+              <div className="sm:col-span-4">
+                <Field label="Precursor passports claimed">
+                  {precursors.map((p) => {
+                    const held = p.batch?.balances.producer ?? 0;
+                    return (
+                      <div key={p.batchId} className="flex flex-wrap items-center gap-x-3 gap-y-1">
+                        <span>
+                          <span className="font-mono tnum">{fmtT(p.tonnes)} t</span> {p.batch ? installationInfo(p.batch.installationId).product.toLowerCase() : "input"} from{" "}
+                          <Link href={`/passport/${p.batchId}`} className="font-mono text-molten hover:underline">
+                            #{p.batchId}
+                          </Link>
+                          {p.batch && (
+                            <>
+                              {" "}
+                              ({installationInfo(p.batch.installationId).name}, verified <span className="font-mono tnum">{(p.batch.directKgPerT / 1000).toFixed(3)}</span> tCO₂e/t)
+                            </>
+                          )}
+                        </span>
+                        {p.batch?.status !== "Issued" ? (
+                          <Badge tone="revoked">{p.batch?.status ?? "unknown"}: issuance will revert</Badge>
+                        ) : batch.status === "Pending" && held < p.tonnes ? (
+                          <Badge tone="revoked">producer holds {fmtT(held)} t: issuance will revert</Badge>
+                        ) : batch.status === "Pending" ? (
+                          <Badge tone="verified">producer holds {fmtT(held)} t</Badge>
+                        ) : null}
+                      </div>
+                    );
+                  })}
+                </Field>
+              </div>
+            )}
           </Card>
         </section>
       )}
@@ -187,6 +221,11 @@ function Verifier() {
               <Stamp caption={monthFromTs(batch.periodStart)} animate={!!result} />
               <div className="space-y-3">
                 <p className="font-serif text-2xl font-semibold">{fmtT(batch.tonnes)} verified tonnes issued</p>
+                {precursors.length > 0 && (
+                  <p className="text-sm text-ink-muted">
+                    Precursors consumed: {precursors.map((p) => `${fmtT(p.tonnes)} t of #${p.batchId}`).join(", ")} burned in the same transaction.
+                  </p>
+                )}
                 {result?.pq && (
                   <p className="text-sm text-ink-muted">
                     {result.pq.scheme}: <span className="font-mono tnum">{fmtT(result.pq.signatureBytes)}</span> byte signature, signed in{" "}
@@ -212,6 +251,12 @@ function Verifier() {
                 Reject
               </Button>
               {!allAck && bundle && <span className="text-sm text-anomaly">Acknowledge every flag before signing.</span>}
+              {precursors.length > 0 && (
+                <p className="w-full text-sm text-ink-muted">
+                  Issuing burns {precursors.map((p) => `${fmtT(p.tonnes)} t of passport #${p.batchId}`).join(", ")} from the producer, so those tonnes can&apos;t be
+                  counted in any other product. Rejecting burns nothing.
+                </p>
+              )}
             </div>
           )}
         </section>

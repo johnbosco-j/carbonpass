@@ -80,7 +80,8 @@ export function Landing() {
         </div>
         <Reveal delay={240}>
           <p className="mt-3 text-xs text-ink-muted">
-            Batches are minted by the demo flow on a public testnet. Run it yourself, or{" "}
+            Batches are minted by the demo flow on a public testnet, across all products (hot-rolled steel and its pig-iron precursor). Run it
+            yourself, or{" "}
             <Link href="/passport" className="underline decoration-rule underline-offset-2 hover:decoration-ink">
               open a passport
             </Link>

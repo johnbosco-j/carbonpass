@@ -42,7 +42,7 @@ export function LiveImpact({ impact }: { impact: LedgerImpact }) {
             <>Chain unreachable ({error}). Totals will appear when it reconnects.</>
           ) : state ? (
             <>
-              Read from {state.network} at block #{state.latestBlock}: issued batches only (revoked and rejected excluded). Overstatement corrected = Σ tonnes ×
+              Read from {state.network} at block #{state.latestBlock}: issued hot-rolled steel batches only (revoked and rejected excluded; precursor pig iron is counted inside the steel, not twice). Overstatement corrected = Σ tonnes ×
               (default − verified), the emissions the default would have wrongly attributed. It is an accounting correction, not an emissions cut. Savings use
               the 2026 CBAM factor, the 10% mark-up and the reference ETS price.
               {impact.batches === 0 && (

@@ -9,7 +9,7 @@
 |---|---|
 | Demo video | _TBD (YouTube link)_ |
 | **Live demo** | **https://carbonpass.vercel.app** (Ethereum Sepolia testnet, no wallet needed) |
-| Contracts | [CarbonPassport](https://sepolia.etherscan.io/address/0xCd046Af6Ecbf5fe411949a4710A07ca25B6f63Ff) · [VerifierRegistry](https://sepolia.etherscan.io/address/0x4F3b0C41339bd213AbBF73741deB7A368d4b7804), source verified on [Sourcify](https://repo.sourcify.dev/11155111/0xCd046Af6Ecbf5fe411949a4710A07ca25B6f63Ff) |
+| Contracts | [CarbonPassport](https://sepolia.etherscan.io/address/0xcA4e491c54550b242f90f1c97a1C7612acf7b237) · [VerifierRegistry](https://sepolia.etherscan.io/address/0xDB123272620e734a8feEfc776aC0a40E6Baabc69), source verified on [Sourcify](https://repo.sourcify.dev/11155111/0xcA4e491c54550b242f90f1c97a1C7612acf7b237) |
 | Dossier (PDF) | [`docs/CarbonPass-Dossier.pdf`](docs/CarbonPass-Dossier.pdf): problem, architecture, security, impact, roadmap |
 
 ---
@@ -27,14 +27,15 @@ To use **actual** emissions, that data must be checked by an accredited verifier
 
 ## What CarbonPass does
 
-One flow, four parties:
+One flow, five parties:
 
 1. **Producer** uploads energy and fuel invoices plus the production log. **AI extracts** every quantity and links it to its source document and page. A fixed calculator applies the CBAM methodology, and **statistical anomaly detection** flags anything implausible.
 2. Raw data **stays private**. Only a salted **Merkle root** and a report hash go on-chain.
 3. An **accredited verifier** reviews the evidence and signs twice: an ECDSA wallet signature, and a **post-quantum ML-DSA signature** so the record stays valid over long retention periods. The smart contract then **mints the batch** as ERC-1155 tonnes with a verified tCO₂e/t.
-4. The producer **ships** tonnes to EU importers. The contract enforces **conservation**: verified tonnes can't be sold twice, a reporting period can't be certified twice, and an importer **surrenders** (burns) tonnes when filing a CBAM declaration so they can't be reused.
-5. Anyone can scan the **passport QR code** to see the verified intensity, the verifier, the on-chain trail and the **€ saved versus default values**. They can also check that any evidence file is unchanged (tamper check).
-6. The **[impact dashboard](https://carbonpass.vercel.app/impact)** shows what the ledger has already corrected (live from Sepolia) and scales it to an industry. Example: 5 Turkish mills save €224 M/yr by 2034, and verified data turns the value of cutting 0.1 tCO₂e/t from **€0** (default values) into **€8 M/yr**.
+4. **Precursors carry their own passports.** The mill's pig iron comes from a supplier's verified batch. At issuance the contract consumes (burns) those tonnes and won't accept a steel intensity below its inputs' emissions, so embedded emissions propagate on-chain and precursor tonnes can't be claimed twice.
+5. The producer **ships** tonnes to EU importers. The contract enforces **conservation**: verified tonnes can't be sold twice, a reporting period can't be certified twice, and an importer **surrenders** (burns) tonnes when filing a CBAM declaration so they can't be reused.
+6. Anyone can scan the **passport QR code** to see the verified intensity, the verifier, the on-chain trail and the **€ saved versus default values**. They can also check that any evidence file is unchanged (tamper check).
+7. The **[impact dashboard](https://carbonpass.vercel.app/impact)** shows what the ledger has already corrected (live from Sepolia) and scales it to an industry. Example: 5 Turkish mills save €226 M/yr by 2034, and verified data turns the value of cutting 0.1 tCO₂e/t from **€0** (default values) into **€8 M/yr**.
 
 ## Why blockchain, and why AI?
 
@@ -69,7 +70,7 @@ Full detail is in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 ## Repository layout
 
 ```
-contracts/          Solidity contracts (VerifierRegistry, CarbonPassport), 16 Hardhat tests, deploy script
+contracts/          Solidity contracts (VerifierRegistry, CarbonPassport), 28 Hardhat tests, deploy script
 web/                Next.js app: producer → verifier → shipments → importer → public passport
 web/data/           Emission factors (factors.json), plant history, cached AI extractions
 web/public/samples/ Fictional evidence PDFs (+ a tampered copy for the integrity demo)
@@ -100,8 +101,8 @@ pnpm dev                      # http://localhost:3000
 
 | Contract | Network | Address |
 |---|---|---|
-| VerifierRegistry | Sepolia (11155111) | [`0x4F3b0C41339bd213AbBF73741deB7A368d4b7804`](https://sepolia.etherscan.io/address/0x4F3b0C41339bd213AbBF73741deB7A368d4b7804) |
-| CarbonPassport | Sepolia (11155111) | [`0xCd046Af6Ecbf5fe411949a4710A07ca25B6f63Ff`](https://sepolia.etherscan.io/address/0xCd046Af6Ecbf5fe411949a4710A07ca25B6f63Ff) |
+| VerifierRegistry | Sepolia (11155111) | [`0xDB123272620e734a8feEfc776aC0a40E6Baabc69`](https://sepolia.etherscan.io/address/0xDB123272620e734a8feEfc776aC0a40E6Baabc69) |
+| CarbonPassport | Sepolia (11155111) | [`0xcA4e491c54550b242f90f1c97a1C7612acf7b237`](https://sepolia.etherscan.io/address/0xcA4e491c54550b242f90f1c97a1C7612acf7b237) |
 
 Both contracts are verified on Sourcify (exact match). Every attestation's ML-DSA-65 signature and the verifier's public key are in the event logs, so anyone can re-verify them from chain data alone.
 
@@ -111,7 +112,7 @@ Both contracts are verified on Sourcify (exact match). Every attestation's ML-DS
 
 | Component | Status |
 |---|---|
-| Smart contracts + 16 tests | **Working**, deployed and source-verified on Sepolia |
+| Smart contracts + 28 tests | **Working**, deployed and source-verified on Sepolia |
 | AI extraction | Implemented with Google Gemini (`gemini-3.5-flash-lite`, JSON-schema structured output, verbatim citations). **Without an API key the demo shows pre-recorded sample outputs, which were hand-prepared rather than produced by a live model run, and the UI says so.** |
 | Anomaly checks, CBAM calculator, Merkle commitments, ML-DSA-65 signatures | **Working**, and verifiable from chain data alone |
 | Emission factors and CBAM default values | Default values and mark-ups come from Implementing Reg. 2025/2621 (Türkiye HRC 2.43 tCO₂e/t, via a secondary source; check against the 2026/1740 corrections). Grid factors and plausibility bounds are **illustrative**. Every value's source is listed in `web/data/factors.json` |

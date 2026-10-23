@@ -12,7 +12,7 @@ export const ETS_PRICE = factors.eu_ets_price_eur.value;
 // ------------------------------------------------------------------ live ledger
 
 export interface LedgerImpact {
-  /** Issued (not revoked or rejected) batches */
+  /** Issued (not revoked or rejected) batches of this product */
   batches: number;
   /** Verified tonnes of product minted by issued batches */
   verifiedT: number;
@@ -28,8 +28,12 @@ export interface LedgerImpact {
   saved2026: number;
 }
 
+/**
+ * Only batches of `cnCode` count. Precursor batches (e.g. pig iron consumed by the mill) aren't imported into the EU,
+ * and their emissions are already inside the downstream product's intensity, so counting them here would double count.
+ */
 export function ledgerImpact(state: ChainState | null, cnCode: number, country: Country, price = ETS_PRICE): LedgerImpact {
-  const issued = state?.batches.filter((b) => b.status === "Issued") ?? [];
+  const issued = state?.batches.filter((b) => b.status === "Issued" && b.cnCode === cnCode) ?? [];
   const defaultSee = defaultValue(cnCode, country);
   let verifiedT = 0;
   let kgT = 0;
@@ -107,20 +111,20 @@ export interface ScenarioResult {
 export const MARGINAL_CUT = 0.1;
 
 /**
- * Hand check (defaults below: 5 mills × 200 kt, TR, 0.356 tCO2e/t verified, Δ 0.05, €80, phased), T = 1,000,000 t:
+ * Hand check (defaults below: 5 mills × 200 kt, TR, 0.337 tCO2e/t verified, Δ 0.05, €80, phased), T = 1,000,000 t:
  *   2026: default bill = 1,000,000 × 2.43 × (1 + 0.10) × 0.025 × 80 = €5,346,000
- *         verified bill = 1,000,000 × 0.356 × 0.025 × 80            =   €712,000   → saving €4,634,000
+ *         verified bill = 1,000,000 × 0.337 × 0.025 × 80            =   €674,000   → saving €4,672,000
  *         marginal value of −0.1 t/t: defaults €0; verified 0.1 × 1,000,000 × 0.025 × 80 = €200,000
  *         avoided = 0.05 × 0.025 × 1,000,000 = 1,250 tCO2e
  *   2034: default bill = 1,000,000 × 2.43 × 1.30 × 1.00 × 80 = €252,720,000
- *         verified bill = 1,000,000 × 0.356 × 1.00 × 80        =  €28,480,000   → saving €224,240,000
+ *         verified bill = 1,000,000 × 0.337 × 1.00 × 80        =  €26,960,000   → saving €225,760,000
  *         marginal value of −0.1 t/t on verified data = 0.1 × 1,000,000 × 80 = €8,000,000
  *         avoided = 0.05 × 1.00 × 1,000,000 = 50,000 tCO2e/yr (the docs/IMPACT.md pilot figure)
  *   Cumulative avoided 2026–2034 = 0.05 × 1,000,000 × ΣF, ΣF = 0.025+0.05+0.1+0.225+0.485+0.61+0.735+0.86+1 = 4.09
  *                                = 204,500 tCO2e ("immediate" timing: 0.05 × 1,000,000 × 9 = 450,000 tCO2e)
- *   Cumulative saving 2026–2034 = 4,634,000 + 1,000,000 × (2.43 × 1.2 − 0.356) × 0.05 × 80 [2027: 10,240,000]
- *                               + 1,000,000 × (2.43 × 1.3 − 0.356) × 80 × (0.1+0.225+0.485+0.61+0.735+0.86+1) [2028–34: 900,323,600]
- *                               = €915,197,600
+ *   Cumulative saving 2026–2034 = 4,672,000 + 1,000,000 × (2.43 × 1.2 − 0.337) × 0.05 × 80 [2027: 10,316,000]
+ *                               + 1,000,000 × (2.43 × 1.3 − 0.337) × 80 × (0.1+0.225+0.485+0.61+0.735+0.86+1) [2028–34: 906,426,400]
+ *                               = €921,414,400
  * Checked by running simulate() on these inputs (23 Oct 2026): every figure above matches.
  */
 export function simulate(s: Scenario): ScenarioResult {

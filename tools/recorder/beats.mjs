@@ -346,9 +346,14 @@ export const TIMELINE = [
     id: "passport-cost",
     n: "09",
     label: "Public passport · value",
-    screen: (ctx) => `Supply chain, conservation gauge, then cost model: ${ctx.saving26 ?? "€46,720"} saved in 2026, ${ctx.saving34 ?? "€2.26M"} in 2034`,
+    screen: (ctx) =>
+      `Supply chain (pig-iron passport consumed), conservation gauge, then cost model: ${ctx.saving26 ?? "€46,720"} saved in 2026, ${ctx.saving34 ?? "€2.26M"} in 2034`,
     narration: (ctx) =>
-      `Against the EU default for Turkish hot-rolled steel, this one month's output saves ${spokenEur(ctx.saving26, "about 47,000 euros")} this year, rising to ${spokenEur(
+      `${
+        ctx.pigIronT
+          ? `The pig iron in this steel came with its own verified passport. Those ${ctx.pigIronT} tonnes were consumed on-chain, so no other mill can ever claim them. And against`
+          : "Against"
+      } the EU default for Turkish hot-rolled steel, this one month's output saves ${spokenEur(ctx.saving26, "about 47,000 euros")} this year, rising to ${spokenEur(
         ctx.saving34,
         "2.3 million euros",
       )} a year when CBAM is fully phased in.`,
@@ -356,8 +361,10 @@ export const TIMELINE = [
       const chain = { role: "heading", level: 2, name: /supply chain/i };
       if (await d.exists(chain, 1000)) {
         await d.scrollTo(chain, { at: 0 });
-        await d.caption("Supply chain: the supplier's pig-iron passport was <b>burned into this batch</b> at issuance, so those tonnes count once.");
-        await d.read(3200);
+        await d.caption(
+          `Supply chain, on-chain: <b>${ctx.pigIronT ?? "1,300"} t of verified pig iron</b> (its own passport) consumed into this batch and burned, so no other mill can claim it.`,
+        );
+        await d.read(3400);
       }
       await d.scrollTo({ role: "heading", level: 2, name: /Conservation of verified tonnes/i }, { at: 0 });
       await d.caption("Conservation, enforced by the contract: supply + surrendered = issued tonnes.");

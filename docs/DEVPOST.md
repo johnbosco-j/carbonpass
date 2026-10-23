@@ -25,6 +25,7 @@ We worked through what that means for a mid-sized mill. Its data lives in invoic
 - **Producer:** upload fuel and electricity invoices plus the production log. AI extracts each quantity with a citation to the source page. A CBAM calculator computes embedded emissions per tonne, and anomaly detection flags values that are implausible against the plant's own history.
 - **Commit:** only a salted Merkle root and a report hash go on-chain, so plant data stays confidential.
 - **Verifier:** an accredited verifier (from the on-chain registry) reviews the flags and signs with a **hybrid ECDSA + ML-DSA (post-quantum)** signature. The contract then mints the batch as ERC-1155 verified tonnes.
+- **Supply chain, on-chain:** precursors carry their own passports. The steel mill's 1,300 t of pig iron comes from a supplier's verified batch. At issuance the contract **consumes (burns) those precursor tonnes**, links them to the steel batch, and refuses a steel intensity lower than its own inputs' emissions (`UnderstatedPrecursors`). Embedded emissions propagate across companies, and precursor tonnes can never be claimed twice.
 - **Ship & surrender:** tonnes move to EU importers with each shipment. Importers burn them when they file their CBAM declaration. The contract enforces **conservation**. Over-shipping, re-certifying a period, reusing a report, and self-verification all revert.
 - **Impact dashboard:** live totals from the chain (verified tonnes, overstatement corrected, € saved) plus a scenario simulator to 2034. The key insight: on default values, cutting emissions is worth €0 at the border; on verified data it's worth more every year as CBAM phases in.
 - **Passport:** a QR code opens a public page with the verified intensity, the verifier, the full on-chain history, a tamper check for evidence files, and the € saved versus default values from 2026 to 2034.
@@ -46,7 +47,7 @@ We worked through what that means for a mid-sized mill. Its data lives in invoic
 
 ### Accomplishments that we're proud of
 
-- Double counting is **blocked by contract invariants**, not by policy: tonnes are conserved, periods can't overlap, reports can't be reused, producers can't self-verify, and surrendered tonnes are burned. All of it is covered by 16 tests.
+- Double counting is **blocked by contract invariants**, not by policy: tonnes are conserved, periods can't overlap, reports can't be reused, producers can't self-verify, and surrendered tonnes are burned. All of it is covered by 28 tests.
 - The over-shipment rejection is a **real failed transaction on Sepolia** that anyone can inspect on Etherscan.
 - **Post-quantum (NIST FIPS 204) verifier attestations** that anyone can verify from public chain data.
 - Plant data stays private (salted Merkle commitments), yet any single document can be proven unchanged. The tampered-invoice demo shows a one-figure edit failing.
@@ -60,7 +61,7 @@ We worked through what that means for a mid-sized mill. Its data lives in invoic
 
 ### What's next for CarbonPass
 
-A pilot with 3–5 exporters in Türkiye and India alongside one accredited verifier, ahead of the first CBAM declarations due 30 Sep 2027. Feeding the same data to Türkiye's ETS pilot and India's CCTS. Cement and fertiliser passports, with renewable-electricity certificates retired into batches. Precursor chaining across supply chains. Zero-knowledge proofs of correct calculation.
+A pilot with 3–5 exporters in Türkiye and India alongside one accredited verifier, ahead of the first CBAM declarations due 30 Sep 2027. Feeding the same data to Türkiye's ETS pilot and India's CCTS. Cement and fertiliser passports, with renewable-electricity certificates retired into batches. Deeper multi-tier supply chains (ore → pig iron → steel → products). Zero-knowledge proofs of correct calculation.
 
 ---
 
@@ -69,4 +70,4 @@ A pilot with 3–5 exporters in Türkiye and India alongside one accredited veri
 - GitHub: https://github.com/johnbosco-j/carbonpass
 - Live demo: https://carbonpass.vercel.app
 - Video: _TBD (YouTube)_
-- Contracts (Sepolia): CarbonPassport https://sepolia.etherscan.io/address/0xCd046Af6Ecbf5fe411949a4710A07ca25B6f63Ff · VerifierRegistry https://sepolia.etherscan.io/address/0x4F3b0C41339bd213AbBF73741deB7A368d4b7804
+- Contracts (Sepolia): CarbonPassport https://sepolia.etherscan.io/address/0xcA4e491c54550b242f90f1c97a1C7612acf7b237 · VerifierRegistry https://sepolia.etherscan.io/address/0xDB123272620e734a8feEfc776aC0a40E6Baabc69

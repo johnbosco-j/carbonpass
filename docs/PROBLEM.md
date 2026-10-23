@@ -16,7 +16,7 @@ Today the data moves as spreadsheets and PDFs over email. This causes four failu
 3. **No verifiable chain of custody.** An importer receiving a PDF can't confirm it is the version the verifier approved, or that the verifier is accredited.
 4. **Cost barrier for SMEs.** Turning invoices and meter logs into verifier-ready data is expensive consultant work. Small exporters, the members of chambers like the Istanbul Chamber of Commerce, are hit hardest.
 
-This isn't hypothetical. For hot-rolled steel from Türkiye the EU default is **2.43 tCO₂e/t** (Implementing Reg. 2025/2621). Yet about **70% of Turkish steel is made in electric arc furnaces**, and the Aegean Ferrous and Non-Ferrous Metals Exporters' Association (İzmir) says the defaults don't reflect that lower-carbon production. They are asking for verified, plant-level data, and they note that the bodies to accredit CBAM verifiers aren't yet clearly defined. Our demo mill verifies at **0.356 tCO₂e/t**.
+This isn't hypothetical. For hot-rolled steel from Türkiye the EU default is **2.43 tCO₂e/t** (Implementing Reg. 2025/2621). Yet about **70% of Turkish steel is made in electric arc furnaces**, and the Aegean Ferrous and Non-Ferrous Metals Exporters' Association (İzmir) says the defaults don't reflect that lower-carbon production. They are asking for verified, plant-level data, and they note that the bodies to accredit CBAM verifiers aren't yet clearly defined. Our demo mill verifies at **0.337 tCO₂e/t**, using its pig-iron supplier's verified passport.
 
 The same data gap blocks **Türkiye's ETS pilot** (monitoring, reporting and verification only in 2026) and **India's Carbon Credit Trading Scheme**. One trusted pipeline can serve all three.
 
