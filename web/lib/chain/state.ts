@@ -114,6 +114,7 @@ export async function readState() {
     network: deployment.network,
     chainId: deployment.chainId,
     explorer: deployment.explorer,
+    deployedAt: deployment.deployedAt,
     contracts: { passport: deployment.passport, registry: deployment.registry },
     roles: Object.fromEntries(ROLES.map((r) => [r, roleAddress(r)])) as Record<Role, Address>,
     installation: deployment.installation,

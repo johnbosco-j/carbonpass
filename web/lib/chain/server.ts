@@ -132,10 +132,15 @@ async function send(
   } catch (err) {
     const revert = decodeRevert(err);
     if (revert && opts.forceOnchain) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const hash = await wallet.writeContract({ ...contract, functionName, args, gas: 300_000n, chain } as any);
-      const receipt = await publicClient.waitForTransactionReceipt({ hash });
-      return { ok: false, hash, explorer: explorerTx(hash), blockNumber: Number(receipt.blockNumber), revert };
+      try {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const hash = await wallet.writeContract({ ...contract, functionName, args, gas: 300_000n, chain } as any);
+        const receipt = await publicClient.waitForTransactionReceipt({ hash });
+        return { ok: false, hash, explorer: explorerTx(hash), blockNumber: Number(receipt.blockNumber), revert };
+      } catch {
+        // Some nodes refuse to accept a transaction that reverts; the simulated revert is still the answer.
+        return { ok: false, revert };
+      }
     }
     return { ok: false, revert: revert ?? undefined, error: err instanceof BaseError ? err.shortMessage : String(err) };
   }

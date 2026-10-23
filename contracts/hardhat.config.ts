@@ -12,7 +12,9 @@ const config: HardhatUserConfig = {
     settings: { optimizer: { enabled: true, runs: 200 }, viaIR: true, evmVersion: "cancun" },
   },
   networks: {
-    hardhat: {},
+    // `pnpm node` sets DEMO_NODE so reverted transactions get mined like on a public chain (the demo records a
+    // rejected over-shipment on-chain). Tests keep the default so reverts throw.
+    hardhat: { throwOnTransactionFailures: process.env.DEMO_NODE !== "true" },
     localhost: { url: "http://127.0.0.1:8545" },
     sepolia: {
       url: process.env.SEPOLIA_RPC_URL ?? "https://ethereum-sepolia-rpc.publicnode.com",
