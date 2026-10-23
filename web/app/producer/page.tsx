@@ -213,7 +213,7 @@ export default function ProducerPage() {
           <p className="mb-3 text-xs text-ink-muted">
             {extractMode === "claude"
               ? "Live extraction by Claude (claude-opus-5-5, structured output)."
-              : "Showing cached Claude extraction (no API key configured on this deployment)."}
+              : "Showing pre-recorded sample extraction output. Live AI extraction runs when an Anthropic API key is configured."}
           </p>
         )}
         {values.length > 0 && (

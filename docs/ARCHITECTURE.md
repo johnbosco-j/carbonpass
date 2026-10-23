@@ -166,7 +166,7 @@ All factors live in `web/data/factors.json`, each with a source and a verify not
 - The Claude API gets each document (PDF or image) and a **JSON schema** for the output. Each line has: `{ key, value, unit, period, source: { file, page, quote }, confidence }`.
 - Documents are treated as untrusted data. The model has no tools, and its output is validated against the schema and unit whitelist.
 - Model: `claude-opus-5-5` at `effort: low`, via `client.beta.messages.parse` with a Zod schema, plus `fallbacks: "default"` (server-side refusal fallback).
-- Without an API key, cached outputs in `web/data/extractions/` are returned, so the demo always works.
+- Without an API key, pre-recorded sample outputs in `web/data/extractions/` are returned (hand-prepared, labelled as such in the UI), so the demo always works.
 
 ## 9. Web app
 

@@ -91,7 +91,7 @@ pnpm seed                     # April–June 2026 verified batches with shipment
 pnpm dev                      # http://localhost:3000
 ```
 
-**Live AI extraction:** set `ANTHROPIC_API_KEY` in `web/.env.local`. Without it, cached Claude outputs in `web/data/extractions/` are used, with the same UI.
+**Live AI extraction:** set `ANTHROPIC_API_KEY` in `web/.env.local`. Without it, the pre-recorded sample outputs in `web/data/extractions/` are shown, and the UI says so.
 
 **Sepolia:** fund `DEPLOYER` in `contracts/.env`, run `pnpm deploy:sepolia`, set `NETWORK=sepolia` in `web/.env.local`, then `pnpm seed`.
 
@@ -107,7 +107,7 @@ pnpm dev                      # http://localhost:3000
 | Component | Status |
 |---|---|
 | Smart contracts + 16 tests | **Working** (local chain); Sepolia deployment _pending testnet ETH_ |
-| AI extraction | **Working**: Claude (`claude-opus-5-5`, structured output, verbatim citations). Cached outputs used when no API key is set |
+| AI extraction | Implemented with Claude (`claude-opus-5-5`, structured output, verbatim citations). **Without an API key the demo shows pre-recorded sample outputs, which were hand-prepared rather than produced by a live model run.** |
 | Anomaly checks, CBAM calculator, Merkle commitments, ML-DSA-65 signatures | **Working**, and verifiable from chain data alone |
 | Emission factors and CBAM default values | **Illustrative.** See `web/data/factors.json` for sources and what to replace |
 | Companies, installations, verifiers | **Fictional demo entities** |
