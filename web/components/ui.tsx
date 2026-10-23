@@ -7,16 +7,16 @@ export function cx(...parts: (string | false | null | undefined)[]) {
 }
 
 export function Card({ children, className }: { children: ReactNode; className?: string }) {
-  return <div className={cx("cp-card rounded-[4px] border border-rule bg-surface p-5 sm:p-6", className)}>{children}</div>;
+  return <div className={cx("rounded-[4px] border border-rule bg-surface p-5 sm:p-6", className)}>{children}</div>;
 }
 
 export function SectionHead({ n, title, hint, right }: { n?: string; title: string; hint?: ReactNode; right?: ReactNode }) {
   return (
-    <div className="cp-section-head mb-5 flex flex-wrap items-end justify-between gap-3 pb-3">
+    <div className="mb-4 flex flex-wrap items-end justify-between gap-3 border-b border-rule pb-3">
       <div>
-        <div className="flex items-center gap-3">
-          {n && <span className="cp-section-n font-mono text-xs text-molten tnum">{n}</span>}
-          <h2 className="font-serif text-xl font-semibold tracking-tight sm:text-2xl">{title}</h2>
+        <div className="flex items-baseline gap-3">
+          {n && <span className="font-mono text-sm text-molten tnum">{n}</span>}
+          <h2 className="text-lg font-semibold">{title}</h2>
         </div>
         {hint && <p className="mt-1 text-sm text-ink-muted">{hint}</p>}
       </div>
