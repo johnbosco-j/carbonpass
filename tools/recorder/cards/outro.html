@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>CarbonPass roadmap card</title>
+<link rel="stylesheet" href="card.css">
+<style>
+  h2 { font-size: 64px; }
+  .road { display: grid; grid-template-columns: repeat(4, 1fr); margin-top: 52px; border-top: 2px solid var(--ink); }
+  .step { padding: 26px 32px 0 0; position: relative; }
+  .step::before { content: ""; position: absolute; top: -9px; left: 0; width: 16px; height: 16px; border-radius: 50%; background: var(--paper); border: 2px solid var(--ink); }
+  .step.now::before { background: var(--molten); border-color: var(--molten); }
+  .when { font-family: var(--mono); font-size: 18px; color: var(--steel); margin-top: 8px; }
+  .what { font-size: 29px; font-weight: 600; margin-top: 8px; line-height: 1.2; }
+  .detail { font-size: 21px; color: var(--ink-muted); margin-top: 10px; line-height: 1.42; }
+  .cop { margin-top: 48px; display: flex; align-items: center; gap: 22px; font-size: 24px; }
+  .cop .pill { font-family: var(--mono); font-size: 18px; padding: 6px 14px; border: 1px solid var(--ink); border-radius: 999px; }
+  .end { margin-top: auto; display: flex; align-items: flex-end; justify-content: space-between; padding-top: 28px; border-top: 1px solid var(--rule); }
+  .word { font-family: var(--serif); font-size: 76px; font-weight: 600; letter-spacing: -0.02em; line-height: 1; }
+  .tagline { font-size: 24px; color: var(--ink-muted); margin-top: 10px; }
+  .links { text-align: right; font-family: var(--mono); font-size: 21px; line-height: 1.6; color: var(--steel); }
+  .links .track { font-family: var(--sans); font-size: 18px; color: var(--ink-muted); }
+</style>
+</head>
+<body>
+<div class="frame">
+  <div class="label in" style="--i:0"><span class="n">13</span>Roadmap</div>
+  <h2 class="in" style="--i:1">From one testnet mill to the first real declarations.</h2>
+  <div class="road">
+    <div class="step now in" style="--i:2"><div class="when">Q1–Q2 2027</div><div class="what">Pilots in Türkiye &amp; India</div><div class="detail">3–5 exporting mills, one accredited verifier, two EU importers. First 2026 declarations on verified data.</div></div>
+    <div class="step in" style="--i:3"><div class="when">H2 2027</div><div class="what">One dataset, three regimes</div><div class="detail">The same passport feeds the EU CBAM Registry, Türkiye's ETS and India's carbon market (CCTS).</div></div>
+    <div class="step in" style="--i:4"><div class="when">2028</div><div class="what">Cement &amp; fertiliser</div><div class="detail">Indirect emissions chargeable, renewable certificates retired into batches. Then aluminium and hydrogen.</div></div>
+    <div class="step in" style="--i:5"><div class="when">2028+</div><div class="what">Precursor passports</div><div class="detail">Pig iron consumed into steel carries its verified emissions downstream. EU Digital Product Passport.</div></div>
+  </div>
+  <div class="cop in" style="--i:7"><span class="pill">COP31</span><span>Türkiye hosts COP31 in Antalya, November 2026. Its steel exporters are the first users.</span></div>
+  <div class="end in" style="--i:9">
+    <div><div class="word">CarbonPass</div><div class="tagline">Verified tonnes, counted once.</div></div>
+    <div class="links">carbonpass.vercel.app<br>github.com/johnbosco-j/carbonpass<br><span class="track">Carbon Markets &amp; Emissions Transparency · IEEE ClimateChain Global Hackathon 2026</span></div>
+  </div>
+</div>
+<div class="veil"></div>
+<script src="card.js"></script>
+</body>
+</html>

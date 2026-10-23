@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>CarbonPass why blockchain card</title>
+<link rel="stylesheet" href="card.css">
+<style>
+  .ledger { margin-top: 56px; background: var(--surface); border: 1px solid var(--rule); border-radius: 4px; }
+  .ledger .r { display: grid; grid-template-columns: 80px 620px 1fr; align-items: baseline; padding: 30px 40px; border-bottom: 1px solid var(--rule); }
+  .ledger .r:last-child { border-bottom: 0; }
+  .ledger .k { font-family: var(--mono); font-size: 20px; color: var(--molten); }
+  .ledger .need { font-size: 30px; font-weight: 600; line-height: 1.25; }
+  .ledger .why { font-size: 25px; color: var(--ink-muted); line-height: 1.4; }
+  .foot { font-size: 21px; color: var(--ink); }
+</style>
+</head>
+<body>
+<div class="frame">
+  <div class="label in" style="--i:0"><span class="n">11</span>Why a blockchain?</div>
+  <h2 class="in" style="--i:1">Because the core risk is a double-spend.</h2>
+  <div class="ledger">
+    <div class="r in" style="--i:3"><span class="k">01</span><span class="need">Three parties, three jurisdictions</span><span class="why">Producer in Türkiye or India, verifier and importer in the EU. No neutral database operator exists between them.</span></div>
+    <div class="r in" style="--i:4"><span class="k">02</span><span class="need">The same tonnes, claimed twice</span><span class="why">Minted once (ERC-1155). Shipping more than was verified reverts, and certified periods can't overlap.</span></div>
+    <div class="r in" style="--i:5"><span class="k">03</span><span class="need">Sign-offs that hold for years</span><span class="why">Public, timestamped attestations with a post-quantum ML-DSA-65 signature next to ECDSA.</span></div>
+    <div class="r in" style="--i:6"><span class="k">04</span><span class="need">Plant data is commercially sensitive</span><span class="why">Only salted Merkle roots and hashes go on-chain. Files are disclosed selectively.</span></div>
+  </div>
+  <div class="foot in" style="--i:8">The chain doesn't make a meter reading true. That's why an accredited verifier and anomaly checks sit in front of it.</div>
+</div>
+<div class="veil"></div>
+<script src="card.js"></script>
+</body>
+</html>

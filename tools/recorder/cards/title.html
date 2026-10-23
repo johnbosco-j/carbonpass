@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>CarbonPass title card</title>
+<link rel="stylesheet" href="card.css">
+<style>
+  .frame { justify-content: center; align-items: center; }
+  .doc { width: 1440px; padding: 88px 104px 72px; display: grid; grid-template-columns: 1fr 260px; gap: 40px; align-items: center; }
+  h1 { font-size: 148px; margin-top: 18px; }
+  .claim { font-family: var(--serif); font-size: 50px; font-weight: 500; line-height: 1.18; margin-top: 18px; letter-spacing: -0.01em; }
+  .chips { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 44px; }
+  .meta { grid-column: 1 / -1; display: flex; justify-content: space-between; margin-top: 18px; padding-top: 24px; border-top: 1px solid var(--rule); font-size: 19px; color: var(--ink-muted); }
+  .meta .mono { color: var(--steel); }
+  .stamp { width: 260px; height: 260px; --stamp-at: 1.5s; }
+</style>
+</head>
+<body>
+<div class="frame">
+  <div class="doc">
+    <div>
+      <div class="label in" style="--i:0">EU carbon border adjustment (CBAM) · definitive period since 1 January 2026</div>
+      <h1 class="in" style="--i:1">CarbonPass</h1>
+      <p class="claim in" style="--i:2">Verified carbon passports for the EU border.</p>
+      <div class="chips">
+        <span class="chip in" style="--i:4"><span class="dot"></span>AI-extracted, human-confirmed evidence</span>
+        <span class="chip in" style="--i:5"><span class="dot"></span>Post-quantum verifier signature</span>
+        <span class="chip in" style="--i:6"><span class="dot" style="background:var(--molten)"></span>Tonnes that can't be counted twice</span>
+      </div>
+    </div>
+    <svg class="stamp" viewBox="0 0 160 160" aria-hidden="true">
+      <defs><path id="ring" d="M80,80 m-58,0 a58,58 0 1,1 116,0 a58,58 0 1,1 -116,0" /></defs>
+      <circle cx="80" cy="80" r="76" fill="none" stroke="currentColor" stroke-width="3" />
+      <circle cx="80" cy="80" r="44" fill="none" stroke="currentColor" stroke-width="1.5" />
+      <text fill="currentColor" font-family="IBM Plex Sans, sans-serif" font-size="11.5" font-weight="600" letter-spacing="1.6"><textPath href="#ring">VERIFIED · ACCREDITED VERIFIER · 2026-07 · </textPath></text>
+      <path d="M62 81 l12 12 l26 -28" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" />
+    </svg>
+    <div class="meta in" style="--i:7">
+      <span>IEEE ClimateChain Global Hackathon 2026 · Track: Carbon Markets &amp; Emissions Transparency</span>
+      <span class="mono">carbonpass.vercel.app</span>
+    </div>
+  </div>
+</div>
+<div class="veil"></div>
+<script src="card.js"></script>
+</body>
+</html>

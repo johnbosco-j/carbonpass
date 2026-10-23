@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>CarbonPass problem card</title>
+<link rel="stylesheet" href="card.css">
+<style>
+  .grid { display: grid; grid-template-columns: 1fr 420px; gap: 72px; margin-top: 64px; align-items: start; }
+  .row + .row { margin-top: 52px; }
+  .row .what { font-size: 24px; font-weight: 600; }
+  .row .who { font-size: 19px; color: var(--ink-muted); margin-top: 4px; }
+  .bar { display: flex; align-items: center; gap: 24px; margin-top: 18px; }
+  .track { height: 56px; display: flex; }
+  .fill { height: 100%; width: 0; transition: width 900ms cubic-bezier(.2,.7,.2,1); }
+  body.play .fill { width: var(--w); }
+  .fill.default { background: var(--steel); opacity: 0.55; transition-delay: 900ms; }
+  .fill.markup { background: repeating-linear-gradient(135deg, var(--steel) 0 3px, transparent 3px 9px); opacity: 0.7; transition-delay: 1700ms; }
+  .fill.verified { background: var(--molten); transition-delay: 2600ms; }
+  .num { font-family: var(--mono); font-size: 64px; font-weight: 600; line-height: 1; font-feature-settings: "tnum" 1; white-space: nowrap; }
+  .num.molten { color: var(--molten); }
+  .num small { font-family: var(--sans); font-size: 22px; font-weight: 400; color: var(--ink-muted); margin-left: 8px; }
+  .note { font-size: 18px; color: var(--ink-muted); margin-top: 10px; font-family: var(--mono); }
+  .side { border-left: 1px solid var(--rule); padding-left: 56px; }
+  .side .big { font-family: var(--mono); font-size: 150px; font-weight: 600; line-height: 0.95; color: var(--ink); letter-spacing: -0.03em; }
+  .side p { font-size: 27px; line-height: 1.35; margin-top: 18px; }
+  .side .sub { font-size: 20px; color: var(--ink-muted); margin-top: 22px; line-height: 1.45; }
+  .ratio { margin-top: 44px; font-size: 26px; }
+  .ratio b { font-family: var(--mono); }
+</style>
+</head>
+<body>
+<div class="frame">
+  <div class="label in" style="--i:0"><span class="n">01</span>The problem</div>
+  <h2 class="in" style="--i:1">A clean mill is priced like a dirty one.</h2>
+  <div class="grid">
+    <div>
+      <div class="row in" style="--i:3">
+        <div class="what">EU default value, Turkish hot-rolled steel <span class="mono muted" style="font-weight:400">CN 7208</span></div>
+        <div class="who">What the importer pays for without verified data (direct emissions)</div>
+        <div class="bar">
+          <div class="track"><div class="fill default" style="--w:1000px"></div><div class="fill markup" style="--w:100px"></div></div>
+          <div class="num">2.43<small>tCO₂e/t</small></div>
+        </div>
+        <div class="note">+10% mark-up in 2026 → 2.67 · 20% in 2027 · 30% from 2028</div>
+      </div>
+      <div class="row in" style="--i:5">
+        <div class="what">This electric-arc mill, verified</div>
+        <div class="who">Anatolia Green Steel, İzmir (fictional demo entity), July 2026</div>
+        <div class="bar">
+          <div class="track"><div class="fill verified" style="--w:146px"></div></div>
+          <div class="num molten">0.356<small>tCO₂e/t</small></div>
+        </div>
+      </div>
+      <p class="ratio in" style="--i:7">Default values overstate this mill <b>~7×</b>, and nothing stops verified tonnes being sold twice.</p>
+    </div>
+    <div class="side in" style="--i:9">
+      <div class="big">~70%</div>
+      <p>of Türkiye's steel is made in electric arc furnaces.</p>
+      <p class="sub">Turkish exporters say the CBAM defaults don't reflect their lower-carbon production and ask for verified plant-level data.</p>
+    </div>
+  </div>
+  <div class="foot in" style="--i:10">Default value: Commission Implementing Regulation (EU) 2025/2621, Annex I · EAF share and exporters' position: SteelOrbis / Eurometal, Apr 2026 · see docs/RESEARCH.md</div>
+</div>
+<div class="veil"></div>
+<script src="card.js"></script>
+</body>
+</html>

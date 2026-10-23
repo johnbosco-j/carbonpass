@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>CarbonPass architecture card</title>
+<link rel="stylesheet" href="card.css">
+<style>
+  h2 { font-size: 60px; }
+  .dia { position: relative; width: 1600px; height: 610px; margin-top: 44px; }
+  .lane { position: absolute; left: 0; font-size: 15px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-muted); }
+  .lane::after { content: ""; position: absolute; left: 0; top: 26px; width: 1600px; border-top: 1px dashed var(--rule); }
+  .box { position: absolute; background: var(--surface); border: 1px solid var(--rule); border-radius: 4px; padding: 16px 18px; }
+  .box .t { font-size: 22px; font-weight: 600; line-height: 1.2; }
+  .box .s { font-size: 16.5px; color: var(--ink-muted); line-height: 1.38; margin-top: 6px; }
+  .box .tag { font-family: var(--mono); font-size: 13px; color: var(--steel); margin-top: 8px; }
+  .box.chain { border-color: var(--ink); border-width: 1.5px; }
+  .box.pub { border-top: 3px dotted var(--steel); }
+  .box.ai { border-left: 4px solid var(--anomaly); }
+  .life { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
+  .life span { font-family: var(--mono); font-size: 15px; padding: 4px 10px; border-radius: 999px; background: var(--sunken); color: var(--steel); }
+  .life span.burn { background: var(--steel); color: #fff; }
+  .life span.ok { background: var(--verified-tint); color: var(--verified); }
+  svg.arrows { position: absolute; inset: 0; overflow: visible; }
+  svg.arrows path { fill: none; stroke: var(--steel); stroke-width: 2; }
+  svg.arrows text { font-family: var(--mono); font-size: 14px; fill: var(--steel); }
+  svg.arrows .in { transform: none; }
+  .foot { padding-top: 16px; font-size: 17px; }
+</style>
+</head>
+<body>
+<div class="frame">
+  <div class="label in" style="--i:0"><span class="n">12</span>Architecture</div>
+  <h2 class="in" style="--i:1">Evidence stays private. Commitments and tonnes go on-chain.</h2>
+  <div class="dia">
+    <div class="lane in" style="top:0;--i:2">Off-chain · producer &amp; verifier, private</div>
+    <div class="box in" style="left:0;top:36px;width:230px;height:150px;--i:3"><div class="t">Evidence PDFs</div><div class="s">Invoices, production report, meter log</div><div class="tag">SHA-256 in browser</div></div>
+    <div class="box ai in" style="left:274px;top:36px;width:230px;height:150px;--i:4"><div class="t">AI extraction</div><div class="s">Gemini, structured output with page quotes</div><div class="tag">suggests only</div></div>
+    <div class="box in" style="left:548px;top:36px;width:230px;height:150px;--i:5"><div class="t">Human confirms</div><div class="s">Every value checked before it counts</div><div class="tag">AI never writes on-chain</div></div>
+    <div class="box in" style="left:822px;top:36px;width:230px;height:150px;--i:6"><div class="t">Calculator + checks</div><div class="s">CBAM intensity; robust z-scores vs 12-month history</div></div>
+    <div class="box in" style="left:1096px;top:36px;width:230px;height:150px;--i:7"><div class="t">Evidence bundle</div><div class="s">Salted Merkle tree over every value and file</div></div>
+    <div class="box in" style="left:1370px;top:36px;width:230px;height:150px;--i:8"><div class="t">Verifier signs</div><div class="s">Reviews flags, signs ECDSA + ML-DSA-65</div><div class="tag">NIST FIPS 204</div></div>
+
+    <div class="lane in" style="top:248px;--i:9">On-chain · Ethereum (Sepolia testnet)</div>
+    <div class="box chain in" style="left:0;top:286px;width:420px;height:132px;--i:10"><div class="t">VerifierRegistry</div><div class="s">Accredited verifiers, installations, post-quantum key hashes</div></div>
+    <div class="box chain in" style="left:548px;top:286px;width:1052px;height:132px;--i:11"><div class="t">CarbonPassport · ERC-1155, one token id per verified batch</div>
+      <div class="life"><span>submitBatch(root, reportHash)</span><span class="ok">attest → mint tonnes</span><span>ship(importer, t, customs ref)</span><span class="burn">surrender → burn</span></div>
+      <div class="s">Conservation: supply + surrendered = issued. Over-shipping reverts. Periods can't overlap.</div></div>
+
+    <div class="lane in" style="top:470px;--i:12">Public · no wallet needed</div>
+    <div class="box in" style="left:548px;top:508px;width:500px;height:100px;--i:13"><div class="t">EU importers</div><div class="s">Hold verified tonnes, surrender them at CBAM declaration</div></div>
+    <div class="box pub in" style="left:1100px;top:508px;width:500px;height:100px;--i:14"><div class="t">Passport page · QR</div><div class="s">PQ signature check from chain data, tamper check, € saved</div></div>
+
+    <svg class="arrows in" style="--i:15" viewBox="0 0 1600 610" width="1600" height="610">
+      <defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#3C4B5F" stroke="none"/></marker></defs>
+      <path d="M232 111 H272" marker-end="url(#a)"/><path d="M506 111 H546" marker-end="url(#a)"/><path d="M780 111 H820" marker-end="url(#a)"/>
+      <path d="M1054 111 H1094" marker-end="url(#a)"/><path d="M1328 111 H1368" marker-end="url(#a)"/>
+      <path d="M1180 188 V284" marker-end="url(#a)"/><text x="1170" y="242" text-anchor="end">root + report hash</text>
+      <path d="M1485 188 V284" marker-end="url(#a)"/><text x="1475" y="242" text-anchor="end">attest · sig hash</text>
+      <path d="M422 352 H546" marker-end="url(#a)" marker-start="url(#a)"/><text x="484" y="340" text-anchor="middle">accredited?</text>
+      <path d="M798 420 V506" marker-end="url(#a)"/><text x="810" y="468">ship · surrender</text>
+      <path d="M1350 506 V420" marker-end="url(#a)"/><text x="1362" y="468">reads state + events</text>
+    </svg>
+  </div>
+  <div class="foot in" style="--i:16">Next.js app · viem · Solidity 0.8.28 · OpenZeppelin 5 · @noble/post-quantum · Gemini API. Full ML-DSA signature (3,309 B) in the event log, its hash in storage.</div>
+</div>
+<div class="veil"></div>
+<script src="card.js"></script>
+</body>
+</html>
