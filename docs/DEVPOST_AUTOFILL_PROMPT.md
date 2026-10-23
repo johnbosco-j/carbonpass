@@ -85,6 +85,10 @@ We worked through what that means for a mid-sized mill. Its data lives in invoic
 - CBAM's real mechanics, and how verified data turns them into a growing financial incentive to decarbonise.
 - Designing for crypto-agility: versioned signature contexts so the scheme can be rotated over long retention periods.
 
+## Honest scope
+
+This is a prototype on the Sepolia testnet. The companies and the verifier are fictional, and a passport here is not an official CBAM declaration. The contract makes double counting impossible within CarbonPass; preventing it across other systems needs registry integration. The € figures are calculated from published CBAM rules with an assumed ETS price. Actual emissions cuts are the hypothesis a pilot would measure, and the evidence that a carbon price drives them is strong: the EU ETS cut about 1.2 billion tonnes of CO₂ in 2008–2016 (Bayer & Aklin, PNAS 2020). The ML-DSA signature is verified off-chain by anyone from chain data; the contract stores and emits it.
+
 ## What's next for CarbonPass
 
 A pilot with 3–5 exporters in Türkiye and India alongside one accredited verifier, ahead of the first CBAM declarations due 30 Sep 2027. Feeding the same data to Türkiye's ETS pilot and India's CCTS. Cement and fertiliser passports, with renewable-electricity certificates retired into batches. Zero-knowledge proofs of correct calculation.

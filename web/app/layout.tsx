@@ -3,6 +3,7 @@ import { IBM_Plex_Mono, IBM_Plex_Sans, IBM_Plex_Serif } from "next/font/google";
 import "./globals.css";
 import { DemoProvider } from "@/components/demo-provider";
 import { TopBar } from "@/components/top-bar";
+import { StageBackdrop } from "@/components/stage/stage-backdrop";
 
 const serif = IBM_Plex_Serif({ variable: "--font-plex-serif", subsets: ["latin", "latin-ext"], weight: ["500", "600"] });
 const sans = IBM_Plex_Sans({ variable: "--font-plex-sans", subsets: ["latin", "latin-ext"], weight: ["400", "500", "600"] });
@@ -20,7 +21,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="min-h-dvh">
         <DemoProvider>
           <TopBar />
-          <main className="mx-auto w-full max-w-[1200px] px-4 pb-24 pt-8 sm:px-6">{children}</main>
+          <main className="relative isolate mx-auto w-full max-w-[1200px] px-4 pb-24 pt-8 sm:px-6">
+            <StageBackdrop />
+            {children}
+          </main>
         </DemoProvider>
       </body>
     </html>
