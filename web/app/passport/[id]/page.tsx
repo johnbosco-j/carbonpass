@@ -262,6 +262,11 @@ export default function PassportPage({ params }: { params: Promise<{ id: string 
           <TamperCheck batchId={batch.id} bundle={bundle} />
         </div>
       </section>
+      <p className="border-t border-rule pt-6 text-xs text-ink-muted">
+        Prototype on the Sepolia testnet. The producer, supplier, importers and verifier are fictional, and the verifier holds no accreditation:
+        this passport demonstrates the workflow and is not an official CBAM declaration. Double counting is prevented within CarbonPass; across
+        other systems it needs registry integration.
+      </p>
     </div>
   );
 }

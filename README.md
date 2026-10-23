@@ -118,6 +118,10 @@ Both contracts are verified on Sourcify (exact match). Every attestation's ML-DS
 | Emission factors and CBAM default values | Default values and mark-ups come from Implementing Reg. 2025/2621 (Türkiye HRC 2.43 tCO₂e/t, via a secondary source; check against the 2026/1740 corrections). Grid factors and plausibility bounds are **illustrative**. Every value's source is listed in `web/data/factors.json` |
 | Companies, installations, verifiers | **Fictional demo entities** |
 | Party wallets | Demo custodial testnet keys (production: each party's own wallet or HSM) |
+| Verifier accreditation | **None.** The verifier is fictional, and a testnet passport is **not** an official CBAM declaration. The prototype demonstrates the workflow |
+| Double-counting protection | Enforced by the contract **within CarbonPass**. Across other systems it needs EU / national registry integration (roadmap) |
+| Climate impact | Compliance benefit: demonstrated. € benefit: calculated from published rules. Emissions cuts: modeled, to be measured in a pilot (see [IMPACT.md](docs/IMPACT.md)) |
+| Post-quantum signature | Emitted on-chain and verified **off-chain** by anyone (passport page); the contract doesn't verify ML-DSA itself |
 
 ## Docs
 

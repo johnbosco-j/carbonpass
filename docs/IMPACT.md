@@ -13,6 +13,16 @@ Verified data     → actual values  → every tCO2e/t cut lowers the bill  → 
 
 Under default values, a mill that cuts its emissions pays the same CBAM bill as one that doesn't. With trusted, verified data, every tonne of CO₂ abated is money saved at the border. That incentive grows each year as the CBAM factor phases in, from 2.5% in 2026 to 100% in 2034.
 
+**Three levels of benefit, and how solid each one is:**
+
+| Level | What it means | Status in this prototype |
+|---|---|---|
+| 1. Compliance | The producer can declare *actual* verified emissions instead of the default value | **Demonstrated:** the full flow runs on Sepolia |
+| 2. Financial | The importer's CBAM bill is computed on 0.337 instead of 2.43 × mark-up | **Calculated** from the published rules (phase-in factor, default values, mark-ups); the ETS price is an assumption |
+| 3. Climate | The restored price signal leads plants to cut emissions | **A hypothesis, to be measured in a pilot.** Not demonstrated by the prototype |
+
+Level 3 is the one that matters for the climate, so we keep it honest. CarbonPass doesn't claim measured reductions; it restores the price signal that carbon markets rely on. There's strong evidence that signal works: the EU ETS cut about **1.2 billion tonnes of CO₂ (3.8%) between 2008 and 2016**, even at low prices ([Bayer & Aklin, *PNAS* 117(16), 2020](https://doi.org/10.1073/pnas.1918128117)). Under default values, CBAM sends exporters no such signal. Verified data turns it on.
+
 Secondary effects:
 - **Market integrity:** double counting of low-carbon claims becomes technically impossible. That protects the credibility of "green steel" premiums.
 - **Cheaper MRV at scale:** the same pipeline produces data for **Türkiye's ETS pilot** (MRV-only in 2026) and **India's CCTS**. Better measurement is the precondition for meaningful caps.

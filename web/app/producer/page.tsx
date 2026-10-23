@@ -252,11 +252,11 @@ export default function ProducerPage() {
             <table className="w-full min-w-[720px] text-sm">
               <thead>
                 <tr className="border-b border-rule text-left">
-                  <th className="label px-5 py-3">Quantity</th>
-                  <th className="label px-3 py-3 text-right">Value</th>
-                  <th className="label px-3 py-3">Source</th>
-                  <th className="label px-3 py-3">Conf.</th>
-                  <th className="label px-5 py-3 text-right">Confirm</th>
+                  <th scope="col" className="label px-5 py-3">Quantity</th>
+                  <th scope="col" className="label px-3 py-3 text-right">Value</th>
+                  <th scope="col" className="label px-3 py-3">Source</th>
+                  <th scope="col" className="label px-3 py-3">Conf.</th>
+                  <th scope="col" className="label px-5 py-3 text-right">Confirm</th>
                 </tr>
               </thead>
               <tbody>
@@ -387,10 +387,10 @@ export default function ProducerPage() {
               <table className="w-full min-w-[560px] text-sm">
                 <thead>
                   <tr className="border-b border-rule text-left">
-                    <th className="label px-5 py-3">Source</th>
-                    <th className="label px-3 py-3 text-right">Activity</th>
-                    <th className="label px-3 py-3 text-right">Factor</th>
-                    <th className="label px-5 py-3 text-right">tCO₂e</th>
+                    <th scope="col" className="label px-5 py-3">Source</th>
+                    <th scope="col" className="label px-3 py-3 text-right">Activity</th>
+                    <th scope="col" className="label px-3 py-3 text-right">Factor</th>
+                    <th scope="col" className="label px-5 py-3 text-right">tCO₂e</th>
                   </tr>
                 </thead>
                 <tbody className="font-mono tnum">

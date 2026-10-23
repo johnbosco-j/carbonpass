@@ -9,6 +9,6 @@
 set -euo pipefail
 cd "$(dirname "$0")/../../.."
 export RPC_URL=${RPC_URL:-http://127.0.0.1:8547}
-(cd contracts && npx hardhat --config ../tools/recorder/dev/hardhat.local.config.ts run scripts/deploy.ts --network localhost)
+(cd contracts && LOCAL_RPC_URL=$RPC_URL npx hardhat run scripts/deploy.ts --network localhost)
 (cd web && NETWORK=localhost npx tsx --env-file-if-exists=.env.local scripts/seed.ts)
 node tools/recorder/dev/chain-snapshot.mjs save

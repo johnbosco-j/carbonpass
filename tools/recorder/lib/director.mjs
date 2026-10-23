@@ -223,8 +223,8 @@ export class Director {
     await sleep(pause);
     this.mark("click", { target: this.describe(spec) });
     await this.overlay("ripple", x, y);
+    // Press and release together: some UIs move things on focus (mousedown), which would turn a slow click into a miss.
     await this.page.mouse.down();
-    await sleep(70);
     await this.page.mouse.up();
     await sleep(160);
     return l;
