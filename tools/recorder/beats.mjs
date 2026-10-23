@@ -8,6 +8,7 @@
 //   narration         string, or (ctx) => string; read by the voiceover artist
 //   params            cards only: (ctx) => values shown on the card (e.g. the verified intensity just recorded)
 //   lead              seconds the previous narration may run into this item (default 0.5)
+//   chapter           starts a YouTube chapter here (items without one continue the previous chapter)
 //   card: file        HTML in cards/, duration (seconds) or fit: { min, max } to size it to its narration
 //   app:  run(d, ctx) async function using the Director API
 
@@ -59,7 +60,7 @@ async function scrollStory(d, spec, p, ms = 2600) {
   await d.scrollToY(r.top + p * Math.max(1, r.h - v.h), ms);
 }
 
-/** Reads the value printed under a metric label, e.g. "€46,340". */
+/** Reads the value printed under a metric label, e.g. "€46,720". */
 async function metricValue(d, label) {
   try {
     // innerText applies the label's text-transform, so take the value line rather than stripping the label.
@@ -75,6 +76,7 @@ export const TIMELINE = [
   {
     kind: "card",
     id: "title",
+    chapter: "The problem: clean steel priced like dirty steel",
     file: "title.html",
     duration: 7,
     screen: "Title card: CarbonPass, verified carbon passports for the EU border",
@@ -95,6 +97,7 @@ export const TIMELINE = [
   {
     kind: "app",
     id: "landing",
+    chapter: "CarbonPass in four steps",
     n: "00",
     label: "CarbonPass",
     lead: 8,
@@ -106,10 +109,12 @@ export const TIMELINE = [
       await d.read(1200);
       await d.caption("Verified carbon passports for CBAM steel: AI-prepared evidence, an accredited signature, tonnes that can't be counted twice.");
       if (await d.exists(story, 2000)) {
-        // Beat windows are in web/components/hero/timeline.ts: price 0–0.22, numbers 0.26–0.48, contract 0.53–0.75, CTA 0.8–1.
-        // Stop the CTA beat near 1: focusing the CTA scrolls the story to 1 if it's further than 0.08 away.
+        // Stops follow web/components/hero/timeline.ts. Each one is where that step has finished animating:
+        // numbers at 0.45 (the verified count-down ends at T.keepTo; earlier it shows an intermediate value),
+        // contract at 0.70 (after the ship at 0.64 and the revert at 0.66), CTA at 0.96 (focusing the CTA scrolls
+        // the story to 1 when it's more than 0.08 away, which would move the button mid-click).
         await d.read(3000);
-        for (const [p, ms] of [[0.37, 3800], [0.645, 3800], [0.96, 2200]]) {
+        for (const [p, ms] of [[0.45, 3800], [0.7, 3800], [0.96, 2200]]) {
           await scrollStory(d, story, p);
           await d.read(ms);
         }
@@ -127,6 +132,7 @@ export const TIMELINE = [
   {
     kind: "app",
     id: "producer-evidence",
+    chapter: "Producer: AI extraction with page citations",
     n: "01",
     label: "Producer · evidence",
     screen: "Producer: load the 4 sample PDFs → AI extraction table with page citations → confirm all",
@@ -165,6 +171,7 @@ export const TIMELINE = [
   {
     kind: "app",
     id: "producer-calc",
+    chapter: "Precursor passport, CBAM calculation, anomaly check",
     n: "02",
     label: "Producer · calculation & checks",
     screen: (ctx) =>
@@ -178,7 +185,9 @@ export const TIMELINE = [
     async run(d, ctx) {
       // Precursor passport (supplier's verified pig iron), if this build has it.
       const use = { role: "checkbox", name: /supplier.s verified intensity/i };
-      if (await d.exists(use, 1500)) {
+      // The page ticks it only when the mill still holds the pig-iron tonnes (fresh deploy + seed); otherwise the
+      // batch uses the EU default and the narration below drops the precursor sentence.
+      if ((await d.exists(use, 1500)) && (await d.loc(use).isChecked())) {
         const text = await d.loc(use).evaluate((el) => (el.closest("label") ?? el.parentElement).textContent ?? "");
         const verified = await d.page.getByText(/^verified [\d.]+ tCO₂e\/t$/).first().textContent().catch(() => null);
         ctx.pigIronT = text.match(/for ([\d,]+) t of pig iron/)?.[1] ?? null;
@@ -228,6 +237,7 @@ export const TIMELINE = [
   {
     kind: "app",
     id: "verifier",
+    chapter: "Verifier: post-quantum signature, 10,000 t minted",
     n: "04",
     label: "Verifier · sign & issue",
     screen: "Verifier: integrity badges ✓ → acknowledge the flag → Sign (ECDSA + ML-DSA) → stamp, 10,000 t issued",
@@ -259,6 +269,7 @@ export const TIMELINE = [
   {
     kind: "app",
     id: "shipments",
+    chapter: "Shipping, and a double-count rejected on-chain",
     n: "05",
     label: "Shipments",
     screen: "Ship 6,000 t → Hamburg, 4,000 t → Rotterdam; the gauge drains to 0",
@@ -305,6 +316,7 @@ export const TIMELINE = [
   {
     kind: "app",
     id: "importer",
+    chapter: "Importer surrenders at the CBAM declaration",
     n: "07",
     label: "Importer · CBAM declaration",
     screen: "Importer (Hamburg) holds 6,000 t → Surrender for declaration → burned",
@@ -326,6 +338,7 @@ export const TIMELINE = [
   {
     kind: "app",
     id: "passport-pq",
+    chapter: "Public passport: signature, supply chain, € saved, tamper check",
     n: "08",
     label: "Public passport",
     screen: "Passport card + QR → Verify signature → ✓ Valid, ML-DSA-65, 3,309 B",
@@ -413,6 +426,7 @@ export const TIMELINE = [
   {
     kind: "card",
     id: "why",
+    chapter: "Why blockchain, architecture, roadmap",
     file: "why.html",
     duration: 8,
     lead: 1,

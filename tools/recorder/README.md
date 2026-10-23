@@ -13,7 +13,8 @@ It produces, in `docs/video/`:
 | `carbonpass-demo.mp4` | H.264 1920×1080, 25 fps, no audio. About 3:45 locally and 4:00 on Sepolia, at about 40 MB (the 3D hero costs bits) |
 | `carbonpass-demo.srt` | The narration as subtitles, timed to the cut (upload it to YouTube as captions) |
 | `VOICEOVER.md` | The narration from `docs/DEMO_SCRIPT.md`, re-timed to the cut: start and end time, what's on screen, what to say. It also has the mux command |
-| `carbonpass-demo.timeline.json` | The cut list: every segment's raw and cut times, speed-ups, and each beat's raw timestamps |
+| `carbonpass-demo.timeline.json` | The cut list: every segment's raw and cut times, speed-ups, each beat's raw timestamps, the narration cues and the chapters |
+| `YOUTUBE.md` | Title, description and chapter timestamps for the upload, with the numbers from this run |
 
 Then record the voice while the video plays, and run:
 
@@ -22,6 +23,14 @@ node tools/recorder/mux.mjs path/to/voiceover.m4a
 ```
 
 That writes `docs/video/carbonpass-demo-vo.mp4`. Add `--offset 0.4` to delay the voice, or `--offset -0.4` to advance it.
+
+No time to record a voice? This makes a draft narrated cut with macOS text-to-speech:
+
+```bash
+node tools/recorder/tts.mjs --voice Daniel
+```
+
+It writes `docs/video/carbonpass-demo-tts.mp4`. Each cue is synthesised with `say` and placed at its timestamp, and it's sped up (up to 215 wpm) if it would run into the next cue. Acronyms are spelled out the way a narrator says them (C O 2, M L D S A, C-bam). Other voices: `say -v '?'` (Samantha, Rishi, Moira, …). A human voice is better; this is the fallback.
 
 ## Setup
 
@@ -97,4 +106,4 @@ Things to check after UI changes:
 2. **Producer**: the precursor step is optional. If the "Use the supplier's verified intensity" checkbox exists, the beat captions and rings it before Calculate.
 3. **Passport**: the "Supply chain" section is captioned if present. The tamper check finds its drop zone by the text "Drop an evidence file to check it" and sends a synthetic `drop` with a real `File` fetched from `/samples/…`.
 4. **Top-bar nav** links are found inside `role="navigation"` by name (Producer, Importer). If they're missing, the beat falls back to `page.goto`.
-5. **Hero number**: the hero used to compute its "verified" figure without the supplier's precursor (0.356, against the batch's 0.337). This is fixed in `a8c2de1` on `claude/hero-3d-ad6f7b`, which now shows 0.337, −86% and €46,720. Merge and redeploy it before the final recording.
+5. **Hero number**: the hero used to compute its "verified" figure without the supplier's precursor (0.356, against the batch's 0.337). This is fixed on main as of `dcdad0c`: the hero now shows 0.337, −86% and €46,720.

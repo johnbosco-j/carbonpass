@@ -71,3 +71,11 @@ The landing page (`web/app/page.tsx`) opens with a pinned scroll story in `web/c
 The script needs `ffmpeg` and `ffprobe`. If your ffmpeg build lacks the libwebp encoder, it encodes through `cwebp` (`brew install webp`). If ffmpeg won't start after a `brew upgrade` (a missing `libx265…dylib`), run `brew reinstall ffmpeg`.
 
 Before committing frames, check the folder size. Keep it under ~6 MB, or lower the frame count and quality.
+
+### Stage theme (all pages)
+
+Every page now shares the hero's look:
+
+- **Colours:** the site runs on design.md's `dark-*` palette in both colour schemes. A `:root` override near the end of `globals.css` sets this. Delete that block to bring the light paper theme back.
+- **Header band:** `components/stage/stage-backdrop.tsx`, mounted in `layout.tsx`, draws the strip above each page title: perspective ledger floor, molten horizon, registration marks, and an `0N / 05 · Role` readout. It's hidden on `/`, which has the hero.
+- **Shared components:** `Card` (lit top edge, corner ticks) and `SectionHead` (serif title, molten HUD index) in `components/ui.tsx` carry the style into every section. Only their styling changed; props are the same.
