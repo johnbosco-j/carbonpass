@@ -1,0 +1,548 @@
+{
+  "generated": "2026-10-23T13:41:58.881Z",
+  "base": "http://localhost:3104",
+  "total": 205.08,
+  "items": [
+    {
+      "id": "title",
+      "kind": "card",
+      "start": 0,
+      "duration": 6.96,
+      "lead": 0.5,
+      "screen": "Title card: CarbonPass, verified carbon passports for the EU border"
+    },
+    {
+      "id": "problem",
+      "kind": "card",
+      "start": 6.96,
+      "duration": 10,
+      "lead": 3,
+      "screen": "Problem card: EU default 2.43 vs verified 0.356 tCO₂e/t; ~70% of Turkish steel is EAF"
+    },
+    {
+      "id": "landing",
+      "kind": "app",
+      "start": 16.96,
+      "duration": 17.28,
+      "lead": 8,
+      "screen": "Landing page: hero, the problem panel, how it works"
+    },
+    {
+      "id": "producer-evidence",
+      "kind": "app",
+      "start": 34.24,
+      "duration": 22.64,
+      "lead": 0.5,
+      "screen": "Producer: load the 4 sample PDFs → AI extraction table with page citations → confirm all"
+    },
+    {
+      "id": "producer-calc",
+      "kind": "app",
+      "start": 56.88,
+      "duration": 12.64,
+      "lead": 0.5,
+      "screen": "Calculate → 0.356 tCO₂e/t, anomaly callout (amber) for one value"
+    },
+    {
+      "id": "producer-submit",
+      "kind": "app",
+      "start": 69.52,
+      "duration": 9.04,
+      "lead": 0.5,
+      "screen": "Merkle root + report hash → Submit → tx toast → pending"
+    },
+    {
+      "id": "verifier",
+      "kind": "app",
+      "start": 78.56,
+      "duration": 20.72,
+      "lead": 0.5,
+      "screen": "Verifier: integrity badges ✓ → acknowledge the flag → Sign (ECDSA + ML-DSA) → stamp, 10,000 t issued"
+    },
+    {
+      "id": "shipments",
+      "kind": "app",
+      "start": 99.28,
+      "duration": 18.44,
+      "lead": 0.5,
+      "screen": "Ship 6,000 t → Hamburg, 4,000 t → Rotterdam; the gauge drains to 0"
+    },
+    {
+      "id": "overship",
+      "kind": "app",
+      "start": 117.72,
+      "duration": 11.44,
+      "lead": 0.5,
+      "screen": "Try 2,000 t more → red revert toast (ERC1155InsufficientBalance) + gauge shake"
+    },
+    {
+      "id": "importer",
+      "kind": "app",
+      "start": 129.16,
+      "duration": 11.76,
+      "lead": 0.5,
+      "screen": "Importer (Hamburg) holds 6,000 t → Surrender for declaration → burned"
+    },
+    {
+      "id": "passport-pq",
+      "kind": "app",
+      "start": 140.92,
+      "duration": 10.88,
+      "lead": 0.5,
+      "screen": "Passport card + QR → Verify signature → ✓ Valid, ML-DSA-65, 3,309 B"
+    },
+    {
+      "id": "passport-cost",
+      "kind": "app",
+      "start": 151.8,
+      "duration": 10.72,
+      "lead": 0.5,
+      "screen": "Conservation gauge, then cost model: €46,340 saved in 2026, €2.24M in 2034"
+    },
+    {
+      "id": "passport-tamper",
+      "kind": "app",
+      "start": 162.52,
+      "duration": 13.04,
+      "lead": 0.5,
+      "screen": "Ledger timeline; drop the original invoice → ✓ Unchanged; drop the tampered copy → ✗ Altered"
+    },
+    {
+      "id": "why",
+      "kind": "card",
+      "start": 175.56,
+      "duration": 7.96,
+      "lead": 1,
+      "screen": "Why blockchain: four reasons"
+    },
+    {
+      "id": "architecture",
+      "kind": "card",
+      "start": 183.52,
+      "duration": 8,
+      "lead": 1,
+      "screen": "Architecture: evidence → AI + human → calculator & checks → verifier → contracts → public passport"
+    },
+    {
+      "id": "outro",
+      "kind": "card",
+      "start": 191.52,
+      "duration": 13.56,
+      "lead": 1.5,
+      "screen": "Roadmap & outro: pilots in Türkiye and India, cement & fertiliser, COP31; links"
+    }
+  ],
+  "segments": [
+    {
+      "item": "title",
+      "kind": "card",
+      "rawStart": null,
+      "rawEnd": null,
+      "speed": 1,
+      "wait": null,
+      "cutStart": 0,
+      "cutEnd": 6.96
+    },
+    {
+      "item": "problem",
+      "kind": "card",
+      "rawStart": null,
+      "rawEnd": null,
+      "speed": 1,
+      "wait": null,
+      "cutStart": 6.96,
+      "cutEnd": 16.96
+    },
+    {
+      "item": "landing",
+      "kind": "app",
+      "rawStart": 0.001,
+      "rawEnd": 17.265,
+      "speed": 1,
+      "wait": null,
+      "cutStart": 16.96,
+      "cutEnd": 34.24
+    },
+    {
+      "item": "producer-evidence",
+      "kind": "app",
+      "rawStart": 17.265,
+      "rawEnd": 39.922,
+      "speed": 1,
+      "wait": null,
+      "cutStart": 34.24,
+      "cutEnd": 56.88
+    },
+    {
+      "item": "producer-calc",
+      "kind": "app",
+      "rawStart": 39.923,
+      "rawEnd": 52.577,
+      "speed": 1,
+      "wait": null,
+      "cutStart": 56.88,
+      "cutEnd": 69.52
+    },
+    {
+      "item": "producer-submit",
+      "kind": "app",
+      "rawStart": 52.578,
+      "rawEnd": 56.812,
+      "speed": 1,
+      "wait": null,
+      "cutStart": 69.52,
+      "cutEnd": 73.76
+    },
+    {
+      "item": "producer-submit",
+      "kind": "app",
+      "rawStart": 56.812,
+      "rawEnd": 69.666,
+      "speed": 4,
+      "wait": "submit batch",
+      "cutStart": 73.76,
+      "cutEnd": 76.96
+    },
+    {
+      "item": "producer-submit",
+      "kind": "app",
+      "rawStart": 69.666,
+      "rawEnd": 71.272,
+      "speed": 1,
+      "wait": null,
+      "cutStart": 76.96,
+      "cutEnd": 78.56
+    },
+    {
+      "item": "verifier",
+      "kind": "app",
+      "rawStart": 71.272,
+      "rawEnd": 83.99,
+      "speed": 1,
+      "wait": null,
+      "cutStart": 78.56,
+      "cutEnd": 91.28
+    },
+    {
+      "item": "verifier",
+      "kind": "app",
+      "rawStart": 83.99,
+      "rawEnd": 96.329,
+      "speed": 4,
+      "wait": "attest + mint",
+      "cutStart": 91.28,
+      "cutEnd": 94.36
+    },
+    {
+      "item": "verifier",
+      "kind": "app",
+      "rawStart": 96.329,
+      "rawEnd": 101.247,
+      "speed": 1,
+      "wait": null,
+      "cutStart": 94.36,
+      "cutEnd": 99.28
+    },
+    {
+      "item": "shipments",
+      "kind": "app",
+      "rawStart": 101.248,
+      "rawEnd": 107.519,
+      "speed": 1,
+      "wait": null,
+      "cutStart": 99.28,
+      "cutEnd": 105.56
+    },
+    {
+      "item": "shipments",
+      "kind": "app",
+      "rawStart": 107.519,
+      "rawEnd": 119.859,
+      "speed": 4,
+      "wait": "ship 6,000 t → Hamburg",
+      "cutStart": 105.56,
+      "cutEnd": 108.64
+    },
+    {
+      "item": "shipments",
+      "kind": "app",
+      "rawStart": 119.859,
+      "rawEnd": 124.854,
+      "speed": 1,
+      "wait": null,
+      "cutStart": 108.64,
+      "cutEnd": 113.64
+    },
+    {
+      "item": "shipments",
+      "kind": "app",
+      "rawStart": 124.854,
+      "rawEnd": 133.206,
+      "speed": 4,
+      "wait": "ship 4,000 t → Rotterdam",
+      "cutStart": 113.64,
+      "cutEnd": 115.72
+    },
+    {
+      "item": "shipments",
+      "kind": "app",
+      "rawStart": 133.206,
+      "rawEnd": 135.208,
+      "speed": 1,
+      "wait": null,
+      "cutStart": 115.72,
+      "cutEnd": 117.72
+    },
+    {
+      "item": "overship",
+      "kind": "app",
+      "rawStart": 135.208,
+      "rawEnd": 139.308,
+      "speed": 1,
+      "wait": null,
+      "cutStart": 117.72,
+      "cutEnd": 121.8
+    },
+    {
+      "item": "overship",
+      "kind": "app",
+      "rawStart": 139.308,
+      "rawEnd": 143.633,
+      "speed": 4,
+      "wait": "over-ship 2,000 t (reverts)",
+      "cutStart": 121.8,
+      "cutEnd": 122.88
+    },
+    {
+      "item": "overship",
+      "kind": "app",
+      "rawStart": 143.633,
+      "rawEnd": 149.921,
+      "speed": 1,
+      "wait": null,
+      "cutStart": 122.88,
+      "cutEnd": 129.16
+    },
+    {
+      "item": "importer",
+      "kind": "app",
+      "rawStart": 149.921,
+      "rawEnd": 155.484,
+      "speed": 1,
+      "wait": null,
+      "cutStart": 129.16,
+      "cutEnd": 134.72
+    },
+    {
+      "item": "importer",
+      "kind": "app",
+      "rawStart": 155.484,
+      "rawEnd": 167.847,
+      "speed": 4,
+      "wait": "surrender (burn)",
+      "cutStart": 134.72,
+      "cutEnd": 137.8
+    },
+    {
+      "item": "importer",
+      "kind": "app",
+      "rawStart": 167.847,
+      "rawEnd": 170.96,
+      "speed": 1,
+      "wait": null,
+      "cutStart": 137.8,
+      "cutEnd": 140.92
+    },
+    {
+      "item": "passport-pq",
+      "kind": "app",
+      "rawStart": 170.96,
+      "rawEnd": 181.829,
+      "speed": 1,
+      "wait": null,
+      "cutStart": 140.92,
+      "cutEnd": 151.8
+    },
+    {
+      "item": "passport-cost",
+      "kind": "app",
+      "rawStart": 181.83,
+      "rawEnd": 192.564,
+      "speed": 1,
+      "wait": null,
+      "cutStart": 151.8,
+      "cutEnd": 162.52
+    },
+    {
+      "item": "passport-tamper",
+      "kind": "app",
+      "rawStart": 192.564,
+      "rawEnd": 205.619,
+      "speed": 1,
+      "wait": null,
+      "cutStart": 162.52,
+      "cutEnd": 175.56
+    },
+    {
+      "item": "why",
+      "kind": "card",
+      "rawStart": null,
+      "rawEnd": null,
+      "speed": 1,
+      "wait": null,
+      "cutStart": 175.56,
+      "cutEnd": 183.52
+    },
+    {
+      "item": "architecture",
+      "kind": "card",
+      "rawStart": null,
+      "rawEnd": null,
+      "speed": 1,
+      "wait": null,
+      "cutStart": 183.52,
+      "cutEnd": 191.52
+    },
+    {
+      "item": "outro",
+      "kind": "card",
+      "rawStart": null,
+      "rawEnd": null,
+      "speed": 1,
+      "wait": null,
+      "cutStart": 191.52,
+      "cutEnd": 205.08
+    }
+  ],
+  "rawBeats": [
+    {
+      "id": "landing",
+      "start": 0.001,
+      "end": 17.265,
+      "waits": []
+    },
+    {
+      "id": "producer-evidence",
+      "start": 17.265,
+      "end": 39.922,
+      "waits": [
+        {
+          "start": 26.571,
+          "end": 26.574,
+          "label": "AI extraction",
+          "kind": "ai",
+          "beat": "producer-evidence"
+        }
+      ]
+    },
+    {
+      "id": "producer-calc",
+      "start": 39.923,
+      "end": 52.577,
+      "waits": []
+    },
+    {
+      "id": "producer-submit",
+      "start": 52.578,
+      "end": 71.272,
+      "waits": [
+        {
+          "start": 56.812,
+          "end": 69.666,
+          "label": "submit batch",
+          "kind": "chain",
+          "beat": "producer-submit"
+        }
+      ]
+    },
+    {
+      "id": "verifier",
+      "start": 71.272,
+      "end": 101.247,
+      "waits": [
+        {
+          "start": 83.99,
+          "end": 96.329,
+          "label": "attest + mint",
+          "kind": "chain",
+          "beat": "verifier"
+        }
+      ]
+    },
+    {
+      "id": "shipments",
+      "start": 101.248,
+      "end": 135.208,
+      "waits": [
+        {
+          "start": 107.519,
+          "end": 119.859,
+          "label": "ship 6,000 t → Hamburg",
+          "kind": "chain",
+          "beat": "shipments"
+        },
+        {
+          "start": 124.854,
+          "end": 133.206,
+          "label": "ship 4,000 t → Rotterdam",
+          "kind": "chain",
+          "beat": "shipments"
+        }
+      ]
+    },
+    {
+      "id": "overship",
+      "start": 135.208,
+      "end": 149.921,
+      "waits": [
+        {
+          "start": 139.308,
+          "end": 143.633,
+          "label": "over-ship 2,000 t (reverts)",
+          "kind": "chain",
+          "beat": "overship"
+        }
+      ]
+    },
+    {
+      "id": "importer",
+      "start": 149.921,
+      "end": 170.96,
+      "waits": [
+        {
+          "start": 155.484,
+          "end": 167.847,
+          "label": "surrender (burn)",
+          "kind": "chain",
+          "beat": "importer"
+        }
+      ]
+    },
+    {
+      "id": "passport-pq",
+      "start": 170.96,
+      "end": 181.829,
+      "waits": [
+        {
+          "start": 174.958,
+          "end": 175.751,
+          "label": "verify ML-DSA signature",
+          "kind": "read",
+          "beat": "passport-pq"
+        }
+      ]
+    },
+    {
+      "id": "passport-cost",
+      "start": 181.83,
+      "end": 192.564,
+      "waits": []
+    },
+    {
+      "id": "passport-tamper",
+      "start": 192.564,
+      "end": 205.619,
+      "waits": []
+    }
+  ]
+}

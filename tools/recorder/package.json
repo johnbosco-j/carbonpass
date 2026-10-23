@@ -1,0 +1,13 @@
+{
+  "name": "carbonpass-recorder",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Records the CarbonPass demo as a captioned 1080p video (Playwright + ffmpeg). Standalone: not part of the pnpm workspace.",
+  "type": "module",
+  "scripts": {
+    "record": "node record.mjs"
+  },
+  "dependencies": {
+    "playwright-core": "1.56.1"
+  }
+}
