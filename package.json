@@ -1,0 +1,15 @@
+{
+  "name": "carbonpass",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Verified embedded-emissions passports for EU CBAM",
+  "license": "MIT",
+  "scripts": {
+    "test": "pnpm --filter contracts test",
+    "dev": "pnpm --filter web dev",
+    "chain": "pnpm --filter contracts node",
+    "deploy:local": "pnpm --filter contracts deploy:local",
+    "deploy:sepolia": "pnpm --filter contracts deploy:sepolia"
+  },
+  "packageManager": "pnpm@10.33.2"
+}
