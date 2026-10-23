@@ -5,7 +5,7 @@ import { useDemo } from "@/components/demo-provider";
 import { Card, Metric, fmtT } from "@/components/ui";
 
 const STEPS = [
-  { n: "01", who: "Producer", tech: "AI", title: "Evidence in, numbers out", body: "Invoices and production logs are read by Claude. Every quantity is cited to its page and confirmed by a human." },
+  { n: "01", who: "Producer", tech: "AI", title: "Evidence in, numbers out", body: "Invoices and production logs are read by an AI model (Gemini). Every quantity is cited to its page and confirmed by a human." },
   { n: "02", who: "Producer", tech: "Calculation + checks", title: "CBAM intensity, checked", body: "A fixed calculator applies the CBAM method. Robust statistics flag values that don't match the plant's own history." },
   { n: "03", who: "Verifier", tech: "Post-quantum signature", title: "Accredited sign-off", body: "An on-chain-registered verifier signs with ECDSA and ML-DSA-65 (NIST FIPS 204). Only salted Merkle roots go on-chain." },
   { n: "04", who: "Producer → Importers", tech: "Smart contract", title: "Tonnes that can't be sold twice", body: "Verified tonnes are minted once (ERC-1155). Shipping more than exists reverts. Certified periods can't overlap." },

@@ -70,12 +70,16 @@ export function DemoProvider({ children }: { children: ReactNode }) {
   const [error, setError] = useState<string | null>(null);
   const [toasts, setToasts] = useState<Toast[]>([]);
   const nextId = useRef(1);
+  // Read-your-writes: never accept chain state older than the newest block this browser has seen.
+  const lastBlock = useRef(0);
 
   const refresh = useCallback(async () => {
     try {
-      const res = await fetch("/api/state", { cache: "no-store" });
+      const res = await fetch(`/api/state?minBlock=${lastBlock.current}`, { cache: "no-store" });
       const json = await res.json();
       if (!res.ok) throw new Error(json.error ?? res.statusText);
+      if (json.latestBlock < lastBlock.current) return;
+      lastBlock.current = json.latestBlock;
       setState(json);
       setError(null);
     } catch (e) {
@@ -105,8 +109,13 @@ export function DemoProvider({ children }: { children: ReactNode }) {
     async (action: string, body: unknown, title: string): Promise<TxResponse> => {
       const id = push({ kind: "pending", title, detail: "Submitting transaction…" });
       try {
-        const res = await fetch(`/api/tx/${action}`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) });
+        const res = await fetch(`/api/tx/${action}`, {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ ...(body as object), minBlock: lastBlock.current }),
+        });
         const json = (await res.json()) as TxResponse;
+        if (json.blockNumber && json.blockNumber > lastBlock.current) lastBlock.current = json.blockNumber;
         if (json.ok) {
           update(id, { kind: "success", detail: `Confirmed in block #${json.blockNumber}`, hash: json.hash, explorer: json.explorer, block: json.blockNumber });
           setTimeout(() => dismiss(id), 9000);

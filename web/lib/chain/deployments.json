@@ -20,5 +20,27 @@
     },
     "verifierName": "EuroVerify Accredited Verification (fictional)",
     "explorer": null
+  },
+  "sepolia": {
+    "network": "sepolia",
+    "chainId": 11155111,
+    "deployBlock": 11974552,
+    "deployedAt": "2026-10-23T05:24:01.861Z",
+    "registry": "0x4F3b0C41339bd213AbBF73741deB7A368d4b7804",
+    "passport": "0xCd046Af6Ecbf5fe411949a4710A07ca25B6f63Ff",
+    "registrar": "0x67d7b3491852c6dA70B0592223Ff8cDfc6B5e857",
+    "roles": {
+      "producer": "0xeB1d885701E755cE417b8dBf7d9256BD75FB3d28",
+      "verifier": "0x47DCe94abF188ea02175D1171205347eE60cA207",
+      "importerA": "0x7d8E96890A423DB4560f910D43DC975c69660171",
+      "importerB": "0x5666a1E357695E3A7D2b4F1314EcB271E2fF59cF"
+    },
+    "installation": {
+      "id": "0xf85a4308a22bf57dd8743fbd435c2bf617b36c61489b85d707201daf2b8256c6",
+      "code": "TR-INST-0001",
+      "name": "Anatolia Green Steel A.Ş. — EAF mill, İzmir (fictional)"
+    },
+    "verifierName": "EuroVerify Accredited Verification (fictional)",
+    "explorer": "https://sepolia.etherscan.io"
   }
 }

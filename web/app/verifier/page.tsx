@@ -157,7 +157,7 @@ function Verifier() {
                           </a>{" "}
                           “{v.source?.quote}”
                         </td>
-                        <td className="px-5 py-2.5 text-right text-[0.7rem] uppercase tracking-wider text-ink-muted">{v.extractedBy === "cached" ? "sample" : v.extractedBy} · confirmed</td>
+                        <td className="px-5 py-2.5 text-right text-[0.7rem] uppercase tracking-wider text-ink-muted">{v.extractedBy} · confirmed</td>
                       </tr>
                     ))}
                   </tbody>

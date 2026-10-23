@@ -1,5 +1,5 @@
 // Copies role keys + the verifier PQ seed from contracts/.env into web/.env.local,
-// keeping any NETWORK / RPC_URL / ANTHROPIC_API_KEY lines already there.
+// keeping any NETWORK / RPC_URL / GEMINI_API_KEY / GEMINI_MODEL lines already there.
 import fs from "node:fs";
 const src = Object.fromEntries(
   fs.readFileSync("contracts/.env", "utf8").split("\n").filter((l) => /^[A-Z_]+=/.test(l)).map((l) => [l.split("=")[0], l.slice(l.indexOf("=") + 1)]),
@@ -11,7 +11,8 @@ const keep = fs.existsSync(dest)
 const out = {
   NETWORK: keep.NETWORK ?? "localhost",
   RPC_URL: keep.RPC_URL ?? "",
-  ANTHROPIC_API_KEY: keep.ANTHROPIC_API_KEY ?? "",
+  GEMINI_API_KEY: keep.GEMINI_API_KEY ?? "",
+  GEMINI_MODEL: keep.GEMINI_MODEL ?? "gemini-3.8-flash",
   VERIFIER_PQ_SEED: src.VERIFIER_PQ_SEED,
   DEPLOYER_PRIVATE_KEY: src.DEPLOYER_PRIVATE_KEY,
   PRODUCER_PRIVATE_KEY: src.PRODUCER_PRIVATE_KEY,

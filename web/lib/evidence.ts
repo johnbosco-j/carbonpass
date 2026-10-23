@@ -29,7 +29,7 @@ export interface ActivityValue {
   unit: string;
   source?: SourceRef;
   confidence?: number;
-  extractedBy: "claude" | "cached" | "manual";
+  extractedBy: "gemini" | "sample" | "manual";
   confirmed: boolean;
 }
 

@@ -19,7 +19,7 @@ export const DEMO_INSTALLATION = {
   name: "Anatolia Green Steel A.Ş. — EAF mill, İzmir (fictional)",
 };
 const DEMO_VERIFIER_NAME = "EuroVerify Accredited Verification (fictional)";
-const FUND_AMOUNT = ethers.parseEther("0.01");
+const FUND_AMOUNT = ethers.parseEther("0.008");
 
 function roleAddresses(): Record<string, string> {
   if (network.name === "sepolia") {

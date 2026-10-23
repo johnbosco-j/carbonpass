@@ -11,7 +11,7 @@
     "seed": "tsx --env-file-if-exists=.env.local scripts/seed.ts"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "1.1.0",
+    "@google/genai": "2.31.0",
     "@noble/post-quantum": "0.7.1",
     "@openzeppelin/merkle-tree": "1.0.8",
     "next": "16.4.2",

@@ -15,7 +15,7 @@ interface LoadedDoc extends EvidenceDoc {
 
 interface ExtractResult {
   file: string;
-  mode: "claude" | "cached";
+  mode: "gemini" | "sample";
   model?: string;
   fallbackReason?: string;
   values: Omit<ActivityValue, "extractedBy" | "confirmed">[];
@@ -93,7 +93,7 @@ export default function ProducerPage() {
       setExtractMode(json.mode);
       setValues(
         json.results.flatMap((r) =>
-          r.values.map((v) => ({ ...v, extractedBy: r.mode === "claude" ? "claude" : "cached", confirmed: false }) as ActivityValue),
+          r.values.map((v) => ({ ...v, extractedBy: r.mode === "gemini" ? "gemini" : "sample", confirmed: false }) as ActivityValue),
         ),
       );
       setBundle(null);
@@ -202,7 +202,7 @@ export default function ProducerPage() {
         <SectionHead
           n="02"
           title="AI extraction"
-          hint="Claude reads each document and returns structured quantities with a verbatim source quote. Confirm every value; the AI never writes to the chain."
+          hint="Gemini reads each document and returns structured quantities with a verbatim source quote. Confirm every value; the AI never writes to the chain."
           right={
             <Button variant="secondary" disabled={!docs.length || extracting} onClick={extract}>
               {extracting ? "Reading documents…" : values.length ? "Re-extract" : "Extract with AI"}
@@ -211,9 +211,11 @@ export default function ProducerPage() {
         />
         {extractMode && (
           <p className="mb-3 text-xs text-ink-muted">
-            {extractMode === "claude"
-              ? "Live extraction by Claude (claude-opus-5-5, structured output)."
-              : "Showing pre-recorded sample extraction output. Live AI extraction runs when an Anthropic API key is configured."}
+            {extractMode === "gemini"
+              ? "Live extraction by Gemini (structured JSON output, verbatim citations)."
+              : extractMode === "mixed"
+                ? "Some documents fell back to pre-recorded sample output (live extraction failed for them)."
+                : "Showing pre-recorded sample extraction output. Live AI extraction runs when a Gemini API key is configured."}
           </p>
         )}
         {values.length > 0 && (

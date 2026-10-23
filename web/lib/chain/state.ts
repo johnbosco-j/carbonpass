@@ -1,5 +1,5 @@
 import type { Address, Hex } from "viem";
-import { deployment, explorerTx, passport, publicClient, registry, roleAddress, ROLES, type Role } from "./server";
+import { deployment, explorerTx, passport, pinnedBlock, publicClient, registry, retryLag, roleAddress, ROLES, type Role } from "./server";
 
 export const STATUS = ["None", "Pending", "Issued", "Rejected", "Revoked"] as const;
 export type Status = (typeof STATUS)[number];
@@ -40,18 +40,21 @@ const OUR_EVENTS = new Set(["BatchSubmitted", "BatchIssued", "BatchRejected", "B
 const blockTimes = new Map<bigint, number>();
 
 async function blockTime(n: bigint) {
-  if (!blockTimes.has(n)) blockTimes.set(n, Number((await publicClient.getBlock({ blockNumber: n })).timestamp));
+  if (!blockTimes.has(n)) blockTimes.set(n, Number((await retryLag(() => publicClient.getBlock({ blockNumber: n }))).timestamp));
   return blockTimes.get(n)!;
 }
 
-export async function readBatch(id: number): Promise<BatchView> {
-  const b = await publicClient.readContract({ ...passport, functionName: "getBatch", args: [BigInt(id)] });
+export async function readBatch(id: number, blockNumber?: bigint): Promise<BatchView> {
+  const at = blockNumber ?? (await pinnedBlock());
   const holders: Role[] = ["producer", "importerA", "importerB"];
   const addrs = holders.map(roleAddress);
-  const [bals, supply] = await Promise.all([
-    publicClient.readContract({ ...passport, functionName: "balanceOfBatch", args: [addrs, addrs.map(() => BigInt(id))] }),
-    publicClient.readContract({ ...passport, functionName: "totalSupply", args: [BigInt(id)] }),
-  ]);
+  const [b, bals, supply] = await retryLag(() =>
+    Promise.all([
+      publicClient.readContract({ ...passport, functionName: "getBatch", args: [BigInt(id)], blockNumber: at }),
+      publicClient.readContract({ ...passport, functionName: "balanceOfBatch", args: [addrs, addrs.map(() => BigInt(id))], blockNumber: at }),
+      publicClient.readContract({ ...passport, functionName: "totalSupply", args: [BigInt(id)], blockNumber: at }),
+    ]),
+  );
   return {
     id,
     producer: b.producer,
@@ -75,8 +78,9 @@ export async function readBatch(id: number): Promise<BatchView> {
   };
 }
 
-export async function readEvents(batchId?: number): Promise<EventView[]> {
-  const logs = await publicClient.getContractEvents({ ...passport, fromBlock: BigInt(deployment.deployBlock), toBlock: "latest" });
+export async function readEvents(batchId?: number, toBlock?: bigint): Promise<EventView[]> {
+  const to = toBlock ?? (await pinnedBlock());
+  const logs = await retryLag(() => publicClient.getContractEvents({ ...passport, fromBlock: BigInt(deployment.deployBlock), toBlock: to }));
   const ours = logs.filter((l) => l.eventName && OUR_EVENTS.has(l.eventName));
   const views = await Promise.all(
     ours.map(async (l) => {
@@ -101,14 +105,15 @@ export async function readEvents(batchId?: number): Promise<EventView[]> {
   return batchId === undefined ? views : views.filter((v) => v.batchId === batchId);
 }
 
-export async function readState() {
-  const count = Number(await publicClient.readContract({ ...passport, functionName: "batchCount" }));
+/** Full demo state, read at one pinned block (>= the caller's last known block) so it's internally consistent. */
+export async function readState(minBlock = 0) {
+  const block = await pinnedBlock(minBlock);
+  const count = Number(await retryLag(() => publicClient.readContract({ ...passport, functionName: "batchCount", blockNumber: block })));
   const verifierAddr = roleAddress("verifier");
-  const [batches, events, verifier, block] = await Promise.all([
-    Promise.all(Array.from({ length: count }, (_, i) => readBatch(i + 1))),
-    readEvents(),
-    publicClient.readContract({ ...registry, functionName: "getVerifier", args: [verifierAddr] }),
-    publicClient.getBlockNumber(),
+  const [batches, events, verifier] = await Promise.all([
+    Promise.all(Array.from({ length: count }, (_, i) => readBatch(i + 1, block))),
+    readEvents(undefined, block),
+    retryLag(() => publicClient.readContract({ ...registry, functionName: "getVerifier", args: [verifierAddr], blockNumber: block })),
   ]);
   return {
     network: deployment.network,
