@@ -26,6 +26,7 @@ We worked through what that means for a mid-sized mill. Its data lives in invoic
 - **Commit:** only a salted Merkle root and a report hash go on-chain, so plant data stays confidential.
 - **Verifier:** an accredited verifier (from the on-chain registry) reviews the flags and signs with a **hybrid ECDSA + ML-DSA (post-quantum)** signature. The contract then mints the batch as ERC-1155 verified tonnes.
 - **Ship & surrender:** tonnes move to EU importers with each shipment. Importers burn them when they file their CBAM declaration. The contract enforces **conservation**. Over-shipping, re-certifying a period, reusing a report, and self-verification all revert.
+- **Impact dashboard:** live totals from the chain (verified tonnes, overstatement corrected, € saved) plus a scenario simulator to 2034. The key insight: on default values, cutting emissions is worth €0 at the border; on verified data it's worth more every year as CBAM phases in.
 - **Passport:** a QR code opens a public page with the verified intensity, the verifier, the full on-chain history, a tamper check for evidence files, and the € saved versus default values from 2026 to 2034.
 
 ### How we built it

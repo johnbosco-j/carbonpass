@@ -34,6 +34,7 @@ One flow, four parties:
 3. An **accredited verifier** reviews the evidence and signs twice: an ECDSA wallet signature, and a **post-quantum ML-DSA signature** so the record stays valid over long retention periods. The smart contract then **mints the batch** as ERC-1155 tonnes with a verified tCO₂e/t.
 4. The producer **ships** tonnes to EU importers. The contract enforces **conservation**: verified tonnes can't be sold twice, a reporting period can't be certified twice, and an importer **surrenders** (burns) tonnes when filing a CBAM declaration so they can't be reused.
 5. Anyone can scan the **passport QR code** to see the verified intensity, the verifier, the on-chain trail and the **€ saved versus default values**. They can also check that any evidence file is unchanged (tamper check).
+6. The **[impact dashboard](https://carbonpass.vercel.app/impact)** shows what the ledger has already corrected (live from Sepolia) and scales it to an industry. Example: 5 Turkish mills save €224 M/yr by 2034, and verified data turns the value of cutting 0.1 tCO₂e/t from **€0** (default values) into **€8 M/yr**.
 
 ## Why blockchain, and why AI?
 
