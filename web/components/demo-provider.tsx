@@ -60,6 +60,16 @@ export function explainRevert(r: { name: string; args: unknown[] }): string {
       return "This batch was revoked; its tonnes are frozen.";
     case "NotPending":
       return "This batch is no longer pending.";
+    case "InsufficientPrecursor":
+      return r.args.length
+        ? `${fmt(r.args[2])} t of precursor passport #${r.args[0]} claimed, but only ${fmt(r.args[1])} t held. Already-consumed tonnes can't be counted again.`
+        : "Not enough precursor tonnes held for this claim. Already-consumed tonnes can't be counted again.";
+    case "PrecursorNotIssued":
+      return `Precursor passport${r.args.length ? ` #${r.args[0]}` : ""} isn't an issued batch (pending, rejected or revoked).`;
+    case "UnderstatedPrecursors":
+      return "The declared intensity is lower than the emissions embedded in the precursors alone.";
+    case "DuplicatePrecursor":
+      return "The same precursor passport is listed twice.";
     default:
       return r.name;
   }

@@ -6,9 +6,11 @@ import { useDemo } from "@/components/demo-provider";
 import { CostModel } from "@/components/cost-model";
 import { TonnageGauge } from "@/components/gauge";
 import { Stamp } from "@/components/stamp";
+import { SupplyChain } from "@/components/supply-chain";
 import { TamperCheck } from "@/components/tamper-check";
 import { Badge, Button, Card, Fictional, Field, HashChip, SectionHead, StatusBadge, fmtDate, fmtDateTime, fmtT } from "@/components/ui";
-import { CN_CODE, INSTALLATION, monthFromTs, monthLabel, PLANT } from "@/lib/demo";
+import Link from "next/link";
+import { CN_CODE, INSTALLATION, installationInfo, monthFromTs, monthLabel, PLANT, SUPPLIER } from "@/lib/demo";
 
 interface PqResult {
   verified: boolean;
@@ -30,13 +32,15 @@ const EVENT_LABEL: Record<string, string> = {
   BatchRevoked: "Revoked",
   Shipped: "Shipped",
   Surrendered: "Surrendered for CBAM declaration",
+  PrecursorConsumed: "Precursor consumed",
 };
 
 export default function PassportPage({ params }: { params: Promise<{ id: string }> }) {
   const id = Number(use(params).id);
   const { state, loadBundle } = useDemo();
   const batch = state?.batches.find((b) => b.id === id);
-  const events = state?.events.filter((e) => e.batchId === id) ?? [];
+  // Own events, plus consumption of this batch as a precursor by downstream batches.
+  const events = state?.events.filter((e) => e.batchId === id || (e.type === "PrecursorConsumed" && Number(e.args.precursorId) === id)) ?? [];
   const bundle = useMemo(() => loadBundle(id), [id, loadBundle]);
   const [qr, setQr] = useState<string | null>(null);
   const [pq, setPq] = useState<PqResult | null>(null);
@@ -48,6 +52,7 @@ export default function PassportPage({ params }: { params: Promise<{ id: string 
 
   const nameOf = (addr: string) => {
     const role = Object.entries(state?.roles ?? {}).find(([, a]) => a.toLowerCase() === String(addr).toLowerCase())?.[0];
+    if (role === "supplier") return SUPPLIER.name;
     return PLANT.importers.find((i) => i.key === role)?.name ?? (role === "producer" ? PLANT.installation.name : addr);
   };
 
@@ -60,6 +65,8 @@ export default function PassportPage({ params }: { params: Promise<{ id: string 
   if (!state) return <p className="text-ink-muted">Loading ledger…</p>;
   if (!batch) return <p className="text-ink-muted">Batch #{id} not found on {state.network}.</p>;
   const month = monthFromTs(batch.periodStart);
+  const info = installationInfo(batch.installationId);
+  const byId = new Map(state.batches.map((b) => [b.id, b]));
 
   return (
     <div className="space-y-10">
@@ -75,17 +82,17 @@ export default function PassportPage({ params }: { params: Promise<{ id: string 
             </div>
             <div>
               <h1 className="font-serif text-3xl font-semibold sm:text-4xl">
-                {PLANT.installation.product.name}, {monthLabel(month)}
+                {info.product}, {monthLabel(month)}
               </h1>
               <p className="mt-2 text-ink-muted">
-                {PLANT.installation.name} · {PLANT.installation.city}, {PLANT.installation.country} <Fictional />
+                {info.name} · {info.city}, {info.country} <Fictional />
               </p>
             </div>
             <div className="grid gap-6 sm:grid-cols-3">
               <div>
                 <div className="label">Verified embedded emissions</div>
                 <div className="mt-1 font-mono text-4xl font-semibold text-molten tnum">{(batch.directKgPerT / 1000).toFixed(3)}</div>
-                <div className="text-sm text-ink-muted">tCO₂e per tonne (direct incl. precursors)</div>
+                <div className="text-sm text-ink-muted">tCO₂e per tonne ({batch.precursors.length || !info.supplier ? "direct incl. precursors" : "direct"})</div>
               </div>
               <div>
                 <div className="label">Indirect (electricity)</div>
@@ -115,6 +122,31 @@ export default function PassportPage({ params }: { params: Promise<{ id: string 
                 </div>
               </Field>
             </div>
+            {batch.precursors.length > 0 && (
+              <div className="border-t border-rule pt-5">
+                <Field label="Precursors">
+                  {batch.precursors.map((p) => {
+                    const pre = byId.get(p.batchId);
+                    return (
+                      <div key={p.batchId}>
+                        {fmtT(p.tonnes)} t {pre ? installationInfo(pre.installationId).product.toLowerCase() : "input"} from passport{" "}
+                        <Link href={`/passport/${p.batchId}`} className="font-mono text-molten hover:underline">
+                          #{p.batchId}
+                        </Link>
+                        {pre && <> (verified {fmtT(pre.directKgPerT)} kgCO₂e/t)</>}
+                        {batch.status === "Issued" || batch.status === "Revoked" ? ", burned at issuance" : ", consumed when issued"}
+                        {pre?.status === "Revoked" && (
+                          <>
+                            {" "}
+                            <Badge tone="revoked">precursor revoked</Badge>
+                          </>
+                        )}
+                      </div>
+                    );
+                  })}
+                </Field>
+              </div>
+            )}
           </div>
           <div className="flex flex-col items-center gap-4">
             {/* eslint-disable-next-line @next/next/no-img-element -- data URL QR code */}
@@ -153,24 +185,42 @@ export default function PassportPage({ params }: { params: Promise<{ id: string 
       </section>
 
       <section>
-        <SectionHead n="02" title="Conservation of verified tonnes" />
-        <Card>
-          <TonnageGauge batch={batch} />
-        </Card>
+        <SectionHead
+          n="02"
+          title="Supply chain"
+          hint="Embedded emissions travel with the tonnes: a precursor passport's tonnes are burned when the product made from them is verified, so they count once."
+        />
+        <SupplyChain batch={batch} state={state} />
       </section>
 
       <section>
-        <SectionHead n="03" title="What verified data is worth" hint="CBAM certificates needed for these tonnes on EU default values vs this batch's verified intensity." />
-        <CostModel tonnes={batch.tonnes} see={batch.directKgPerT / 1000} cnCode={CN_CODE} country={INSTALLATION.country} />
+        <SectionHead n="03" title="Conservation of verified tonnes" />
+        <Card>
+          <TonnageGauge batch={batch} shippedLabel={info.supplier ? "Shipped to customers" : undefined} />
+        </Card>
       </section>
+
+      {batch.cnCode === CN_CODE ? (
+        <section>
+          <SectionHead n="04" title="What verified data is worth" hint="CBAM certificates needed for these tonnes on EU default values vs this batch's verified intensity." />
+          <CostModel tonnes={batch.tonnes} see={batch.directKgPerT / 1000} cnCode={CN_CODE} country={INSTALLATION.country} />
+        </section>
+      ) : (
+        <section>
+          <SectionHead n="04" title="What verified data is worth" />
+          <Card className="text-sm text-ink-muted">
+            This pig iron&apos;s verified intensity replaces the EU default value wherever it&apos;s used as a precursor: see the steel passports downstream.
+          </Card>
+        </section>
+      )}
 
       <section className="grid gap-8 lg:grid-cols-2">
         <div>
-          <SectionHead n="04" title="Ledger timeline" />
+          <SectionHead n="05" title="Ledger timeline" />
           <Card className="p-0 sm:p-0">
             <ol>
               {events.map((e) => (
-                <li key={e.txHash + e.type} className="flex flex-wrap items-center gap-x-4 gap-y-1 border-b border-rule px-5 py-3 last:border-0">
+                <li key={`${e.txHash}-${e.type}-${e.args.precursorId ?? ""}`} className="flex flex-wrap items-center gap-x-4 gap-y-1 border-b border-rule px-5 py-3 last:border-0">
                   <span className="h-2 w-2 rounded-full bg-molten" />
                   <span className="font-medium">{EVENT_LABEL[e.type] ?? e.type}</span>
                   {e.type === "Shipped" && (
@@ -178,6 +228,23 @@ export default function PassportPage({ params }: { params: Promise<{ id: string 
                       {fmtT(Number(e.args.tonnes))} t → {nameOf(String(e.args.to))}
                     </span>
                   )}
+                  {e.type === "PrecursorConsumed" &&
+                    (e.batchId === id ? (
+                      <span className="text-sm text-ink-muted">
+                        {fmtT(Number(e.args.tonnes))} t of{" "}
+                        <Link href={`/passport/${e.args.precursorId}`} className="font-mono hover:text-molten">
+                          #{e.args.precursorId}
+                        </Link>{" "}
+                        burned
+                      </span>
+                    ) : (
+                      <span className="text-sm text-ink-muted">
+                        {fmtT(Number(e.args.tonnes))} t into{" "}
+                        <Link href={`/passport/${e.batchId}`} className="font-mono hover:text-molten">
+                          #{e.batchId}
+                        </Link>
+                      </span>
+                    ))}
                   {e.type === "Surrendered" && (
                     <span className="text-sm text-ink-muted">
                       {fmtT(Number(e.args.tonnes))} t by {nameOf(String(e.args.holder))}
@@ -191,7 +258,7 @@ export default function PassportPage({ params }: { params: Promise<{ id: string 
           </Card>
         </div>
         <div>
-          <SectionHead n="05" title="Tamper check" />
+          <SectionHead n="06" title="Tamper check" />
           <TamperCheck batchId={batch.id} bundle={bundle} />
         </div>
       </section>

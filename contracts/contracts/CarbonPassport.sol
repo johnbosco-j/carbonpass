@@ -18,6 +18,8 @@ import {VerifierRegistry} from "./VerifierRegistry.sol";
 ///          - certified periods per installation and CN code never overlap
 ///          - a producer cannot verify its own batch
 ///          - importers burn (surrender) tonnes when they file a CBAM declaration
+///          - precursor tonnes (e.g. pig iron in steel) are burned when the downstream batch is issued,
+///            so a supplier's verified tonnes count in exactly one downstream product
 contract CarbonPassport is ERC1155Supply, AccessControl {
     bytes32 public constant REGISTRAR_ROLE = keccak256("REGISTRAR_ROLE");
 
@@ -45,6 +47,13 @@ contract CarbonPassport is ERC1155Supply, AccessControl {
         uint32 indirectKgPerT;
         bytes32 dataRoot; // Merkle root of salted evidence leaves
         bytes32 reportHash; // sha256 of the canonical report JSON
+        PrecursorInput[] precursors; // verified upstream tonnes this batch embeds (consumed at issuance)
+    }
+
+    /// @notice `tonnes` of precursor batch `batchId` used to make a downstream batch.
+    struct PrecursorInput {
+        uint256 batchId;
+        uint64 tonnes;
     }
 
     struct Batch {
@@ -63,8 +72,12 @@ contract CarbonPassport is ERC1155Supply, AccessControl {
         uint64 submittedAt;
         uint64 issuedAt;
         uint64 surrendered;
+        uint64 consumed; // tonnes burned as a precursor of downstream batches
         Status status;
     }
+
+    /// @notice Upper bound on precursor inputs per batch, so issuance gas stays bounded.
+    uint256 public constant MAX_PRECURSORS = 8;
 
     VerifierRegistry public immutable registry;
     uint256 public batchCount;
@@ -75,6 +88,8 @@ contract CarbonPassport is ERC1155Supply, AccessControl {
     mapping(bytes32 => bool) public reportHashUsed;
     /// @dev keccak256(installationId, cnCode) => end of the latest certified period
     mapping(bytes32 => uint64) public lastCertifiedEnd;
+    /// @dev downstream batchId => declared precursor inputs
+    mapping(uint256 => PrecursorInput[]) private _precursors;
 
     event InstallationRegistered(bytes32 indexed installationId, address indexed operator, string name);
     event BatchSubmitted(
@@ -96,6 +111,8 @@ contract CarbonPassport is ERC1155Supply, AccessControl {
     event BatchRevoked(uint256 indexed batchId, address indexed by, bytes32 reasonHash);
     event Shipped(uint256 indexed batchId, address indexed from, address indexed to, uint64 tonnes, bytes32 shipmentRef);
     event Surrendered(uint256 indexed batchId, address indexed holder, uint64 tonnes, bytes32 declarationRef);
+    event PrecursorDeclared(uint256 indexed batchId, uint256 indexed precursorId, uint64 tonnes);
+    event PrecursorConsumed(uint256 indexed batchId, uint256 indexed precursorId, address indexed holder, uint64 tonnes);
 
     error UnknownInstallation(bytes32 installationId);
     error NotOperator(bytes32 installationId, address caller);
@@ -110,6 +127,11 @@ contract CarbonPassport is ERC1155Supply, AccessControl {
     error SelfVerification(address producer);
     error NotAuthorized(address caller);
     error BatchFrozen(uint256 batchId);
+    error TooManyPrecursors(uint256 count, uint256 max);
+    error DuplicatePrecursor(uint256 precursorId);
+    error PrecursorNotIssued(uint256 precursorId, Status status);
+    error InsufficientPrecursor(uint256 precursorId, uint256 held, uint256 needed);
+    error UnderstatedPrecursors(uint256 declaredKg, uint256 precursorKg);
 
     constructor(VerifierRegistry registry_, string memory uri_, address admin) ERC1155(uri_) {
         registry = registry_;
@@ -129,6 +151,8 @@ contract CarbonPassport is ERC1155Supply, AccessControl {
 
     // ---------------------------------------------------------------- batch lifecycle
 
+    /// @notice Submit a batch for verification. Declared precursors are checked here (fail fast) but nothing is
+    ///         consumed until a verifier issues the batch; the submission is the producer's consent to that burn.
     function submitBatch(BatchInput calldata input) external returns (uint256 batchId) {
         Installation storage inst = _installations[input.installationId];
         if (!inst.registered) revert UnknownInstallation(input.installationId);
@@ -156,6 +180,17 @@ contract CarbonPassport is ERC1155Supply, AccessControl {
         b.status = Status.Pending;
         _installationBatches[input.installationId].push(batchId);
 
+        uint256 n = input.precursors.length;
+        if (n > MAX_PRECURSORS) revert TooManyPrecursors(n, MAX_PRECURSORS);
+        for (uint256 i = 0; i < n; ++i) {
+            PrecursorInput calldata p = input.precursors[i];
+            for (uint256 j = 0; j < i; ++j) {
+                if (input.precursors[j].batchId == p.batchId) revert DuplicatePrecursor(p.batchId);
+            }
+            _precursors[batchId].push(p);
+        }
+        _checkPrecursors(b, _precursors[batchId]);
+
         emit BatchSubmitted(
             batchId,
             input.installationId,
@@ -169,8 +204,12 @@ contract CarbonPassport is ERC1155Supply, AccessControl {
             input.dataRoot,
             input.reportHash
         );
+        for (uint256 i = 0; i < n; ++i) {
+            emit PrecursorDeclared(batchId, input.precursors[i].batchId, input.precursors[i].tonnes);
+        }
     }
 
+    /// @notice Verify a pending batch: mints its tonnes to the producer and burns the precursor tonnes it declared.
     /// @param pqSignature ML-DSA-65 signature (context "CarbonPass/v1") over
     ///        abi.encode(chainId, address(this), batchId, dataRoot, reportHash). Verified off-chain.
     function attestAndIssue(uint256 batchId, bytes calldata pqSignature) external {
@@ -179,6 +218,9 @@ contract CarbonPassport is ERC1155Supply, AccessControl {
         bytes32 key = _periodKey(b.installationId, b.cnCode);
         // Re-check: another batch for an overlapping period may have been issued while this one was pending.
         if (b.periodStart <= lastCertifiedEnd[key]) revert PeriodOverlap(b.periodStart, lastCertifiedEnd[key]);
+        // Re-check: a precursor may have been revoked, or its tonnes moved or consumed, while this one was pending.
+        PrecursorInput[] storage inputs = _precursors[batchId];
+        _checkPrecursors(b, inputs);
 
         lastCertifiedEnd[key] = b.periodEnd;
         bytes32 pqSignatureHash = keccak256(pqSignature);
@@ -187,6 +229,13 @@ contract CarbonPassport is ERC1155Supply, AccessControl {
         b.issuedAt = uint64(block.timestamp);
         b.status = Status.Issued;
 
+        // Burn precursors before minting: the mint can call back into a contract producer.
+        for (uint256 i = 0; i < inputs.length; ++i) {
+            PrecursorInput storage p = inputs[i];
+            _burn(b.producer, p.batchId, p.tonnes);
+            _batches[p.batchId].consumed += p.tonnes;
+            emit PrecursorConsumed(batchId, p.batchId, b.producer, p.tonnes);
+        }
         _mint(b.producer, batchId, b.tonnes, "");
         emit BatchIssued(batchId, msg.sender, pqSignatureHash, pqSignature);
     }
@@ -248,6 +297,12 @@ contract CarbonPassport is ERC1155Supply, AccessControl {
         return _batches[batchId];
     }
 
+    /// @notice The precursor inputs a batch declared. Once the batch is Issued, these tonnes have been burned.
+    function getPrecursors(uint256 batchId) external view returns (PrecursorInput[] memory) {
+        if (_batches[batchId].status == Status.None) revert UnknownBatch(batchId);
+        return _precursors[batchId];
+    }
+
     function getInstallation(bytes32 installationId) external view returns (Installation memory) {
         return _installations[installationId];
     }
@@ -284,6 +339,25 @@ contract CarbonPassport is ERC1155Supply, AccessControl {
     function _requireIndependentVerifier(Batch storage b) private view {
         if (!registry.isActive(msg.sender)) revert NotActiveVerifier(msg.sender);
         if (msg.sender == b.producer) revert SelfVerification(b.producer);
+    }
+
+    /// @dev Every precursor must be Issued (not revoked) and held by the producer in full, and the batch's direct
+    ///      intensity must cover what it embeds: directKgPerT * tonnes >= sum(precursor tonnes * precursor directKgPerT).
+    ///      Integer form of the check, so there is no rounding. A precursor is always an older batch than the one
+    ///      consuming it (it must already be Issued at submit), so the supply-chain graph is acyclic.
+    function _checkPrecursors(Batch storage b, PrecursorInput[] storage inputs) private view {
+        uint256 precursorKg;
+        for (uint256 i = 0; i < inputs.length; ++i) {
+            PrecursorInput storage p = inputs[i];
+            if (p.tonnes == 0) revert ZeroTonnes();
+            Batch storage pre = _batches[p.batchId];
+            if (pre.status != Status.Issued) revert PrecursorNotIssued(p.batchId, pre.status);
+            uint256 held = balanceOf(b.producer, p.batchId);
+            if (held < p.tonnes) revert InsufficientPrecursor(p.batchId, held, p.tonnes);
+            precursorKg += uint256(p.tonnes) * pre.directKgPerT;
+        }
+        uint256 declaredKg = uint256(b.tonnes) * b.directKgPerT;
+        if (declaredKg < precursorKg) revert UnderstatedPrecursors(declaredKg, precursorKg);
     }
 
     function _periodKey(bytes32 installationId, uint32 cnCode) private pure returns (bytes32) {

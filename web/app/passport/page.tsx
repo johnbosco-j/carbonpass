@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useDemo } from "@/components/demo-provider";
 import { Card, SectionHead, StatusBadge, fmtT } from "@/components/ui";
-import { monthFromTs, monthLabel, PLANT } from "@/lib/demo";
+import { installationInfo, monthFromTs, monthLabel } from "@/lib/demo";
 
 export default function PassportIndex() {
   const { state } = useDemo();
@@ -25,8 +25,10 @@ export default function PassportIndex() {
                   <span className="font-mono text-sm">#{b.id}</span>
                   <StatusBadge status={b.status} />
                 </div>
-                <p className="mt-3 font-semibold">{monthLabel(monthFromTs(b.periodStart))}</p>
-                <p className="text-sm text-ink-muted">{PLANT.installation.name}</p>
+                <p className="mt-3 font-semibold">
+                  {installationInfo(b.installationId).product}, {monthLabel(monthFromTs(b.periodStart))}
+                </p>
+                <p className="text-sm text-ink-muted">{installationInfo(b.installationId).name}</p>
                 <div className="mt-4 flex items-baseline justify-between border-t border-rule pt-3">
                   <span className="font-mono text-2xl font-semibold tnum">{(b.directKgPerT / 1000).toFixed(3)}</span>
                   <span className="text-sm text-ink-muted">tCO₂e/t · {fmtT(b.tonnes)} t</span>

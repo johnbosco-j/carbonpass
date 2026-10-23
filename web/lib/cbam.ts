@@ -38,10 +38,28 @@ export interface CalcResult {
 
 const round = (x: number, dp = 3) => Math.round(x * 10 ** dp) / 10 ** dp;
 
-/** Simplified CBAM specific embedded emissions (SEE) for scrap-based EAF hot-rolled steel. */
-export function calculate(a: Activity, country: Country = "TR"): CalcResult {
+/** The supplier's verified pig-iron passport, read from the chain. Its tonnes are consumed when this batch is issued. */
+export interface PrecursorLink {
+  batchId: number;
+  /** Verified direct intensity of the precursor batch, kgCO2e per tonne (as stored on-chain). */
+  directKgPerT: number;
+  supplier: string;
+}
+
+/**
+ * Simplified CBAM specific embedded emissions (SEE) for scrap-based EAF hot-rolled steel.
+ * Purchased pig iron uses the supplier's verified passport when one is linked, else the EU default value.
+ */
+export function calculate(a: Activity, country: Country = "TR", precursor?: PrecursorLink): CalcResult {
   const f = factors;
   const grid = f.grid[country];
+  const pigIron = precursor
+    ? {
+        label: `Purchased pig iron (precursor passport #${precursor.batchId})`,
+        factor: precursor.directKgPerT / 1000,
+        source: `Verified CarbonPass passport #${precursor.batchId} (${precursor.supplier}), read from the chain`,
+      }
+    : { label: "Purchased pig iron (precursor)", factor: f.precursors.pig_iron.see_tco2_per_unit, source: f.precursors.pig_iron.source };
   const lines: CalcLine[] = [
     {
       key: "fuel.natural_gas",
@@ -78,14 +96,14 @@ export function calculate(a: Activity, country: Country = "TR"): CalcResult {
     },
     {
       key: "precursor.pig_iron",
-      label: "Purchased pig iron (precursor)",
+      label: pigIron.label,
       quantity: a.pig_iron_t,
       unit: "t",
-      factor: f.precursors.pig_iron.see_tco2_per_unit,
+      factor: pigIron.factor,
       factorUnit: "tCO₂e/t",
-      tco2: a.pig_iron_t * f.precursors.pig_iron.see_tco2_per_unit,
+      tco2: a.pig_iron_t * pigIron.factor,
       scope: "precursor",
-      source: f.precursors.pig_iron.source,
+      source: pigIron.source,
     },
     {
       key: "electricity.grid",

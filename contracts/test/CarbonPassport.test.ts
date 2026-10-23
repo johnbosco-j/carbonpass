@@ -11,6 +11,9 @@ const INSTALLATION = ethers.id("TR-INST-0001");
 const day = 24 * 60 * 60;
 const Q3_START = 1782864000; // 2026-07-01
 const Q3_END = Q3_START + 92 * day - 1;
+const CN_PIG_IRON = 72011011;
+const SUPPLIER_INSTALLATION = ethers.id("TR-INST-0002");
+const JUNE_START = Q3_START - 30 * day; // 2026-06-01
 
 function salt(i: number) {
   return ethers.zeroPadValue(ethers.toBeHex(1000 + i), 32);
@@ -38,12 +41,13 @@ function batchInput(overrides: Partial<Record<string, unknown>> = {}) {
     indirectKgPerT: 214,
     dataRoot: evidenceTree().root,
     reportHash: ethers.sha256(ethers.toUtf8Bytes("report-q3-2026")),
+    precursors: [] as { batchId: number; tonnes: number }[],
     ...overrides,
   };
 }
 
 async function deployFixture() {
-  const [admin, producer, verifier, importerA, importerB, outsider] = await ethers.getSigners();
+  const [admin, producer, verifier, importerA, importerB, outsider, supplier] = await ethers.getSigners();
   const registry = await ethers.deployContract("VerifierRegistry", [admin.address]);
   const passport = await ethers.deployContract("CarbonPassport", [
     await registry.getAddress(),
@@ -52,7 +56,8 @@ async function deployFixture() {
   ]);
   await registry.accredit(verifier.address, "EuroVerify (fictional)", ethers.id("ACC-REF-1"), PQ_PK);
   await passport.registerInstallation(INSTALLATION, producer.address, "Anatolia Green Steel (fictional)");
-  return { registry, passport, admin, producer, verifier, importerA, importerB, outsider };
+  await passport.registerInstallation(SUPPLIER_INSTALLATION, supplier.address, "Karadeniz Pig Iron (fictional)");
+  return { registry, passport, admin, producer, verifier, importerA, importerB, outsider, supplier };
 }
 
 async function issuedFixture() {
@@ -224,6 +229,241 @@ describe("CarbonPassport", () => {
       }
       const [key, , unit, s] = tree.at(1)!;
       expect(await passport.verifyDisclosure(1, key, "3000", unit, s, tree.getProof(1))).to.equal(false);
+    });
+  });
+
+  describe("precursor passports (supply-chain composability)", () => {
+    const PIG_IRON_KG = 1_700; // supplier's verified direct intensity
+    const STEEL_KG = 352; // own direct ~ 131 kg/t + 1,300 t x 1,700 kg / 10,000 t = 221 kg/t
+
+    function pigIronInput(overrides: Partial<Record<string, unknown>> = {}) {
+      return batchInput({
+        installationId: SUPPLIER_INSTALLATION,
+        cnCode: CN_PIG_IRON,
+        periodStart: JUNE_START,
+        periodEnd: Q3_START - 1,
+        tonnes: 5_000,
+        directKgPerT: PIG_IRON_KG,
+        indirectKgPerT: 60,
+        reportHash: ethers.id("pig-iron-2026-06"),
+        ...overrides,
+      });
+    }
+
+    /** Supplier batch #1 (5,000 t pig iron) issued; 1,300 t shipped to the steel mill. */
+    async function supplyFixture() {
+      const f = await deployFixture();
+      await f.passport.connect(f.supplier).submitBatch(pigIronInput());
+      await f.passport.connect(f.verifier).attestAndIssue(1, PQ_SIG);
+      await f.passport.connect(f.supplier).ship(f.producer.address, 1, 1_300, ethers.id("CMR-TR-0001"));
+      return f;
+    }
+
+    const steelWith = (precursors: { batchId: number; tonnes: number }[], overrides: Partial<Record<string, unknown>> = {}) =>
+      batchInput({ directKgPerT: STEEL_KG, precursors, ...overrides });
+
+    it("records the claim at submit and consumes precursor tonnes only at issuance", async () => {
+      const { passport, producer, verifier } = await loadFixture(supplyFixture);
+      await expect(passport.connect(producer).submitBatch(steelWith([{ batchId: 1, tonnes: 1_300 }])))
+        .to.emit(passport, "PrecursorDeclared")
+        .withArgs(2, 1, 1_300);
+      // Submitting consumes nothing.
+      expect(await passport.balanceOf(producer.address, 1)).to.equal(1_300);
+      expect((await passport.getBatch(1)).consumed).to.equal(0);
+
+      await expect(passport.connect(verifier).attestAndIssue(2, PQ_SIG))
+        .to.emit(passport, "PrecursorConsumed")
+        .withArgs(2, 1, producer.address, 1_300);
+      expect(await passport.balanceOf(producer.address, 1)).to.equal(0);
+      expect(await passport.balanceOf(producer.address, 2)).to.equal(10_000);
+      expect((await passport.getBatch(1)).consumed).to.equal(1_300);
+      expect(await passport["totalSupply(uint256)"](1)).to.equal(3_700);
+      const inputs = await passport.getPrecursors(2);
+      expect(inputs.map((p) => [p.batchId, p.tonnes])).to.deep.equal([[1n, 1_300n]]);
+      expect(await passport.getPrecursors(1)).to.deep.equal([]);
+    });
+
+    it("rejects a claim for more precursor tonnes than the producer holds", async () => {
+      const { passport, producer } = await loadFixture(supplyFixture);
+      await expect(passport.connect(producer).submitBatch(steelWith([{ batchId: 1, tonnes: 1_500 }])))
+        .to.be.revertedWithCustomError(passport, "InsufficientPrecursor")
+        .withArgs(1, 1_300, 1_500);
+    });
+
+    it("re-checks the balance at issuance if precursor tonnes moved while pending", async () => {
+      const { passport, producer, verifier, outsider } = await loadFixture(supplyFixture);
+      await passport.connect(producer).submitBatch(steelWith([{ batchId: 1, tonnes: 1_300 }]));
+      await passport.connect(producer).ship(outsider.address, 1, 400, ethers.id("resold"));
+      await expect(passport.connect(verifier).attestAndIssue(2, PQ_SIG))
+        .to.be.revertedWithCustomError(passport, "InsufficientPrecursor")
+        .withArgs(1, 900, 1_300);
+      expect(await passport.balanceOf(producer.address, 2)).to.equal(0);
+    });
+
+    it("blocks reuse: consumed precursor tonnes can't back a second batch", async () => {
+      const { passport, producer, verifier } = await loadFixture(supplyFixture);
+      await passport.connect(producer).submitBatch(steelWith([{ batchId: 1, tonnes: 1_300 }]));
+      await passport.connect(verifier).attestAndIssue(2, PQ_SIG);
+      const october = { periodStart: Q3_END + 1, periodEnd: Q3_END + 31 * day, reportHash: ethers.id("report-oct") };
+      await expect(passport.connect(producer).submitBatch(steelWith([{ batchId: 1, tonnes: 1_300 }], october)))
+        .to.be.revertedWithCustomError(passport, "InsufficientPrecursor")
+        .withArgs(1, 0, 1_300);
+    });
+
+    it("blocks reuse across two pending batches: only the first issued consumes the tonnes", async () => {
+      const { passport, producer, verifier } = await loadFixture(supplyFixture);
+      const october = { periodStart: Q3_END + 1, periodEnd: Q3_END + 31 * day, reportHash: ethers.id("report-oct") };
+      await passport.connect(producer).submitBatch(steelWith([{ batchId: 1, tonnes: 1_300 }]));
+      await passport.connect(producer).submitBatch(steelWith([{ batchId: 1, tonnes: 1_300 }], october));
+      await passport.connect(verifier).attestAndIssue(2, PQ_SIG);
+      await expect(passport.connect(verifier).attestAndIssue(3, PQ_SIG))
+        .to.be.revertedWithCustomError(passport, "InsufficientPrecursor")
+        .withArgs(1, 0, 1_300);
+    });
+
+    it("rejects listing the same precursor twice", async () => {
+      const { passport, producer } = await loadFixture(supplyFixture);
+      await expect(passport.connect(producer).submitBatch(steelWith([{ batchId: 1, tonnes: 600 }, { batchId: 1, tonnes: 700 }])))
+        .to.be.revertedWithCustomError(passport, "DuplicatePrecursor")
+        .withArgs(1);
+    });
+
+    it("reverts with UnderstatedPrecursors when the downstream intensity can't cover its precursors", async () => {
+      const { passport, producer } = await loadFixture(supplyFixture);
+      // 1,300 t x 1,700 kg = 2,210,000 kg embedded; 10,000 t at 220 kg/t declares only 2,200,000 kg.
+      await expect(passport.connect(producer).submitBatch(steelWith([{ batchId: 1, tonnes: 1_300 }], { directKgPerT: 220 })))
+        .to.be.revertedWithCustomError(passport, "UnderstatedPrecursors")
+        .withArgs(2_200_000, 2_210_000);
+      // Exactly covering the precursors is allowed (integer check, no rounding).
+      await expect(passport.connect(producer).submitBatch(steelWith([{ batchId: 1, tonnes: 1_300 }], { directKgPerT: 221 }))).to.emit(
+        passport,
+        "BatchSubmitted",
+      );
+    });
+
+    it("blocks pending, unknown and revoked precursors, including revocation while the claim is pending", async () => {
+      const { passport, producer, verifier, supplier } = await loadFixture(supplyFixture);
+      await expect(passport.connect(producer).submitBatch(steelWith([{ batchId: 99, tonnes: 1 }])))
+        .to.be.revertedWithCustomError(passport, "PrecursorNotIssued")
+        .withArgs(99, STATUS.None);
+      const july = { periodStart: Q3_START, periodEnd: Q3_START + 31 * day - 1, reportHash: ethers.id("pig-iron-07") };
+      await passport.connect(supplier).submitBatch(pigIronInput(july)); // #2, pending
+      await expect(passport.connect(producer).submitBatch(steelWith([{ batchId: 2, tonnes: 1 }])))
+        .to.be.revertedWithCustomError(passport, "PrecursorNotIssued")
+        .withArgs(2, STATUS.Pending);
+
+      await passport.connect(producer).submitBatch(steelWith([{ batchId: 1, tonnes: 1_300 }])); // #3
+      await passport.connect(verifier).revokeBatch(1, ethers.id("supplier fraud"));
+      await expect(passport.connect(verifier).attestAndIssue(3, PQ_SIG))
+        .to.be.revertedWithCustomError(passport, "PrecursorNotIssued")
+        .withArgs(1, STATUS.Revoked);
+      await expect(passport.connect(producer).submitBatch(steelWith([{ batchId: 1, tonnes: 1_300 }], { reportHash: ethers.id("retry") })))
+        .to.be.revertedWithCustomError(passport, "PrecursorNotIssued")
+        .withArgs(1, STATUS.Revoked);
+    });
+
+    it("a rejected batch consumes nothing, and the tonnes stay usable", async () => {
+      const { passport, producer, verifier } = await loadFixture(supplyFixture);
+      await passport.connect(producer).submitBatch(steelWith([{ batchId: 1, tonnes: 1_300 }]));
+      await passport.connect(verifier).rejectBatch(2, ethers.id("missing coke invoice"));
+      expect(await passport.balanceOf(producer.address, 1)).to.equal(1_300);
+      expect((await passport.getBatch(1)).consumed).to.equal(0);
+
+      await passport.connect(producer).submitBatch(steelWith([{ batchId: 1, tonnes: 1_300 }], { reportHash: ethers.id("resubmitted") }));
+      await expect(passport.connect(verifier).attestAndIssue(3, PQ_SIG)).to.emit(passport, "PrecursorConsumed").withArgs(3, 1, producer.address, 1_300);
+    });
+
+    it("caps the number of precursor inputs", async () => {
+      const { passport, producer } = await loadFixture(supplyFixture);
+      const many = Array.from({ length: 9 }, (_, i) => ({ batchId: i + 1, tonnes: 1 }));
+      await expect(passport.connect(producer).submitBatch(steelWith(many)))
+        .to.be.revertedWithCustomError(passport, "TooManyPrecursors")
+        .withArgs(9, 8);
+    });
+
+    it("conserves precursor tonnes: supply + surrendered + consumed == issued", async () => {
+      const { passport, producer, verifier, supplier, importerA } = await loadFixture(supplyFixture);
+      // Some pig iron goes straight to an EU importer and is declared there; 1,300 t go into steel.
+      await passport.connect(supplier).ship(importerA.address, 1, 2_000, ethers.id("MRN-PIG"));
+      await passport.connect(importerA).surrender(1, 500, ethers.id("CBAM-DECL-PIG"));
+      await passport.connect(producer).submitBatch(steelWith([{ batchId: 1, tonnes: 1_300 }]));
+      await passport.connect(verifier).attestAndIssue(2, PQ_SIG);
+
+      const pig = await passport.getBatch(1);
+      const supply = await passport["totalSupply(uint256)"](1);
+      expect(supply + pig.surrendered + pig.consumed).to.equal(pig.tonnes);
+      expect([supply, pig.surrendered, pig.consumed]).to.deep.equal([3_200n, 500n, 1_300n]);
+      // The downstream batch is conserved on its own: consumption never touches its supply.
+      const steel = await passport.getBatch(2);
+      expect((await passport["totalSupply(uint256)"](2)) + steel.surrendered + steel.consumed).to.equal(steel.tonnes);
+    });
+
+    it("holds conservation across a seeded random sequence of ships, claims, issuances and surrenders", async () => {
+      const { passport, producer, verifier, supplier, importerA, importerB } = await loadFixture(supplyFixture);
+      let seed = 42;
+      const rand = (n: number) => {
+        // mulberry32: small deterministic PRNG, so a failure replays exactly.
+        seed = (seed + 0x6d2b79f5) | 0;
+        let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+        t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+        return ((t ^ (t >>> 14)) >>> 0) % n;
+      };
+      const holders = [supplier, producer, importerA, importerB];
+      let nextStart = Q3_START;
+      let reverted = 0;
+      let consumedSteps = 0;
+
+      for (let step = 0; step < 80; step++) {
+        const count = Number(await passport.batchCount());
+        const id = 1 + rand(count);
+        const op = rand(4);
+        try {
+          if (op === 0) {
+            // Any holder ships part of any batch to another holder.
+            const from = holders[rand(holders.length)];
+            const to = holders[rand(holders.length)];
+            await passport.connect(from).ship(to.address, id, 1 + rand(1_500), ethers.id(`s${step}`));
+          } else if (op === 1) {
+            // Any holder surrenders part of any batch.
+            await passport.connect(holders[rand(holders.length)]).surrender(id, 1 + rand(800), ethers.id(`d${step}`));
+          } else if (op === 2) {
+            // The mill claims a random amount of a random batch as a precursor for its next month.
+            const end = nextStart + 30 * day;
+            await passport.connect(producer).submitBatch(
+              steelWith([{ batchId: id, tonnes: 1 + rand(1_500) }], { periodStart: nextStart, periodEnd: end, reportHash: ethers.id(`r${step}`), directKgPerT: 2_000 }),
+            );
+            nextStart = end + 1;
+          } else {
+            // The verifier issues or rejects a pending batch.
+            const b = await passport.getBatch(id);
+            if (b.status !== STATUS.Pending) continue;
+            if (rand(4) === 0) {
+              await passport.connect(verifier).rejectBatch(id, ethers.id("random"));
+            } else {
+              const hasInputs = (await passport.getPrecursors(id)).length > 0;
+              await passport.connect(verifier).attestAndIssue(id, PQ_SIG);
+              if (hasInputs) consumedSteps++;
+            }
+          }
+        } catch {
+          reverted++; // over-claims, over-ships and stale claims are expected to revert
+        }
+
+        for (let i = 1; i <= Number(await passport.batchCount()); i++) {
+          const b = await passport.getBatch(i);
+          const supply = await passport["totalSupply(uint256)"](i);
+          const minted = b.status === STATUS.Issued || b.status === STATUS.Revoked ? b.tonnes : 0n;
+          expect(supply + b.surrendered + b.consumed).to.equal(minted);
+          const balances = await passport.balanceOfBatch(
+            holders.map((h) => h.address),
+            holders.map(() => i),
+          );
+          expect(balances.reduce((a, x) => a + x, 0n)).to.equal(supply);
+        }
+      }
+      // The sequence exercises both paths: some claims are consumed, some are rejected by the contract.
+      expect(consumedSteps).to.be.greaterThan(0);
+      expect(reverted).to.be.greaterThan(0);
     });
   });
 });

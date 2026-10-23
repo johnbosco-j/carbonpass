@@ -504,6 +504,17 @@ export const passportAbi = [
   {
     "inputs": [
       {
+        "internalType": "uint256",
+        "name": "precursorId",
+        "type": "uint256"
+      }
+    ],
+    "name": "DuplicatePrecursor",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "address",
         "name": "sender",
         "type": "address"
@@ -601,6 +612,27 @@ export const passportAbi = [
       }
     ],
     "name": "ERC1155MissingApprovalForAll",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "precursorId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "held",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "needed",
+        "type": "uint256"
+      }
+    ],
+    "name": "InsufficientPrecursor",
     "type": "error"
   },
   {
@@ -708,6 +740,22 @@ export const passportAbi = [
   {
     "inputs": [
       {
+        "internalType": "uint256",
+        "name": "precursorId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "enum CarbonPassport.Status",
+        "name": "status",
+        "type": "uint8"
+      }
+    ],
+    "name": "PrecursorNotIssued",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "bytes32",
         "name": "reportHash",
         "type": "bytes32"
@@ -725,6 +773,38 @@ export const passportAbi = [
       }
     ],
     "name": "SelfVerification",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "count",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "max",
+        "type": "uint256"
+      }
+    ],
+    "name": "TooManyPrecursors",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "declaredKg",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "precursorKg",
+        "type": "uint256"
+      }
+    ],
+    "name": "UnderstatedPrecursors",
     "type": "error"
   },
   {
@@ -956,6 +1036,62 @@ export const passportAbi = [
       }
     ],
     "name": "InstallationRegistered",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "batchId",
+        "type": "uint256"
+      },
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "precursorId",
+        "type": "uint256"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "holder",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint64",
+        "name": "tonnes",
+        "type": "uint64"
+      }
+    ],
+    "name": "PrecursorConsumed",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "batchId",
+        "type": "uint256"
+      },
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "precursorId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint64",
+        "name": "tonnes",
+        "type": "uint64"
+      }
+    ],
+    "name": "PrecursorDeclared",
     "type": "event"
   },
   {
@@ -1209,6 +1345,19 @@ export const passportAbi = [
   },
   {
     "inputs": [],
+    "name": "MAX_PRECURSORS",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "REGISTRAR_ROLE",
     "outputs": [
       {
@@ -1406,6 +1555,11 @@ export const passportAbi = [
             "type": "uint64"
           },
           {
+            "internalType": "uint64",
+            "name": "consumed",
+            "type": "uint64"
+          },
+          {
             "internalType": "enum CarbonPassport.Status",
             "name": "status",
             "type": "uint8"
@@ -1450,6 +1604,37 @@ export const passportAbi = [
         "internalType": "struct CarbonPassport.Installation",
         "name": "",
         "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "batchId",
+        "type": "uint256"
+      }
+    ],
+    "name": "getPrecursors",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "batchId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint64",
+            "name": "tonnes",
+            "type": "uint64"
+          }
+        ],
+        "internalType": "struct CarbonPassport.PrecursorInput[]",
+        "name": "",
+        "type": "tuple[]"
       }
     ],
     "stateMutability": "view",
@@ -1878,6 +2063,23 @@ export const passportAbi = [
             "internalType": "bytes32",
             "name": "reportHash",
             "type": "bytes32"
+          },
+          {
+            "components": [
+              {
+                "internalType": "uint256",
+                "name": "batchId",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint64",
+                "name": "tonnes",
+                "type": "uint64"
+              }
+            ],
+            "internalType": "struct CarbonPassport.PrecursorInput[]",
+            "name": "precursors",
+            "type": "tuple[]"
           }
         ],
         "internalType": "struct CarbonPassport.BatchInput",

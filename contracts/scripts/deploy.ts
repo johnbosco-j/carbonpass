@@ -1,6 +1,6 @@
 /**
  * Deploys VerifierRegistry + CarbonPassport, accredits the demo verifier, registers the demo
- * installation, funds role wallets (testnets), and writes addresses + ABIs for the web app.
+ * steel installation and its pig-iron supplier, funds role wallets (testnets), and writes addresses + ABIs for the web app.
  *
  *   pnpm deploy:local     (needs `pnpm chain` running)
  *   pnpm deploy:sepolia   (needs a funded DEPLOYER_PRIVATE_KEY in contracts/.env)
@@ -18,6 +18,12 @@ export const DEMO_INSTALLATION = {
   code: "TR-INST-0001",
   name: "Anatolia Green Steel A.Ş. — EAF mill, İzmir (fictional)",
 };
+/** Upstream supplier: its verified pig-iron batches are consumed as precursors by the steel mill. Keep in sync with web/data/plant.json. */
+export const SUPPLIER_INSTALLATION = {
+  id: ethers.id("TR-INST-0002"),
+  code: "TR-INST-0002",
+  name: "Karadeniz Pig Iron A.Ş. — blast furnace, Samsun (fictional)",
+};
 const DEMO_VERIFIER_NAME = "EuroVerify Accredited Verification (fictional)";
 const FUND_AMOUNT = ethers.parseEther("0.008");
 
@@ -33,10 +39,11 @@ function roleAddresses(): Record<string, string> {
       verifier: get("VERIFIER_PRIVATE_KEY"),
       importerA: get("IMPORTER_A_PRIVATE_KEY"),
       importerB: get("IMPORTER_B_PRIVATE_KEY"),
+      supplier: get("SUPPLIER_PRIVATE_KEY"),
     };
   }
   const at = (i: number) => ethers.HDNodeWallet.fromPhrase(LOCAL_MNEMONIC, undefined, `m/44'/60'/0'/0/${i}`).address;
-  return { producer: at(1), verifier: at(2), importerA: at(3), importerB: at(4) };
+  return { producer: at(1), verifier: at(2), importerA: at(3), importerB: at(4), supplier: at(5) };
 }
 
 function verifierPqPublicKey(): Uint8Array {
@@ -67,6 +74,8 @@ async function main() {
 
   await (await passport.registerInstallation(DEMO_INSTALLATION.id, roles.producer, DEMO_INSTALLATION.name)).wait();
   console.log(`Registered installation ${DEMO_INSTALLATION.code} → ${roles.producer}`);
+  await (await passport.registerInstallation(SUPPLIER_INSTALLATION.id, roles.supplier, SUPPLIER_INSTALLATION.name)).wait();
+  console.log(`Registered installation ${SUPPLIER_INSTALLATION.code} → ${roles.supplier}`);
 
   if (network.name !== "hardhat") {
     for (const [role, addr] of Object.entries(roles)) {
@@ -88,6 +97,7 @@ async function main() {
     registrar: deployer.address,
     roles,
     installation: DEMO_INSTALLATION,
+    supplierInstallation: SUPPLIER_INSTALLATION,
     verifierName: DEMO_VERIFIER_NAME,
     explorer: network.name === "sepolia" ? "https://sepolia.etherscan.io" : null,
   };

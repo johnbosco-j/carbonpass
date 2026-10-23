@@ -21,9 +21,15 @@ export interface BatchView {
   submittedAt: number;
   issuedAt: number;
   surrendered: number;
+  /** Tonnes burned as a precursor of downstream batches. supply + surrendered + consumed == tonnes once issued. */
+  consumed: number;
   status: Status;
   supply: number;
+  /** Tonnes still held by the batch's own producer (the supplier, for a pig-iron batch). */
+  producerBalance: number;
   balances: Partial<Record<Role, number>>;
+  /** Verified upstream batches this batch declared as inputs; burned when it was issued. */
+  precursors: { batchId: number; tonnes: number }[];
 }
 
 export interface EventView {
@@ -36,7 +42,7 @@ export interface EventView {
   args: Record<string, string | number>;
 }
 
-const OUR_EVENTS = new Set(["BatchSubmitted", "BatchIssued", "BatchRejected", "BatchRevoked", "Shipped", "Surrendered"]);
+const OUR_EVENTS = new Set(["BatchSubmitted", "BatchIssued", "BatchRejected", "BatchRevoked", "Shipped", "Surrendered", "PrecursorConsumed"]);
 const blockTimes = new Map<bigint, number>();
 
 async function blockTime(n: bigint) {
@@ -46,15 +52,18 @@ async function blockTime(n: bigint) {
 
 export async function readBatch(id: number, blockNumber?: bigint): Promise<BatchView> {
   const at = blockNumber ?? (await pinnedBlock());
-  const holders: Role[] = ["producer", "importerA", "importerB"];
+  const holders: Role[] = ["producer", "importerA", "importerB", "supplier"];
   const addrs = holders.map(roleAddress);
-  const [b, bals, supply] = await retryLag(() =>
+  const [b, bals, supply, precursors] = await retryLag(() =>
     Promise.all([
       publicClient.readContract({ ...passport, functionName: "getBatch", args: [BigInt(id)], blockNumber: at }),
       publicClient.readContract({ ...passport, functionName: "balanceOfBatch", args: [addrs, addrs.map(() => BigInt(id))], blockNumber: at }),
       publicClient.readContract({ ...passport, functionName: "totalSupply", args: [BigInt(id)], blockNumber: at }),
+      publicClient.readContract({ ...passport, functionName: "getPrecursors", args: [BigInt(id)], blockNumber: at }),
     ]),
   );
+  const balances = Object.fromEntries(holders.map((r, i) => [r, Number(bals[i])])) as Partial<Record<Role, number>>;
+  const producerRole = holders.find((_, i) => addrs[i].toLowerCase() === b.producer.toLowerCase());
   return {
     id,
     producer: b.producer,
@@ -72,9 +81,12 @@ export async function readBatch(id: number, blockNumber?: bigint): Promise<Batch
     submittedAt: Number(b.submittedAt),
     issuedAt: Number(b.issuedAt),
     surrendered: Number(b.surrendered),
+    consumed: Number(b.consumed),
     status: STATUS[b.status],
     supply: Number(supply),
-    balances: Object.fromEntries(holders.map((r, i) => [r, Number(bals[i])])),
+    producerBalance: producerRole ? (balances[producerRole] ?? 0) : 0,
+    balances,
+    precursors: precursors.map((p) => ({ batchId: Number(p.batchId), tonnes: Number(p.tonnes) })),
   };
 }
 
