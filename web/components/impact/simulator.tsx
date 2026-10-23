@@ -94,6 +94,8 @@ export function Simulator({ ledgerSee }: { ledgerSee: number | null }) {
   const [showTable, setShowTable] = useState(false);
   const set = <K extends keyof Scenario>(k: K, v: Scenario[K]) => setS((p) => ({ ...p, [k]: v }));
   const r = useMemo(() => simulate(s), [s]);
+  // The other timing, shown beside the headline so the range (conservative ↔ upper bound) is always visible.
+  const alt = useMemo(() => simulate({ ...s, timing: s.timing === "phased" ? "immediate" : "phased" }), [s]);
   const dv = defaultValue(s.cnCode, s.country);
   const first = r.rows[0];
   const last = r.rows.at(-1)!;
@@ -172,7 +174,13 @@ export function Simulator({ ledgerSee }: { ledgerSee: number | null }) {
         <Metric label="Saving in 2026" value={fmtEurShort(first.saving)} accent />
         <Metric label="Saving in 2034" value={fmtEurShort(last.saving)} />
         <Metric label="Saving 2026–2034" value={fmtEurShort(r.cumulativeSaving)} />
-        <Metric label="Avoided 2026–2034" value={fmtNum(r.cumulativeAvoided)} unit="tCO₂e" />
+        <div>
+          <Metric label="Avoided 2026–2034" value={fmtNum(r.cumulativeAvoided)} unit="tCO₂e" />
+          <p className="mt-1.5 text-xs text-ink-muted">
+            {s.timing === "phased" ? "Up to" : "At least"} <span className="font-mono tnum">{fmtNum(alt.cumulativeAvoided)}</span>{" "}
+            {s.timing === "phased" ? "if the full cut happens from 2026" : "if the cut follows the CBAM factor"}
+          </p>
+        </div>
         {first.saving < 0 && (
           <p className="col-span-2 text-sm text-anomaly lg:col-span-4">
             This intensity is above the default value plus mark-up, so these mills would declare on defaults. Verified data only pays for producers cleaner than
