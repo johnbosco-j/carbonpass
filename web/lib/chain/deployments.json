@@ -24,10 +24,10 @@
   "sepolia": {
     "network": "sepolia",
     "chainId": 11155111,
-    "deployBlock": 11977157,
-    "deployedAt": "2026-10-23T14:07:02.023Z",
-    "registry": "0xDB123272620e734a8feEfc776aC0a40E6Baabc69",
-    "passport": "0xcA4e491c54550b242f90f1c97a1C7612acf7b237",
+    "deployBlock": 11978556,
+    "deployedAt": "2026-10-23T18:48:38.148Z",
+    "registry": "0x9D417Ce6FF747df11e20834F6FEE38A759C17959",
+    "passport": "0xdEC62216b2fD10a8A2dB88391d042b7d9C68D7Eb",
     "registrar": "0x67d7b3491852c6dA70B0592223Ff8cDfc6B5e857",
     "roles": {
       "producer": "0xeB1d885701E755cE417b8dBf7d9256BD75FB3d28",
