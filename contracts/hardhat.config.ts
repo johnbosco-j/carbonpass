@@ -20,7 +20,7 @@ const config: HardhatUserConfig = {
       url: process.env.SEPOLIA_RPC_URL ?? "https://ethereum-sepolia-rpc.publicnode.com",
       accounts: deployerKey ? [deployerKey] : [],
       // Fixed price: Sepolia's base fee is usually ~0, but fee estimates can spike and fail the balance check.
-      gasPrice: Number(process.env.SEPOLIA_GAS_PRICE_WEI ?? 1_000_000_000),
+      gasPrice: Number(process.env.SEPOLIA_GAS_PRICE_WEI ?? 100_000_000), // 0.1 gwei; contract creation is gas-heavy on Sepolia
     },
   },
   gasReporter: { enabled: process.env.REPORT_GAS === "true" },
