@@ -180,7 +180,9 @@ export const TIMELINE = [
     async run(d, ctx) {
       // Precursor passport (supplier's verified pig iron), if this build has it.
       const use = { role: "checkbox", name: /supplier.s verified intensity/i };
-      if (await d.exists(use, 1500)) {
+      // The page ticks it only when the mill still holds the pig-iron tonnes (fresh deploy + seed); otherwise the
+      // batch uses the EU default and the narration below drops the precursor sentence.
+      if ((await d.exists(use, 1500)) && (await d.loc(use).isChecked())) {
         const text = await d.loc(use).evaluate((el) => (el.closest("label") ?? el.parentElement).textContent ?? "");
         const verified = await d.page.getByText(/^verified [\d.]+ tCO₂e\/t$/).first().textContent().catch(() => null);
         ctx.pigIronT = text.match(/for ([\d,]+) t of pig iron/)?.[1] ?? null;
