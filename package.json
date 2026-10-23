@@ -6,10 +6,14 @@
   "license": "MIT",
   "scripts": {
     "test": "pnpm --filter contracts test",
-    "dev": "pnpm --filter web dev",
     "chain": "pnpm --filter contracts node",
     "deploy:local": "pnpm --filter contracts deploy:local",
-    "deploy:sepolia": "pnpm --filter contracts deploy:sepolia"
+    "deploy:sepolia": "pnpm --filter contracts deploy:sepolia",
+    "sync-env": "node scripts/sync-env.mjs",
+    "seed": "pnpm --filter web seed",
+    "dev": "pnpm --filter web dev",
+    "build": "pnpm --filter web build",
+    "make:docs": "pnpm --filter web make:docs"
   },
   "packageManager": "pnpm@10.33.2"
 }

@@ -68,21 +68,32 @@ Full detail is in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 ## Repository layout
 
 ```
-contracts/   Solidity contracts, Hardhat tests, deploy + seed scripts
-web/         Next.js app: producer, verifier, importer, public passport
-data/        Demo fixtures: sample invoices, plant history, emission factors
-docs/        Problem, architecture, security, impact, roadmap, demo script
-design.md    Design system (DESIGN.md format) used by Claude Design + the app
+contracts/          Solidity contracts (VerifierRegistry, CarbonPassport), 16 Hardhat tests, deploy script
+web/                Next.js app: producer → verifier → shipments → importer → public passport
+web/data/           Emission factors (factors.json), plant history, cached AI extractions
+web/public/samples/ Fictional evidence PDFs (+ a tampered copy for the integrity demo)
+web/scripts/        seed.ts (verified history on-chain), make-docs.ts (sample PDFs)
+docs/               Problem, architecture, security, impact, roadmap, demo script
+design.md           Design system (DESIGN.md format) used by Claude Design + the app
 ```
 
 ## Quickstart
 
-_Filled in as the build lands; see [docs/PLAN.md](docs/PLAN.md)._
+Requires Node 22+ and pnpm.
 
 ```bash
 pnpm install
-pnpm --filter contracts test
+pnpm test                     # 16 contract tests (conservation, overlap, self-verification, revocation, Merkle proofs)
+pnpm chain                    # terminal 1: local chain (mines reverted txs like a public chain)
+pnpm deploy:local             # terminal 2: deploy + accredit verifier + register installation
+pnpm sync-env                 # copy demo keys + verifier PQ seed into web/.env.local
+pnpm seed                     # April–June 2026 verified batches with shipments and surrenders
+pnpm dev                      # http://localhost:3000
 ```
+
+**Live AI extraction:** set `ANTHROPIC_API_KEY` in `web/.env.local`. Without it, cached Claude outputs in `web/data/extractions/` are used, with the same UI.
+
+**Sepolia:** fund `DEPLOYER` in `contracts/.env`, run `pnpm deploy:sepolia`, set `NETWORK=sepolia` in `web/.env.local`, then `pnpm seed`.
 
 ## Deployed contracts
 
@@ -95,9 +106,10 @@ pnpm --filter contracts test
 
 | Component | Status |
 |---|---|
-| Smart contracts, tests, testnet deployment | _in progress_ |
-| AI extraction (Claude API) | _in progress_; falls back to cached output if no API key |
-| Emission factors and CBAM default values | **Illustrative.** See `data/factors.json` for sources and what to replace |
+| Smart contracts + 16 tests | **Working** (local chain); Sepolia deployment _pending testnet ETH_ |
+| AI extraction | **Working**: Claude (`claude-opus-5-5`, structured output, verbatim citations). Cached outputs used when no API key is set |
+| Anomaly checks, CBAM calculator, Merkle commitments, ML-DSA-65 signatures | **Working**, and verifiable from chain data alone |
+| Emission factors and CBAM default values | **Illustrative.** See `web/data/factors.json` for sources and what to replace |
 | Companies, installations, verifiers | **Fictional demo entities** |
 | Party wallets | Demo custodial testnet keys (production: each party's own wallet or HSM) |
 

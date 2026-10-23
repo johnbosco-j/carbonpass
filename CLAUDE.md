@@ -16,7 +16,7 @@ CBAM embedded-emissions passports. A producer's evidence is AI-extracted and che
 
 ## Stack
 
-- `contracts/`: Hardhat 2, Solidity 0.8.28, OpenZeppelin 5, ethers v6, mocha/chai. Networks: `hardhat`, `localhost`, `sepolia`.
+- `contracts/`: Hardhat 2, Solidity 0.8.28 (cancun, viaIR), OpenZeppelin 5, ethers v6, mocha/chai. Networks: `hardhat`, `localhost`, `sepolia`. Deploy writes `web/lib/chain/deployments.json` + typed `abi.ts`.
 - `web/`: Next.js (App Router, TypeScript), Tailwind, viem. Server API routes sign txs with demo role keys from env. Claude API for extraction, with a fixture fallback when `ANTHROPIC_API_KEY` is unset.
 - Evidence handoff in the demo: browser storage plus seeded fixtures (no DB). The passport page reads the chain.
 - pnpm workspace at the repo root.
@@ -24,11 +24,15 @@ CBAM embedded-emissions passports. A producer's evidence is AI-extracted and che
 ## Conventions
 
 - Units: tonnes of product as integers; intensity as **kgCO₂e per tonne** (uint32). 0.35 tCO₂e/t = 350.
-- All emission factors and default values live in `data/factors.json` with a `source` and `verify` note. Never hardcode them elsewhere.
+- All emission factors and default values live in `web/data/factors.json` with a `source` and `verify` note. Never hardcode them elsewhere.
 - Demo entities are fictional; label them as such in the UI.
 - The AI never writes on-chain. Values go to a human confirm step first.
 - Don't commit keys. `.env*` is gitignored and `.env.example` documents the variables.
 - UI follows `design.md` (DESIGN.md format). Read it before building UI.
+
+## Commands (repo root)
+
+`pnpm test` · `pnpm chain` (local node) · `pnpm deploy:local` · `pnpm sync-env` · `pnpm seed` · `pnpm dev` · `pnpm deploy:sepolia`
 
 ## Docs map
 

@@ -152,7 +152,7 @@ cbam_cost(y) = tonnes × chargeable × CBAM_factor(y) × EU_ETS_price
 default_cost(y) = tonnes × default_value × (1 + markup(y)) × CBAM_factor(y) × EU_ETS_price
 ```
 
-All factors live in `data/factors.json`, each with a source and a verify note. Precursors are out of scope for the MVP (scrap-based EAF route); they're on the roadmap.
+All factors live in `web/data/factors.json`, each with a source and a verify note. Purchased pig iron is included as a **precursor** using the supplier's declared embedded emissions (`precursor_t × SEE_precursor`, added to direct). Recursive passport chaining (consuming the supplier's own CarbonPass batch) is on the roadmap.
 
 ## 7. Anomaly checks (in `web/lib/anomaly.ts`)
 
@@ -165,7 +165,8 @@ All factors live in `data/factors.json`, each with a source and a verify note. P
 
 - The Claude API gets each document (PDF or image) and a **JSON schema** for the output. Each line has: `{ key, value, unit, period, source: { file, page, quote }, confidence }`.
 - Documents are treated as untrusted data. The model has no tools, and its output is validated against the schema and unit whitelist.
-- Without an API key, cached outputs in `data/extractions/` are returned, so the demo always works.
+- Model: `claude-opus-5-5` at `effort: low`, via `client.beta.messages.parse` with a Zod schema, plus `fallbacks: "default"` (server-side refusal fallback).
+- Without an API key, cached outputs in `web/data/extractions/` are returned, so the demo always works.
 
 ## 9. Web app
 
