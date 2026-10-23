@@ -20,18 +20,19 @@ import { hardhat, sepolia } from "viem/chains";
 import { passportAbi, registryAbi } from "./abi";
 import deployments from "./deployments.json";
 
-export type Role = "registrar" | "producer" | "verifier" | "importerA" | "importerB";
-export const ROLES: Role[] = ["registrar", "producer", "verifier", "importerA", "importerB"];
+export type Role = "registrar" | "producer" | "verifier" | "importerA" | "importerB" | "supplier";
+export const ROLES: Role[] = ["registrar", "producer", "verifier", "importerA", "importerB", "supplier"];
 
 const NETWORK = (process.env.NETWORK ?? "localhost") as "localhost" | "sepolia";
 const LOCAL_MNEMONIC = "test test test test test test test test test test test junk";
-const LOCAL_INDEX: Record<Role, number> = { registrar: 0, producer: 1, verifier: 2, importerA: 3, importerB: 4 };
+const LOCAL_INDEX: Record<Role, number> = { registrar: 0, producer: 1, verifier: 2, importerA: 3, importerB: 4, supplier: 5 };
 const ENV_KEY: Record<Role, string> = {
   registrar: "DEPLOYER_PRIVATE_KEY",
   producer: "PRODUCER_PRIVATE_KEY",
   verifier: "VERIFIER_PRIVATE_KEY",
   importerA: "IMPORTER_A_PRIVATE_KEY",
   importerB: "IMPORTER_B_PRIVATE_KEY",
+  supplier: "SUPPLIER_PRIVATE_KEY",
 };
 
 type Deployment = Omit<(typeof deployments)["localhost"], "explorer"> & { explorer: string | null };
@@ -65,6 +66,9 @@ export function roleAccount(role: Role): Account {
 export function roleAddress(role: Role): Address {
   // The registrar (deployer) never signs from the web app, so its key doesn't need to be deployed.
   if (role === "registrar" && NETWORK !== "localhost") return deployment.registrar as Address;
+  // Same for the supplier (only the seed script signs as it): fall back to the address the deploy recorded.
+  const recorded = (deployment.roles as Partial<Record<Role, string>>)[role];
+  if (NETWORK !== "localhost" && !process.env[ENV_KEY[role]] && recorded) return recorded as Address;
   return roleAccount(role).address;
 }
 
@@ -203,7 +207,8 @@ async function send(role: Role, functionName: PassportFn | RegistryFn, args: rea
     const revert = decodeRevert(err);
     if (revert && opts.forceOnchain) {
       try {
-        const { hash, receipt } = await broadcast(300_000n);
+        // Generous fixed limit: a real revert refunds unused gas, and a lag-induced false prediction must not run out.
+        const { hash, receipt } = await broadcast(600_000n);
         // The receipt is the source of truth: a lagging node can predict a revert that doesn't happen.
         const ok = receipt.status === "success";
         return { ok, hash, explorer: explorerTx(hash), blockNumber: Number(receipt.blockNumber), revert: ok ? undefined : revert };

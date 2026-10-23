@@ -1,5 +1,5 @@
 import plant from "@/data/plant.json";
-import { calculate, type Activity } from "./cbam";
+import { calculate, type Activity, type PrecursorLink } from "./cbam";
 import { runChecks } from "./anomaly";
 import { installationId, sealBundle, type ActivityValue, type EvidenceDoc, type Hex } from "./evidence";
 
@@ -11,6 +11,27 @@ export const INSTALLATION = {
   country: plant.installation.country as "TR" | "IN",
 };
 export const CN_CODE = plant.installation.product.cnCode;
+
+/** Upstream pig-iron supplier (fictional). Its verified batches are the steel mill's precursor passports. */
+export const SUPPLIER = {
+  code: plant.supplier.installation.code,
+  id: installationId(plant.supplier.installation.code),
+  name: plant.supplier.installation.name,
+  city: plant.supplier.installation.city,
+  country: plant.supplier.installation.country,
+  product: plant.supplier.installation.product,
+  routeLabel: plant.supplier.installation.routeLabel,
+};
+export const PIG_IRON_CN = SUPPLIER.product.cnCode;
+
+/** Display info for any installation on the ledger (the steel mill or its supplier). */
+export function installationInfo(id: string) {
+  if (id.toLowerCase() === SUPPLIER.id.toLowerCase()) {
+    return { name: SUPPLIER.name, city: SUPPLIER.city, country: SUPPLIER.country, product: SUPPLIER.product.name, supplier: true };
+  }
+  const i = plant.installation;
+  return { name: i.name, city: i.city, country: i.country, product: i.product.name, supplier: false };
+}
 
 export const SAMPLE_DOCS: { name: string; kind: EvidenceDoc["kind"]; label: string }[] = [
   { name: "gas_invoice_2026-07.pdf", kind: "gas_invoice", label: "Natural gas invoice" },
@@ -76,10 +97,15 @@ export async function buildBundle(opts: {
   values: ActivityValue[];
   documents: EvidenceDoc[];
   history?: Activity[];
+  /** Verified pig-iron passport to consume; without one, pig iron uses the EU default value. */
+  precursor?: PrecursorLink;
   saltFn?: () => Hex;
 }) {
   const history = opts.history ?? HISTORY.filter((h) => h.month < opts.month).slice(-12).map((h) => h.activity);
-  const calc = calculate(opts.activity, INSTALLATION.country);
+  const calc = calculate(opts.activity, INSTALLATION.country, opts.precursor);
+  const precursors = opts.precursor
+    ? [{ batchId: opts.precursor.batchId, tonnes: Math.round(opts.activity.pig_iron_t), directKgPerT: opts.precursor.directKgPerT }]
+    : undefined;
   const checks = runChecks(opts.activity, history.length >= 6 ? history : HISTORY.map((h) => h.activity), opts.meterMwh);
   return sealBundle(
     {
@@ -93,6 +119,7 @@ export async function buildBundle(opts: {
       documents: opts.documents,
       calc,
       checks,
+      precursors,
     },
     opts.saltFn,
   );

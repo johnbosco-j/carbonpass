@@ -5,8 +5,12 @@ import { useMemo, useState } from "react";
 import { useDemo } from "@/components/demo-provider";
 import { Badge, Button, Card, Fictional, Field, HashChip, Metric, SectionHead, cx, fmtT } from "@/components/ui";
 import { ChecksList } from "@/components/checks-list";
-import { activityFromValues, buildBundle, INSTALLATION, CN_CODE, PLANT, SAMPLE_DOCS, monthFromTs, monthLabel, nextMonth } from "@/lib/demo";
+import { activityFromValues, buildBundle, INSTALLATION, CN_CODE, PLANT, SAMPLE_DOCS, SUPPLIER, monthFromTs, monthLabel, nextMonth } from "@/lib/demo";
+import type { PrecursorLink } from "@/lib/cbam";
+import factors from "@/data/factors.json";
 import { sha256, type ActivityValue, type DocKind, type EvidenceBundle, type EvidenceDoc } from "@/lib/evidence";
+
+const PLANT_DEFAULT_PIG_IRON = factors.precursors.pig_iron.see_tco2_per_unit.toFixed(2);
 
 interface LoadedDoc extends EvidenceDoc {
   label: string;
@@ -45,6 +49,8 @@ export default function ProducerPage() {
   const [bundle, setBundle] = useState<EvidenceBundle | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [submittedId, setSubmittedId] = useState<number | null>(null);
+  const [linkPassport, setLinkPassport] = useState(true);
+  const [pickedPassport, setPickedPassport] = useState<number | null>(null);
 
   // Next free reporting month for this installation (sandbox: each run certifies the next month).
   const month = useMemo(() => {
@@ -105,6 +111,22 @@ export default function ProducerPage() {
   const allConfirmed = values.length > 0 && values.every((v) => v.confirmed);
   const derived = useMemo(() => (allConfirmed ? activityFromValues(values) : null), [allConfirmed, values]);
 
+  // Verified pig-iron passports from the supplier. Default: the one the mill holds most of, else the latest (so a
+  // reuse attempt after consumption can be shown being rejected by the contract).
+  const pigIron = useMemo(
+    () => state?.batches.filter((b) => b.installationId.toLowerCase() === SUPPLIER.id.toLowerCase() && b.status !== "Pending" && b.status !== "Rejected") ?? [],
+    [state],
+  );
+  const passport =
+    pigIron.find((b) => b.id === pickedPassport) ??
+    [...pigIron].sort((a, b) => (b.balances.producer ?? 0) - (a.balances.producer ?? 0) || b.id - a.id)[0] ??
+    null;
+  const precursor: PrecursorLink | undefined =
+    linkPassport && passport ? { batchId: passport.id, directKgPerT: passport.directKgPerT, supplier: `${SUPPLIER.name} (fictional)` } : undefined;
+  const pigIronNeeded = Math.round(derived?.activity.pig_iron_t ?? PLANT.demoMonth.pig_iron_t);
+  const held = passport?.balances.producer ?? 0;
+  const consumedBy = state?.events.filter((e) => e.type === "PrecursorConsumed" && Number(e.args.precursorId) === passport?.id) ?? [];
+
   async function seal() {
     if (!derived) return;
     setBundle(
@@ -114,6 +136,7 @@ export default function ProducerPage() {
         meterMwh: derived.meterMwh,
         values,
         documents: docs.map(({ name, kind, sha256, size }) => ({ name, kind, sha256, size })),
+        precursor,
       }),
     );
   }
@@ -133,6 +156,7 @@ export default function ProducerPage() {
         indirectKgPerT: bundle.calc.indirectKgPerT,
         dataRoot: bundle.dataRoot,
         reportHash: bundle.reportHash,
+        precursors: (bundle.precursors ?? []).map(({ batchId, tonnes }) => ({ batchId, tonnes })),
       },
       `Submit ${monthLabel(bundle.period.month)} batch`,
     );
@@ -297,6 +321,61 @@ export default function ProducerPage() {
             </Button>
           }
         />
+        {passport && (
+          <Card className="mb-4 space-y-3">
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+              <span className="label">Precursor passport</span>
+              <Link href={`/passport/${passport.id}`} className="font-mono text-sm hover:text-molten">
+                #{passport.id}
+              </Link>
+              <span className="text-sm">
+                {SUPPLIER.product.name} · {SUPPLIER.name} <Fictional />
+              </span>
+              <span className="font-mono text-sm tnum">verified {(passport.directKgPerT / 1000).toFixed(3)} tCO₂e/t</span>
+              {passport.status === "Revoked" && <Badge tone="revoked">Revoked</Badge>}
+              {pigIron.length > 1 && (
+                <select
+                  aria-label="Precursor passport"
+                  className="ml-auto rounded-[2px] border border-rule bg-paper px-2 py-1 text-sm"
+                  value={passport.id}
+                  onChange={(e) => {
+                    setPickedPassport(Number(e.target.value));
+                    setBundle(null);
+                  }}
+                >
+                  {pigIron.map((b) => (
+                    <option key={b.id} value={b.id}>
+                      #{b.id} · {monthLabel(monthFromTs(b.periodStart))} · you hold {fmtT(b.balances.producer ?? 0)} t
+                    </option>
+                  ))}
+                </select>
+              )}
+            </div>
+            <label className="flex cursor-pointer items-start gap-3 text-sm">
+              <input
+                type="checkbox"
+                className="mt-0.5 h-4 w-4 accent-[var(--color-molten)]"
+                checked={linkPassport}
+                onChange={(e) => {
+                  setLinkPassport(e.target.checked);
+                  setBundle(null);
+                }}
+              />
+              <span>
+                Use the supplier&apos;s verified intensity for {fmtT(pigIronNeeded)} t of pig iron instead of the EU default (
+                {PLANT_DEFAULT_PIG_IRON} tCO₂e/t). The contract burns these {fmtT(pigIronNeeded)} t of passport #{passport.id} when this batch is issued, so
+                they can&apos;t be counted in any other product.
+              </span>
+            </label>
+            <p className={cx("text-xs", linkPassport && held < pigIronNeeded ? "text-anomaly" : "text-ink-muted")}>
+              You hold <span className="font-mono tnum">{fmtT(held)} t</span> of passport #{passport.id}.
+              {held < pigIronNeeded &&
+                (consumedBy.length
+                  ? ` ${fmtT(consumedBy.reduce((t, e) => t + Number(e.args.tonnes), 0))} t were already consumed by batch ${consumedBy.map((e) => `#${e.batchId}`).join(", ")}. Submitting this claim anyway shows the contract rejecting the reuse.`
+                  : " Not enough for this claim: the contract will reject it.")}
+            </p>
+          </Card>
+        )}
         {bundle && (
           <div className="grid gap-4 xl:grid-cols-[1.4fr_1fr]">
             <Card className="overflow-x-auto p-0 sm:p-0">
@@ -331,7 +410,10 @@ export default function ProducerPage() {
               <Metric label="Direct incl. precursors (chargeable for steel)" value={bundle.calc.seeDirect.toFixed(3)} unit="tCO₂e/t" accent />
               <Metric label="Indirect (reported, not charged for steel)" value={bundle.calc.seeIndirect.toFixed(3)} unit="tCO₂e/t" />
               <p className="border-t border-rule pt-3 text-xs text-ink-muted">
-                Factors: IPCC 2006 / EU MRR standard values; grid and precursor factors illustrative. See data/factors.json.
+                Factors: IPCC 2006 / EU MRR standard values; grid factor illustrative. See data/factors.json.{" "}
+                {bundle.precursors?.length
+                  ? `Pig iron: the supplier's verified passport #${bundle.precursors[0].batchId}, read from the chain.`
+                  : "Pig iron: EU default value for Türkiye."}
               </p>
             </Card>
             <div className="xl:col-span-2">
@@ -361,6 +443,18 @@ export default function ProducerPage() {
                 <span className="font-mono tnum">{bundle.leaves.length}</span> <span className="text-ink-muted">(activity, documents, report)</span>
               </Field>
             </div>
+            {bundle.precursors?.map((p) => (
+              <p key={p.batchId} className="text-sm">
+                <Badge tone="steel">Precursor</Badge>{" "}
+                <span className="ml-2">
+                  Consumes <span className="font-mono tnum">{fmtT(p.tonnes)} t</span> of pig-iron passport{" "}
+                  <Link href={`/passport/${p.batchId}`} className="font-mono hover:text-molten">
+                    #{p.batchId}
+                  </Link>{" "}
+                  at {(p.directKgPerT / 1000).toFixed(3)} tCO₂e/t when the verifier issues this batch. Nothing is burned if it&apos;s rejected.
+                </span>
+              </p>
+            ))}
             {reviewFlags.length > 0 && (
               <p className="text-sm">
                 <Badge tone="anomaly">{reviewFlags.length} flag{reviewFlags.length > 1 ? "s" : ""} for review</Badge>{" "}

@@ -37,6 +37,34 @@
     "pig_iron_t": 1300,
     "anomalyExplanation": "New carbon-injection control system commissioned 18 Jun 2026 (commissioning report CR-2026-06-18). Lower charge-carbon use is expected."
   },
+  "supplier": {
+    "_readme": "Fictional upstream pig-iron supplier. Its verified June 2026 batch is seeded on-chain; the steel mill consumes 1,300 t of it as a precursor in the July demo batch.",
+    "installation": {
+      "code": "TR-INST-0002",
+      "name": "Karadeniz Pig Iron A.Ş.",
+      "fictional": true,
+      "country": "TR",
+      "city": "Samsun",
+      "route": "blast_furnace",
+      "routeLabel": "Blast furnace (iron ore, coke, PCI)",
+      "product": { "cnCode": 72011011, "cnLabel": "CN 7201 10 11", "name": "Pig iron" }
+    },
+    "batch": {
+      "month": "2026-06",
+      "production_t": 5000,
+      "directKgPerT": 1700,
+      "indirectKgPerT": 60,
+      "shippedToMill_t": 1300,
+      "evidence": [
+        { "key": "activity.coke_t", "value": "1820", "unit": "t" },
+        { "key": "activity.pci_coal_t", "value": "760", "unit": "t" },
+        { "key": "activity.natural_gas_gj", "value": "9400", "unit": "GJ" },
+        { "key": "activity.electricity_mwh", "value": "690", "unit": "MWh" },
+        { "key": "activity.production_t", "value": "5000", "unit": "t" }
+      ],
+      "_note": "Illustrative supplier figures, not derived from factors.json: the supplier's own verified report states 1,700 kgCO2e/t direct."
+    }
+  },
   "importers": [
     { "key": "importerA", "name": "Hanse Stahlhandel GmbH", "city": "Hamburg", "country": "DE", "fictional": true },
     { "key": "importerB", "name": "Rijnmond Metals B.V.", "city": "Rotterdam", "country": "NL", "fictional": true }

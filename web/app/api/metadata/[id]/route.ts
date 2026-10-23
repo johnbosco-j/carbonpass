@@ -1,5 +1,5 @@
 import { readBatch } from "@/lib/chain/state";
-import { deployment } from "@/lib/chain/server";
+import { installationInfo } from "@/lib/demo";
 
 export const dynamic = "force-dynamic";
 
@@ -12,7 +12,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
     const origin = new URL(req.url).origin;
     return Response.json({
       name: `CarbonPass batch #${id}`,
-      description: `${b.tonnes.toLocaleString("en-US")} t of CN ${b.cnCode} from ${deployment.installation.name}, verified at ${(b.directKgPerT / 1000).toFixed(3)} tCO2e/t (direct incl. precursors).`,
+      description: `${b.tonnes.toLocaleString("en-US")} t of CN ${b.cnCode} from ${installationInfo(b.installationId).name} (fictional), verified at ${(b.directKgPerT / 1000).toFixed(3)} tCO2e/t (direct incl. precursors).`,
       external_url: `${origin}/passport/${id}`,
       attributes: [
         { trait_type: "Status", value: b.status },
@@ -21,6 +21,8 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
         { trait_type: "Indirect kgCO2e/t", value: b.indirectKgPerT },
         { trait_type: "Verified tonnes", value: b.tonnes },
         { trait_type: "Surrendered tonnes", value: b.surrendered },
+        { trait_type: "Consumed as precursor (tonnes)", value: b.consumed },
+        { trait_type: "Precursor passports", value: b.precursors.map((p) => `#${p.batchId} (${p.tonnes} t)`).join(", ") || "none" },
       ],
     });
   } catch {

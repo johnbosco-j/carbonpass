@@ -20,6 +20,7 @@ const schemas = {
     indirectKgPerT: z.number().int().nonnegative(),
     dataRoot: hex32,
     reportHash: hex32,
+    precursors: z.array(z.object({ batchId: z.number().int().positive(), tonnes: z.number().int().positive() })).max(8).default([]),
   }),
   attest: z.object({ batchId: z.number().int().positive(), acknowledged: z.array(z.string()).default([]) }),
   reject: z.object({ batchId: z.number().int().positive(), reason: z.string().min(1) }),
@@ -47,11 +48,13 @@ export async function POST(req: Request, { params }: { params: Promise<{ action:
     switch (action as Action) {
       case "submit": {
         const input = parsed.data as z.infer<typeof schemas.submit>;
+        const precursors = input.precursors.map((p) => ({ batchId: BigInt(p.batchId), tonnes: BigInt(p.tonnes) }));
         const res = await sendAs(
           "producer",
           "submitBatch",
-          [{ ...input, installationId: input.installationId as Hex, dataRoot: input.dataRoot as Hex, reportHash: input.reportHash as Hex }],
-          { minBlock },
+          [{ ...input, installationId: input.installationId as Hex, dataRoot: input.dataRoot as Hex, reportHash: input.reportHash as Hex, precursors }],
+          // A rejected precursor claim (e.g. reusing consumed pig-iron tonnes) is broadcast anyway so the revert is on-chain.
+          { minBlock, forceOnchain: precursors.length > 0 },
         );
         const ev = res.logs?.find((l) => (l as { eventName: string }).eventName === "BatchSubmitted") as { args: { batchId: string } } | undefined;
         return Response.json({ ...res, batchId: ev ? Number(ev.args.batchId) : undefined });

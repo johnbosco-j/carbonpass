@@ -6,7 +6,7 @@ import { Suspense, useMemo, useState } from "react";
 import { useDemo } from "@/components/demo-provider";
 import { TonnageGauge } from "@/components/gauge";
 import { Button, Card, Fictional, HashChip, SectionHead, cx, fmtDateTime, fmtT } from "@/components/ui";
-import { monthFromTs, monthLabel, PLANT } from "@/lib/demo";
+import { INSTALLATION, monthFromTs, monthLabel, PLANT } from "@/lib/demo";
 
 const IMPORTERS = PLANT.importers as { key: "importerA" | "importerB"; name: string; city: string; country: string }[];
 
@@ -21,7 +21,11 @@ export default function ShipmentsPage() {
 function Shipments() {
   const params = useSearchParams();
   const { state, tx } = useDemo();
-  const issued = useMemo(() => state?.batches.filter((b) => b.status === "Issued" || b.status === "Revoked") ?? [], [state]);
+  // The mill's own batches only (supplier pig-iron batches are shipped by the supplier).
+  const issued = useMemo(
+    () => state?.batches.filter((b) => (b.status === "Issued" || b.status === "Revoked") && b.installationId.toLowerCase() === INSTALLATION.id.toLowerCase()) ?? [],
+    [state],
+  );
   const [selected, setSelected] = useState<number | null>(Number(params.get("batch")) || null);
   const batch = issued.find((b) => b.id === selected) ?? issued.at(-1) ?? null;
 

@@ -37,15 +37,17 @@ CarbonPass handles that second gap with layered controls: AI cross-checks, stati
 | T14 | Prompt injection inside an uploaded document | Elevation | Documents are treated as data. The model has no tools, no secrets in the prompt, and output validated against the schema | None meaningful |
 | T15 | Smart-contract bugs | Tampering | OpenZeppelin bases, custom errors, no ETH handling, invariant-focused tests. Static analysis (Slither) is on the roadmap before mainnet | Unaudited prototype |
 | T16 | Demo API abuse drains testnet gas | Denial of service | Demo-only role wallets, rate limiting, testnet only | Testnet only |
+| T17 | Supply-chain double counting: the same verified precursor tonnes (e.g. pig iron) are claimed by two downstream products, or a mill understates what its precursors embed | Tampering | Precursor tonnes are ERC-1155 balances of the supplier's batch, burned from the mill's balance when its batch is issued, so they can back only one product (`InsufficientPrecursor`). Checked at submit and again at issuance; a rejected batch burns nothing. The downstream intensity must cover its precursors (`UnderstatedPrecursors`). Only issued, unrevoked precursors count (`PrecursorNotIssued`). Inputs are capped (`MAX_PRECURSORS`) to bound gas | A precursor revoked *after* consumption doesn't cascade automatically: the downstream passport shows the revoked input, and the downstream verifier or registrar can revoke it. Tonnes are integers, so a fractional tonne of precursor rounds |
 
 ## 3. Contract invariants (tested)
 
-1. Tonnes are conserved: supply plus surrendered equals issued.
+1. Tonnes are conserved: supply plus surrendered plus consumed-as-precursor equals issued (also checked after every step of a seeded random sequence of operations).
 2. Report hashes are unique.
 3. Certified periods don't overlap.
 4. Only active accredited verifiers can issue. A producer can't self-verify.
 5. Revoked batches are frozen.
 6. Disclosure proofs verify only for leaves in the committed root.
+7. Precursor tonnes are burned once, at the consuming batch's issuance. Reuse, over-claiming, revoked or pending precursors, and an understated downstream intensity all revert. A rejected batch consumes nothing.
 
 Test file: `contracts/test/CarbonPassport.test.ts`.
 

@@ -44,6 +44,8 @@ export interface EvidenceBundle {
   documents: EvidenceDoc[];
   calc: CalcResult;
   checks: Check[];
+  /** Precursor passports this batch consumes at issuance (also declared on-chain in submitBatch). */
+  precursors?: { batchId: number; tonnes: number; directKgPerT: number }[];
   report: Record<string, unknown>;
   reportHash: Hex;
   leaves: Leaf[];
@@ -105,6 +107,7 @@ export function buildReport(b: Omit<EvidenceBundle, "report" | "reportHash" | "l
     },
     checks: b.checks.map((c) => ({ id: c.id, severity: c.severity })),
     documents: b.documents.map((d) => ({ name: d.name, sha256: d.sha256 })),
+    precursors: b.precursors, // omitted from the hash when absent, so older reports hash the same
   };
 }
 
