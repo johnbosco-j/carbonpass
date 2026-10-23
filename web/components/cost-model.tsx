@@ -62,7 +62,7 @@ export function CostModel({ tonnes, see, cnCode, country }: { tonnes: number; se
           <span className="inline-block h-2.5 w-4 bg-molten" /> Verified {see.toFixed(3)} tCO₂e/t
         </span>
         <span>
-          {fmtT(t)} t × CBAM phase-in factor (2.5% in 2026 → 100% in 2034) × €{price}/t. Default value is an illustrative placeholder.
+          {fmtT(t)} t × CBAM phase-in factor (2.5% in 2026 → 100% in 2034) × €{price}/t. Default value: EU CBAM default for this product and origin (Reg. 2025/2621 Annex I); mark-up 10% → 30%.
         </span>
       </div>
     </Card>

@@ -125,10 +125,12 @@ export function cbamFactor(year: number): number {
   return (factors.cbam_factor as unknown as Record<string, number>)[String(year)] ?? 1;
 }
 
-/** Markup on default values. Held at the 2026 level for later years (conservative, see factors.json). */
+/** Mark-up on default values: the value for the latest listed year at or before `year` (30% from 2028). */
 export function defaultMarkup(year: number): number {
   const m = factors.default_markup as unknown as Record<string, number>;
-  return m[String(year)] ?? m["2026"];
+  const years = Object.keys(m).filter((k) => /^\d{4}$/.test(k)).map(Number).sort((a, b) => a - b);
+  const y = [...years].reverse().find((k) => k <= year) ?? years[0];
+  return m[String(y)];
 }
 
 export function defaultValue(cnCode: number, country: Country): number {

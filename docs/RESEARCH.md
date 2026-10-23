@@ -66,6 +66,9 @@ The organizers include the **Istanbul Chamber of Commerce** and the AI Ecosystem
 - **India:** CCTS compliance credits expected to be issued and traded around Oct 2026 ([Outlook Business](https://www.outlookbusiness.com/news/india-to-launch-first-carbon-trading-programme-by-october-2026)). There's evidence CBAM is already reshaping EU–India steel trade ([Nature Climate Change 2026](https://www.nature.com/articles/s41558-026-02607-y)).
 - **COP31:** Türkiye presidency in Antalya, with Australia as President of Negotiations ([PM of Australia](https://www.pm.gov.au/media/cop-be-hosted-turkiye-australia-leading-negotiations)).
 
+- **Default values (Implementing Reg. (EU) 2025/2621, Annex I; direct emissions only):** Türkiye hot-rolled flat (CN 7208) **2.43** tCO₂e/t (2.67 with the 2026 mark-up); bars & rods (7213) 2.31; pig iron (7201) 1.85; India hot-rolled flat 4.28. Mark-up: 10% (2026), 20% (2027), 30% from 2028 ([greensutra.in, Türkiye](https://greensutra.in/?p=237174), [India](https://greensutra.in/question/cbam-default-values-indian-steel-exports/)). Corrections came in Reg. 2026/1740 (31 Jul 2026), so check the Official Journal before quoting.
+- **Turkish industry position:** about 70% of Türkiye's steel is EAF. The Aegean exporters' association says the defaults don't reflect low-carbon production and that verifier accreditation bodies are unclear ([SteelOrbis, 1 Apr 2026](https://www.steelorbis.com/steel-news/latest-news/turkish-steel-sector-cbam-default-values-fail-to-reflect-low-carbon-production-1445161.htm); also [Eurometal](https://eurometal.net/turkish-steel-sector-cbam-default-values-fail-to-reflect-low-carbon-production/)).
+
 > Several CBAM figures come from consultancy blogs. Before quoting numbers in the video, check them against the primary EU texts (Reg. 2023/956 and its implementing regulations on default values).
 
 ## 5. What wins (judges & past winners)

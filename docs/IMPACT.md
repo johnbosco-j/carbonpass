@@ -30,16 +30,18 @@ emissions_reduced(y)  = ΔSEE × T_total               (tCO2e/yr, if the incenti
 
 ## 3. Illustrative scenario
 
-> **All inputs are illustrative assumptions for a fictional installation.** Replace `DV` with the official EU default value for the CN code and country before quoting.
+> The installation is fictional and its intensity comes from the demo's sample evidence. The **default value is the EU's published CBAM default for hot-rolled flat steel from Türkiye** (2.43 tCO₂e/t, direct emissions, Implementing Reg. (EU) 2025/2621 Annex I). Check it against the July 2026 corrections (Reg. 2026/1740) before quoting.
 
-Assumptions: an EAF mill exports **100,000 t/yr** of hot-rolled coil to the EU. Verified direct SEE = **0.35 tCO₂e/t**. Default value **1.80 tCO₂e/t** (placeholder). Markup held at the 2026 level of **10%** (conservative). EU ETS price **€80/t**.
+Assumptions: an EAF mill in İzmir exports **100,000 t/yr** of hot-rolled coil to the EU. Its verified SEE (direct + precursors) is **0.356 tCO₂e/t**, the figure the demo calculates. Default value **2.43 tCO₂e/t**, with a mark-up of **10% (2026), 20% (2027), 30% from 2028**. EU ETS price **€80/t** (an assumption; adjustable in the app).
 
 | Year | CBAM factor | Bill on default values | Bill on verified data | **Saving** |
 |---|---|---|---|---|
-| 2026 | 2.5% | €396,000 | €70,000 | **€326,000** |
-| 2028 | 10% | €1,584,000 | €280,000 | **€1,304,000** |
-| 2030 | 48.5% | €7,682,400 | €1,358,000 | **€6,324,400** |
-| 2034 | 100% | €15,840,000 | €2,800,000 | **€13,040,000** |
+| 2026 | 2.5% | €534,600 | €71,200 | **€463,400** |
+| 2028 | 10% | €2,527,200 | €284,800 | **€2,242,400** |
+| 2030 | 48.5% | €12,256,920 | €1,381,280 | **€10,875,640** |
+| 2034 | 100% | €25,272,000 | €2,848,000 | **€22,424,000** |
+
+This matches what Turkish exporters themselves report. About 70% of Türkiye's steel is made via the electric-arc-furnace route, and the Aegean Ferrous and Non-Ferrous Metals Exporters' Association says the default values don't reflect that lower-carbon production ([SteelOrbis, 1 Apr 2026](https://www.steelorbis.com/steel-news/latest-news/turkish-steel-sector-cbam-default-values-fail-to-reflect-low-carbon-production-1445161.htm)). Verified, plant-level data is exactly what they are asking for.
 
 **The abatement incentive** (what cutting 0.1 tCO₂e/t is worth on 100 kt of exports):
 

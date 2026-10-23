@@ -26,8 +26,8 @@
     "pig_iron": {
       "unit": "t",
       "see_tco2_per_unit": 1.85,
-      "source": "ILLUSTRATIVE: supplier-declared embedded emissions of purchased pig iron",
-      "verify": "In production this comes from the supplier's own CarbonPass passport (precursor chaining)"
+      "source": "EU CBAM default value for pig iron (CN 7201) from Türkiye: 1.85 tCO2e/t direct, Implementing Reg. (EU) 2025/2621 Annex I (as reproduced by greensutra.in)",
+      "verify": "Prefer the supplier's verified value (its own CarbonPass passport); check Reg. 2026/1740 corrections"
     }
   },
   "grid": {
@@ -44,12 +44,13 @@
   },
   "default_values": {
     "72083900": {
-      "description": "Hot-rolled flat products of iron or non-alloy steel (CN 7208 39 00)",
+      "description": "Hot-rolled flat products of iron or non-alloy steel (CN 7208)",
       "sector": "iron_steel",
-      "TR": 1.8,
-      "IN": 2.4,
-      "source": "ILLUSTRATIVE PLACEHOLDER",
-      "verify": "Replace with the EU default values implementing regulation figure for this CN code and country of origin"
+      "TR": 2.43,
+      "IN": 4.28,
+      "scope": "direct emissions only (iron & steel is an Annex II good)",
+      "source": "Implementing Regulation (EU) 2025/2621, Annex I: Türkiye 2.43, India 4.28 tCO2e/t (as reproduced by greensutra.in)",
+      "verify": "Check the Official Journal text of Implementing Reg. (EU) 2026/1740, which corrects Annex I with effect from 1 Jan 2026"
     }
   },
   "chargeable_scope": {
@@ -62,8 +63,10 @@
   },
   "default_markup": {
     "2026": 0.1,
-    "_source": "Aither / Alalea guidance: 10% markup on default values in 2026",
-    "_note": "Later years are held at the 2026 level in this model (conservative); verify the official schedule"
+    "2027": 0.2,
+    "2028": 0.3,
+    "_source": "Mark-up on default values: 10% (2026), 20% (2027), 30% from 2028, per Reg. 2025/2621 guidance (greensutra.in, Aither)",
+    "_note": "Years after 2028 use the 2028 value"
   },
   "cbam_factor": {
     "2026": 0.025,
@@ -83,10 +86,22 @@
   },
   "physical_bounds": {
     "eaf_hot_rolled": {
-      "electricity_mwh_per_t": [0.35, 0.75],
-      "natural_gas_gj_per_t": [0.3, 2.5],
-      "electrodes_kg_per_t": [0.8, 3.5],
-      "charge_carbon_kg_per_t": [5, 30],
+      "electricity_mwh_per_t": [
+        0.35,
+        0.75
+      ],
+      "natural_gas_gj_per_t": [
+        0.3,
+        2.5
+      ],
+      "electrodes_kg_per_t": [
+        0.8,
+        3.5
+      ],
+      "charge_carbon_kg_per_t": [
+        5,
+        30
+      ],
       "_source": "ILLUSTRATIVE plausibility ranges for scrap-based EAF + hot rolling"
     }
   }
