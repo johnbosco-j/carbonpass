@@ -35,7 +35,7 @@ We worked through what that means for a mid-sized mill. Its data lives in invoic
 - **Evidence commitments:** an OpenZeppelin `StandardMerkleTree` with 32-byte salts per leaf. On-chain `verifyDisclosure` gives selective disclosure.
 - **Post-quantum signatures:** ML-DSA-65 (NIST FIPS 204) via `@noble/post-quantum`, with domain-separated messages and the PQ public-key hash registered on-chain.
 - **AI:** Google Gemini (`gemini-3.5-flash-lite`, free tier) with a JSON-schema structured output for document extraction (values + verbatim citations + confidence), validated with Zod. Robust modified z-score and physical-bounds checks for anomalies. A human confirms every value. The AI never touches the chain.
-- **App:** Next.js + TypeScript + Tailwind + viem on Vercel. The design system is written as a DESIGN.md (Google Labs format) and refined in Claude Design.
+- **App:** Next.js + TypeScript + Tailwind + viem on Vercel. The design system is written as a DESIGN.md (Google Labs format) that drives the app's tokens.
 
 ### Challenges we ran into
 
