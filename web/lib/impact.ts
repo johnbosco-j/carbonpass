@@ -12,7 +12,7 @@ export const ETS_PRICE = factors.eu_ets_price_eur.value;
 // ------------------------------------------------------------------ live ledger
 
 export interface LedgerImpact {
-  /** Issued (not revoked or rejected) batches */
+  /** Issued (not revoked or rejected) batches of this product */
   batches: number;
   /** Verified tonnes of product minted by issued batches */
   verifiedT: number;
@@ -28,8 +28,12 @@ export interface LedgerImpact {
   saved2026: number;
 }
 
+/**
+ * Only batches of `cnCode` count. Precursor batches (e.g. pig iron consumed by the mill) aren't imported into the EU,
+ * and their emissions are already inside the downstream product's intensity, so counting them here would double count.
+ */
 export function ledgerImpact(state: ChainState | null, cnCode: number, country: Country, price = ETS_PRICE): LedgerImpact {
-  const issued = state?.batches.filter((b) => b.status === "Issued") ?? [];
+  const issued = state?.batches.filter((b) => b.status === "Issued" && b.cnCode === cnCode) ?? [];
   const defaultSee = defaultValue(cnCode, country);
   let verifiedT = 0;
   let kgT = 0;
