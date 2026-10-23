@@ -49,7 +49,8 @@ export default function ProducerPage() {
   const [bundle, setBundle] = useState<EvidenceBundle | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [submittedId, setSubmittedId] = useState<number | null>(null);
-  const [linkPassport, setLinkPassport] = useState(true);
+  // null = automatic: link the supplier passport only when the mill holds enough of it (see below).
+  const [linkChoice, setLinkChoice] = useState<boolean | null>(null);
   const [pickedPassport, setPickedPassport] = useState<number | null>(null);
 
   // Next free reporting month for this installation (sandbox: each run certifies the next month).
@@ -121,6 +122,10 @@ export default function ProducerPage() {
     pigIron.find((b) => b.id === pickedPassport) ??
     [...pigIron].sort((a, b) => (b.balances.producer ?? 0) - (a.balances.producer ?? 0) || b.id - a.id)[0] ??
     null;
+  const pigIronNeededAuto = Math.round(derived?.activity.pig_iron_t ?? PLANT.demoMonth.pig_iron_t);
+  // Default to the passport only if the mill still holds the tonnes; otherwise fall back to the EU default so a
+  // visitor's run doesn't end in a rejection. Ticking the box still demonstrates the reuse being refused.
+  const linkPassport = linkChoice ?? (passport ? (passport.balances.producer ?? 0) >= pigIronNeededAuto : false);
   const precursor: PrecursorLink | undefined =
     linkPassport && passport ? { batchId: passport.id, directKgPerT: passport.directKgPerT, supplier: `${SUPPLIER.name} (fictional)` } : undefined;
   const pigIronNeeded = Math.round(derived?.activity.pig_iron_t ?? PLANT.demoMonth.pig_iron_t);
@@ -357,7 +362,7 @@ export default function ProducerPage() {
                 className="mt-0.5 h-4 w-4 accent-[var(--color-molten)]"
                 checked={linkPassport}
                 onChange={(e) => {
-                  setLinkPassport(e.target.checked);
+                  setLinkChoice(e.target.checked);
                   setBundle(null);
                 }}
               />

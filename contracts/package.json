@@ -8,7 +8,8 @@
     "node": "DEMO_NODE=true hardhat node",
     "deploy:local": "hardhat run scripts/deploy.ts --network localhost",
     "deploy:sepolia": "hardhat run scripts/deploy.ts --network sepolia",
-    "wallets": "hardhat run scripts/wallets.ts"
+    "wallets": "hardhat run scripts/wallets.ts",
+    "topup:sepolia": "hardhat run scripts/topup.ts --network sepolia"
   },
   "devDependencies": {
     "@noble/post-quantum": "0.7.1",
