@@ -18,7 +18,7 @@
 
 On 1 January 2026, CBAM began charging for the carbon embedded in steel, aluminium, cement, fertilisers, hydrogen and electricity imported into the EU. Producers in countries like Türkiye and India must supply **verified** emissions data. If they can't, their customers pay EU default values plus a markup.
 
-We worked through what that means for a mid-sized mill. Its data lives in invoices and spreadsheets sent by email. It can't prove it's cleaner than the default. Nothing stops its "low-carbon" tonnes being claimed twice. With COP31 being hosted in Türkiye, a CBAM-exposed exporter, this felt like the most concrete climate-transparency problem of the moment.
+We worked through what that means for a mid-sized mill. Its data lives in invoices and spreadsheets sent by email. It can't prove it's cleaner than the default. Nothing stops its "low-carbon" tonnes being claimed twice. Then we found that Turkish exporters are already saying it publicly. About 70% of Türkiye's steel comes from electric arc furnaces, yet the EU default for Turkish hot-rolled steel is 2.43 tCO₂e/t. The Aegean exporters' association in İzmir says the defaults don't reflect their lower-carbon production and asks for verified plant-level data. With COP31 being hosted in Türkiye, this felt like the most concrete climate-transparency problem of the moment.
 
 ### What it does
 
