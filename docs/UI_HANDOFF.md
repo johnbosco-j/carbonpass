@@ -51,7 +51,7 @@ Every page is a client component using `useDemo()` from `web/components/demo-pro
 
 ## Hero (landing page)
 
-The landing page (`web/app/page.tsx`) opens with a pinned scroll story in `web/components/hero/`. It has four beats: the carbon price since 1 Jan 2026, default 2.43 vs verified 0.356 tCO₂e/t, the double-counting revert, and a "Run the demo" CTA. The numbers come from `data/factors.json` and `plant.json` through `lib/cbam.ts` (`hero/data.ts`), so they track the calculator. Nothing in `lib/` changed.
+The landing page (`web/app/page.tsx`) opens with a pinned scroll story in `web/components/hero/`. It has four beats: the carbon price since 1 Jan 2026, default 2.43 vs verified 0.337 tCO₂e/t (with the supplier's pig-iron passport linked), the double-counting revert, and a "Run the demo" CTA. The numbers come from `data/factors.json` and `plant.json` through `lib/cbam.ts` (`hero/data.ts`), so they track the calculator. Nothing in `lib/` changed.
 
 - **Background layer:** a real-time three.js scene (`hero/scene/`). A molten coil crosses a stylised EU border, its CO₂ cloud thins to the verified share, and the particles condense into the verification stamp on a passport card. It is loaded with `next/dynamic` (`ssr: false`), DPR is capped at 1.5, and it stops rendering when off-screen or when the tab is hidden.
 - **Reduced motion or no WebGL:** a static hero over `public/hero/poster.webp`, with no canvas and no three.js download.
