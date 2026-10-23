@@ -1,5 +1,7 @@
 # Climate impact assessment
 
+> **Interactive version: [/impact](https://carbonpass.vercel.app/impact).** The page reads live totals from the chain (verified tonnes, tonnage-weighted intensity vs the EU default, overstatement corrected, tonnes surrendered, € saved at the 2026 CBAM factor). It also has a scenario simulator for 2026–2034 (mills, exports, intensity, abatement, ETS price, Türkiye or India), the key-insight chart (a 0.1 tCO₂e/t cut is worth €0 on default values but more each year on verified data), policy context with sources, and the limitations below. Code: `web/app/impact`, `web/components/impact`, `web/lib/impact.ts` (the hand-checked scenario is in a comment there).
+
 ## 1. Theory of change
 
 CarbonPass doesn't capture carbon itself. Its impact comes from **re-connecting the carbon price to actual performance**:
@@ -53,6 +55,8 @@ This matches what Turkish exporters themselves report. About 70% of Türkiye's s
 
 **Emissions scenario for a pilot.** Take 5 installations, each producing 200 kt/yr. Suppose the restored incentive drives a 0.05 tCO₂e/t cut (e.g. switching reheating-furnace fuel, or optimising electrode and charge-carbon use). That's 5 × 200,000 × 0.05 = **50,000 tCO₂e/yr avoided**. This is a scenario showing the order of magnitude, not a forecast.
 
+The [/impact simulator](https://carbonpass.vercel.app/impact) opens on this pilot, treating all 200 kt per mill as EU exports. By default the cut phases in with the CBAM factor (the share of the carbon price actually charged): 1,250 tCO₂e in 2026, 50,000 tCO₂e/yr by 2034, and **204,500 tCO₂e cumulative over 2026–2034**. If the full cut happens from 2026, that becomes 450,000 tCO₂e. Over the same years the pilot's CBAM bills are €915 million lower on verified data than on defaults.
+
 ## 4. Indicators we'd track in a pilot
 
 - Share of shipments declared on actual vs. default values
@@ -66,4 +70,6 @@ This matches what Turkish exporters themselves report. About 70% of Türkiye's s
 - **Resource shuffling:** a producer could send its cleanest output to the EU and the rest elsewhere. Installation-level batches make the mass balance visible but don't stop this. Policy has to.
 - **Verification quality:** impact depends on honest verifiers. We reduce the cost of auditing them; we don't remove the need.
 - **Scope:** for steel and aluminium only direct emissions are chargeable, so electricity-side improvements show up in CBAM only for cement and fertilisers. We still report indirect emissions for buyers' Scope 3.
-- The numbers above are sensitive to the default values and the ETS price. The app's cost model lets users change both.
+- **A saving is not an emissions cut:** the € saving is a smaller border bill. The climate benefit appears only if that price signal leads plants to abate. "Overstatement corrected" (tonnes × (default − verified)) fixes the accounting; it removes no CO₂.
+- **Additionality goes both ways:** counting avoided emissions on EU exports only understates a plant-wide process change. Attributing every cut to the price signal overstates it, because some plants would have abated anyway.
+- The numbers above are sensitive to the default values and the ETS price. The app's cost model and the /impact simulator let users change both.

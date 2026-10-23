@@ -26,6 +26,7 @@ We worked through what that means for a mid-sized mill. Its data lives in invoic
 - **Commit:** only a salted Merkle root and a report hash go on-chain, so plant data stays confidential.
 - **Verifier:** an accredited verifier (from the on-chain registry) reviews the flags and signs with a **hybrid ECDSA + ML-DSA (post-quantum)** signature. The contract then mints the batch as ERC-1155 verified tonnes.
 - **Ship & surrender:** tonnes move to EU importers with each shipment. Importers burn them when they file their CBAM declaration. The contract enforces **conservation**. Over-shipping, re-certifying a period, reusing a report, and self-verification all revert.
+- **Impact dashboard:** live totals from the chain (verified tonnes, overstatement corrected, € saved) plus a scenario simulator to 2034. The key insight: on default values, cutting emissions is worth €0 at the border; on verified data it's worth more every year as CBAM phases in.
 - **Passport:** a QR code opens a public page with the verified intensity, the verifier, the full on-chain history, a tamper check for evidence files, and the € saved versus default values from 2026 to 2034.
 
 ### How we built it
@@ -33,8 +34,8 @@ We worked through what that means for a mid-sized mill. Its data lives in invoic
 - **Smart contracts:** Solidity 0.8.28 + OpenZeppelin 5 (`VerifierRegistry`, `CarbonPassport` ERC-1155), tested with Hardhat, deployed on Sepolia.
 - **Evidence commitments:** an OpenZeppelin `StandardMerkleTree` with 32-byte salts per leaf. On-chain `verifyDisclosure` gives selective disclosure.
 - **Post-quantum signatures:** ML-DSA-65 (NIST FIPS 204) via `@noble/post-quantum`, with domain-separated messages and the PQ public-key hash registered on-chain.
-- **AI:** Google Gemini (`gemini-3.8-flash`) with a JSON-schema structured output for document extraction (values + verbatim citations + confidence), validated with Zod. Robust modified z-score and physical-bounds checks for anomalies. A human confirms every value. The AI never touches the chain.
-- **App:** Next.js + TypeScript + Tailwind + viem on Vercel. The design system is written as a DESIGN.md (Google Labs format) and refined in Claude Design.
+- **AI:** Google Gemini (`gemini-3.5-flash-lite`, free tier) with a JSON-schema structured output for document extraction (values + verbatim citations + confidence), validated with Zod. Robust modified z-score and physical-bounds checks for anomalies. A human confirms every value. The AI never touches the chain.
+- **App:** Next.js + TypeScript + Tailwind + viem on Vercel. The design system is written as a DESIGN.md (Google Labs format) that drives the app's tokens.
 
 ### Challenges we ran into
 

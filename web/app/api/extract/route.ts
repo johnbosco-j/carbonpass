@@ -6,7 +6,9 @@ import type { DocKind } from "@/lib/evidence";
 
 export const maxDuration = 60;
 
-const MODEL = process.env.GEMINI_MODEL ?? "gemini-3.8-flash";
+// Flash-Lite answers in ~10 s per PDF on the free tier; larger models can stall for minutes on free keys.
+const MODEL = process.env.GEMINI_MODEL ?? "gemini-3.5-flash-lite";
+const PER_DOC_TIMEOUT_MS = 40_000;
 const KEYS = ["production_t", "natural_gas_gj", "electricity_mwh", "electrodes_t", "charge_carbon_t", "pig_iron_t", "electricity_meter_mwh"] as const;
 
 const EXPECTED: Record<DocKind, (typeof KEYS)[number][]> = {
@@ -116,7 +118,10 @@ export async function POST(req: Request) {
   const results = await Promise.all(
     documents.map(async (d) => {
       try {
-        return await extractLive(ai, d);
+        return await Promise.race([
+          extractLive(ai, d),
+          new Promise<never>((_, reject) => setTimeout(() => reject(new Error(`Timed out after ${PER_DOC_TIMEOUT_MS / 1000}s`)), PER_DOC_TIMEOUT_MS)),
+        ]);
       } catch (err) {
         return { ...(await sample(d)), fallbackReason: err instanceof Error ? err.message : String(err) };
       }
