@@ -126,7 +126,8 @@ export async function assemble({ timeline, rec, cardClips, tagFor, workDir, outD
     let it = items.find((x) => x.id === p.item);
     if (!it) {
       const def = timeline.find((x) => x.id === p.item);
-      it = { id: p.item, kind: def.kind, start: t, duration: 0, narration: narrationOf(def, rec.ctx), lead: def.lead ?? 0.5, screen: def.screen ?? "" };
+      const screen = typeof def.screen === "function" ? def.screen(rec.ctx ?? {}) : def.screen ?? "";
+      it = { id: p.item, kind: def.kind, start: t, duration: 0, narration: narrationOf(def, rec.ctx), lead: def.lead ?? 0.5, screen };
       items.push(it);
     }
     it.duration += d;

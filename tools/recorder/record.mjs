@@ -169,15 +169,16 @@ async function renderCards(browser, rec) {
   const clips = {};
   for (const c of TIMELINE.filter((x) => x.kind === "card")) {
     const duration = durations[c.id];
-    const src = fs.readFileSync(path.join(HERE, "cards", c.file), "utf8") + fs.readFileSync(path.join(HERE, "cards", "card.css"), "utf8");
-    const key = `${duration}|${src.length}|${hash(src)}`;
+    const params = c.params?.(rec.ctx ?? {}) ?? {};
+    const src = ["card.css", "card.js", c.file].map((f) => fs.readFileSync(path.join(HERE, "cards", f), "utf8")).join("");
+    const key = `${duration}|${JSON.stringify(params)}|${hash(src)}`;
     const file = path.join(work, "cards", `${c.id}.mp4`);
     if (manifest[c.id] === key && fs.existsSync(file)) {
       clips[c.id] = file;
       log(`  = ${c.id} (${duration} s, cached)`);
       continue;
     }
-    clips[c.id] = await renderCard(browser, { ...c, duration }, work);
+    clips[c.id] = await renderCard(browser, { ...c, duration, params }, work);
     manifest[c.id] = key;
     log(`  ✓ ${c.id} (${duration} s)`);
   }
