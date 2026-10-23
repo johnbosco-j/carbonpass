@@ -17,7 +17,7 @@ CBAM embedded-emissions passports. A producer's evidence is AI-extracted and che
 ## Stack
 
 - `contracts/`: Hardhat 2, Solidity 0.8.28 (cancun, viaIR), OpenZeppelin 5, ethers v6, mocha/chai. Networks: `hardhat`, `localhost`, `sepolia`. Deploy writes `web/lib/chain/deployments.json` + typed `abi.ts`.
-- `web/`: Next.js (App Router, TypeScript), Tailwind, viem. Server API routes sign txs with demo role keys from env. Claude API for extraction, with a fixture fallback when `ANTHROPIC_API_KEY` is unset.
+- `web/`: Next.js (App Router, TypeScript), Tailwind, viem. Server API routes sign txs with demo role keys from env. Gemini (`@google/genai`, Interactions API) for extraction, with labelled sample outputs when `GEMINI_API_KEY` is unset.
 - Evidence handoff in the demo: browser storage plus seeded fixtures (no DB). The passport page reads the chain.
 - pnpm workspace at the repo root.
 

@@ -7,6 +7,7 @@ import {
   ContractFunctionRevertedError,
   createPublicClient,
   createWalletClient,
+  fallback,
   http,
   keccak256,
   parseEventLogs,
@@ -38,8 +39,17 @@ export const deployment: Deployment = (deployments as unknown as Record<string, 
 if (!deployment) throw new Error(`No deployment for NETWORK=${NETWORK}. Run the deploy script first.`);
 
 export const chain = NETWORK === "sepolia" ? sepolia : hardhat;
-const rpcUrl = process.env.RPC_URL ?? (NETWORK === "sepolia" ? "https://ethereum-sepolia-rpc.publicnode.com" : "http://127.0.0.1:8545");
-const transport = http(rpcUrl);
+// Free public RPCs each fail in their own ways (rate limits, log-range limits, lagging nodes), so on Sepolia we
+// fall back across several. Concurrent calls are batched into one HTTP request to cut latency.
+const SEPOLIA_RPCS = ["https://ethereum-sepolia-rpc.publicnode.com", "https://sepolia.drpc.org"];
+const rpcUrls =
+  NETWORK === "sepolia"
+    ? [...new Set([...(process.env.RPC_URL ? [process.env.RPC_URL] : []), ...SEPOLIA_RPCS])]
+    : [process.env.RPC_URL || "http://127.0.0.1:8545"];
+const transport = fallback(
+  rpcUrls.map((url) => http(url, { batch: { batchSize: 20, wait: 10 }, timeout: 12_000 })),
+  { retryCount: 1 },
+);
 
 export const publicClient = createPublicClient({ chain, transport });
 export const passport = { address: deployment.passport as Address, abi: passportAbi } as const;

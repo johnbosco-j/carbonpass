@@ -8,9 +8,9 @@
 | | |
 |---|---|
 | Demo video | _TBD (YouTube link)_ |
-| Live demo | _TBD (Vercel URL)_ |
-| Contracts | _TBD (Sepolia addresses, see [Deployed contracts](#deployed-contracts))_ |
-| Dossier (PDF) | [`docs/`](docs/) compiled into `CarbonPass-Dossier.pdf` |
+| **Live demo** | **https://carbonpass.vercel.app** (Ethereum Sepolia testnet, no wallet needed) |
+| Contracts | [CarbonPassport](https://sepolia.etherscan.io/address/0xCd046Af6Ecbf5fe411949a4710A07ca25B6f63Ff) · [VerifierRegistry](https://sepolia.etherscan.io/address/0x4F3b0C41339bd213AbBF73741deB7A368d4b7804), source verified on [Sourcify](https://repo.sourcify.dev/11155111/0xCd046Af6Ecbf5fe411949a4710A07ca25B6f63Ff) |
+| Dossier (PDF) | [`docs/CarbonPass-Dossier.pdf`](docs/CarbonPass-Dossier.pdf): problem, architecture, security, impact, roadmap |
 
 ---
 
@@ -43,7 +43,7 @@ One flow, four parties:
 | Prevent double counting of verified tonnes | This is literally the double-spend problem | ERC-1155 balances, period non-overlap, report-hash uniqueness |
 | A verifier's sign-off that can't be denied later | Signatures need public, timestamped anchoring | On-chain attestation, plus a hybrid ECDSA + ML-DSA signature |
 | Commercial confidentiality of plant data | Competitors must not see process data | Only salted Merkle roots on-chain; selective disclosure |
-| Turn messy invoices into verifier-ready data | Manual work is the SME cost barrier | LLM extraction with source citations; a human always confirms |
+| Turn messy invoices into verifier-ready data | Manual work is the SME cost barrier | Gemini extraction with source citations; a human always confirms |
 | Catch bad data early | Verifiers sample and can miss things | Robust z-score and physical-bounds anomaly checks |
 
 **Responsible AI rule:** the AI suggests and explains. It never writes to the chain. Every on-chain number is confirmed by a human and signed by an accredited verifier.
@@ -91,7 +91,7 @@ pnpm seed                     # April–June 2026 verified batches with shipment
 pnpm dev                      # http://localhost:3000
 ```
 
-**Live AI extraction:** set `ANTHROPIC_API_KEY` in `web/.env.local`. Without it, the pre-recorded sample outputs in `web/data/extractions/` are shown, and the UI says so.
+**Live AI extraction:** set `GEMINI_API_KEY` in `web/.env.local` (free key at aistudio.google.com/apikey). Without it, the pre-recorded sample outputs in `web/data/extractions/` are shown, and the UI says so.
 
 **Sepolia:** fund `DEPLOYER` in `contracts/.env`, run `pnpm deploy:sepolia`, set `NETWORK=sepolia` in `web/.env.local`, then `pnpm seed`.
 
@@ -99,15 +99,19 @@ pnpm dev                      # http://localhost:3000
 
 | Contract | Network | Address |
 |---|---|---|
-| VerifierRegistry | Sepolia | _TBD_ |
-| CarbonPassport | Sepolia | _TBD_ |
+| VerifierRegistry | Sepolia (11155111) | [`0x4F3b0C41339bd213AbBF73741deB7A368d4b7804`](https://sepolia.etherscan.io/address/0x4F3b0C41339bd213AbBF73741deB7A368d4b7804) |
+| CarbonPassport | Sepolia (11155111) | [`0xCd046Af6Ecbf5fe411949a4710A07ca25B6f63Ff`](https://sepolia.etherscan.io/address/0xCd046Af6Ecbf5fe411949a4710A07ca25B6f63Ff) |
+
+Both contracts are verified on Sourcify (exact match). Every attestation's ML-DSA-65 signature and the verifier's public key are in the event logs, so anyone can re-verify them from chain data alone.
+
+**Try it on the live site:** Producer → *Load sample evidence* → *Extract* → *Confirm all* → *Calculate* → *Submit*. Then Verifier → acknowledge the flag → *Sign & issue*. Then Shipments → ship 6,000 t and 4,000 t, then try 2,000 t more and watch the contract reject it. Finally, Passports → *Verify signature*, and drop the [original](web/public/samples/electricity_invoice_2026-07.pdf) or [tampered](web/public/samples/tampered/electricity_invoice_2026-07.pdf) invoice on the tamper check. Each run certifies the next free month.
 
 ## What is real vs. mocked (honest status)
 
 | Component | Status |
 |---|---|
-| Smart contracts + 16 tests | **Working** (local chain); Sepolia deployment _pending testnet ETH_ |
-| AI extraction | Implemented with Claude (`claude-opus-5-5`, structured output, verbatim citations). **Without an API key the demo shows pre-recorded sample outputs, which were hand-prepared rather than produced by a live model run.** |
+| Smart contracts + 16 tests | **Working**, deployed and source-verified on Sepolia |
+| AI extraction | Implemented with Google Gemini (`gemini-3.8-flash`, JSON-schema structured output, verbatim citations). **Without an API key the demo shows pre-recorded sample outputs, which were hand-prepared rather than produced by a live model run, and the UI says so.** |
 | Anomaly checks, CBAM calculator, Merkle commitments, ML-DSA-65 signatures | **Working**, and verifiable from chain data alone |
 | Emission factors and CBAM default values | **Illustrative.** See `web/data/factors.json` for sources and what to replace |
 | Companies, installations, verifiers | **Fictional demo entities** |

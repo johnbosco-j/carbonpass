@@ -15,5 +15,8 @@
     "build": "pnpm --filter web build",
     "make:docs": "pnpm --filter web make:docs"
   },
-  "packageManager": "pnpm@10.33.2"
+  "packageManager": "pnpm@10.33.2",
+  "devDependencies": {
+    "marked": "^15.0.12"
+  }
 }

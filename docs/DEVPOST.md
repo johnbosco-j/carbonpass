@@ -4,7 +4,7 @@
 
 **Tagline (max 200 chars):** Verified carbon passports for the EU border. AI prepares the evidence, an accredited verifier signs, and smart contracts make double counting of low-carbon tonnes impossible.
 
-**Built with:** solidity, openzeppelin, hardhat, ethereum, sepolia, erc-1155, next.js, typescript, tailwindcss, viem, claude, anthropic-api, ml-dsa, post-quantum-cryptography, merkle-tree, vercel
+**Built with:** solidity, openzeppelin, hardhat, ethereum, sepolia, erc-1155, next.js, typescript, tailwindcss, viem, gemini, google-genai, zod, ml-dsa, post-quantum-cryptography, merkle-tree, sourcify, vercel
 
 **File upload:** `CarbonPass-Dossier.pdf`. It contains the problem statement, architecture & technical spec, security & data-integrity assessment, climate impact assessment, and adoption & scalability roadmap.
 
@@ -33,20 +33,29 @@ We worked through what that means for a mid-sized mill. Its data lives in invoic
 - **Smart contracts:** Solidity 0.8.28 + OpenZeppelin 5 (`VerifierRegistry`, `CarbonPassport` ERC-1155), tested with Hardhat, deployed on Sepolia.
 - **Evidence commitments:** an OpenZeppelin `StandardMerkleTree` with 32-byte salts per leaf. On-chain `verifyDisclosure` gives selective disclosure.
 - **Post-quantum signatures:** ML-DSA-65 (NIST FIPS 204) via `@noble/post-quantum`, with domain-separated messages and the PQ public-key hash registered on-chain.
-- **AI:** the Claude API with a strict JSON schema for document extraction (values + citations + confidence). Robust modified z-score and physical-bounds checks for anomalies. A human confirms every value.
-- **App:** Next.js + TypeScript + Tailwind + viem. The design system is written as a DESIGN.md and prototyped in Claude Design.
+- **AI:** Google Gemini (`gemini-3.8-flash`) with a JSON-schema structured output for document extraction (values + verbatim citations + confidence), validated with Zod. Robust modified z-score and physical-bounds checks for anomalies. A human confirms every value. The AI never touches the chain.
+- **App:** Next.js + TypeScript + Tailwind + viem on Vercel. The design system is written as a DESIGN.md (Google Labs format) and refined in Claude Design.
 
 ### Challenges we ran into
 
-_TBD: fill in from the real build (e.g. making Merkle leaves identical across TypeScript and Solidity; keeping the demo flow reliable on a public testnet)._
+- **Public RPCs aren't consistent.** Free Sepolia endpoints are load-balanced, so right after a transaction a read can land on a node that hasn't seen it yet. We got "batch doesn't exist" errors and even false "insufficient balance" predictions. We built read-your-writes handling: simulations pinned to the block of our last write, short retries for lag-type errors, per-role nonce tracking, and treating the receipt (not the prediction) as truth.
+- **Post-quantum signatures are big.** An ML-DSA-65 signature is 3,309 bytes and the public key is 1,952 bytes. We store only their hashes in contract storage and emit the full bytes in events. That keeps storage cheap while staying verifiable from chain data alone.
+- **Matching Merkle leaves across TypeScript and Solidity.** Leaves are double-hashed `(string, string, string, bytes32)` tuples, so the browser, the server and `verifyDisclosure` must agree byte for byte. A unit test proves the contract accepts the TypeScript-built proofs.
+- **Getting CBAM right.** For iron and steel, only direct emissions (plus precursors) are chargeable; indirect emissions count for cement and fertilisers. We modelled that rule, and pig iron as a precursor, instead of a single "carbon number".
 
 ### Accomplishments that we're proud of
 
-_TBD: e.g. double counting is provably blocked by contract invariants, not policy; post-quantum attestations; the whole flow fits in a 3-minute demo._
+- Double counting is **blocked by contract invariants**, not by policy: tonnes are conserved, periods can't overlap, reports can't be reused, producers can't self-verify, and surrendered tonnes are burned. All of it is covered by 16 tests.
+- The over-shipment rejection is a **real failed transaction on Sepolia** that anyone can inspect on Etherscan.
+- **Post-quantum (NIST FIPS 204) verifier attestations** that anyone can verify from public chain data.
+- Plant data stays private (salted Merkle commitments), yet any single document can be proven unchanged. The tampered-invoice demo shows a one-figure edit failing.
+- The whole flow runs live at carbonpass.vercel.app with no wallet needed, and fits in a 3½-minute video.
 
 ### What we learned
 
-_TBD: e.g. CBAM details (only direct emissions are chargeable for steel); what blockchain can and can't prove about real-world data._
+- What a blockchain can and can't prove: it guarantees *who signed what, when*, and that verified tonnes are conserved. It can't make a meter reading true. That's why an accredited verifier and anomaly checks sit in front of it, and why we say so openly.
+- CBAM's real mechanics: the phase-in factor (2.5% in 2026 rising to 100% in 2034), default-value markups, the sector-specific scope of chargeable emissions, and how those turn verified data into a growing financial incentive to decarbonise.
+- Designing for **crypto-agility**: versioned signature contexts so the scheme can be rotated over long retention periods.
 
 ### What's next for CarbonPass
 
@@ -56,7 +65,7 @@ A pilot with 3–5 exporters in Türkiye and India alongside one accredited veri
 
 ## Links
 
-- GitHub: _TBD_
-- Live demo: _TBD_
-- Video: _TBD_
-- Contracts (Sepolia): _TBD_
+- GitHub: https://github.com/johnbosco-j/carbonpass
+- Live demo: https://carbonpass.vercel.app
+- Video: _TBD (YouTube)_
+- Contracts (Sepolia): CarbonPassport https://sepolia.etherscan.io/address/0xCd046Af6Ecbf5fe411949a4710A07ca25B6f63Ff · VerifierRegistry https://sepolia.etherscan.io/address/0x4F3b0C41339bd213AbBF73741deB7A368d4b7804

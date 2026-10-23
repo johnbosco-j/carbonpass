@@ -8,7 +8,7 @@ flowchart TB
     U[Upload invoices,<br/>meter + production logs]
   end
   subgraph App["CarbonPass web app (Next.js)"]
-    EX[AI extraction<br/>Claude API, cited]
+    EX[AI extraction<br/>Gemini API, cited]
     CALC[CBAM calculator<br/>deterministic]
     AN[Anomaly checks<br/>robust z-score + bounds]
     MT[Evidence Merkle tree<br/>salted leaves]
@@ -41,7 +41,7 @@ sequenceDiagram
   autonumber
   actor P as Producer
   participant W as Web app
-  participant AI as Claude API
+  participant AI as Gemini API
   participant C as CarbonPassport
   actor V as Verifier
   actor A as Importer A
@@ -163,9 +163,8 @@ All factors live in `web/data/factors.json`, each with a source and a verify not
 
 ## 8. AI extraction (in `web/app/api/extract`)
 
-- The Claude API gets each document (PDF or image) and a **JSON schema** for the output. Each line has: `{ key, value, unit, period, source: { file, page, quote }, confidence }`.
+- The Gemini API (Interactions API, `gemini-3.8-flash`, free tier) gets each PDF and a **JSON schema** (generated from a Zod schema) for the output. Each line has: `{ key, value, unit, period, source: { file, page, quote }, confidence }`.
 - Documents are treated as untrusted data. The model has no tools, and its output is validated against the schema and unit whitelist.
-- Model: `claude-opus-5-5` at `effort: low`, via `client.beta.messages.parse` with a Zod schema, plus `fallbacks: "default"` (server-side refusal fallback).
 - Without an API key, pre-recorded sample outputs in `web/data/extractions/` are returned (hand-prepared, labelled as such in the UI), so the demo always works.
 
 ## 9. Web app
@@ -181,8 +180,17 @@ All factors live in `web/data/factors.json`, each with a source and a verify not
 
 API routes (`/api/tx/*`) sign with **demo role wallets** held as server env vars on testnet. In production each party signs with its own wallet or HSM. The UI shows the acting address on every action.
 
-## 10. Deployment
+## 10. Public-RPC consistency (read-your-writes)
+
+Free Sepolia RPCs are load-balanced, so a read right after a write can hit a node a block behind. Two problems follow: "batch doesn't exist" errors, and false "insufficient balance" predictions. The app handles this:
+
+- Simulation and gas estimation are **pinned to the newest block known to contain our own writes**. The browser passes its last-seen block as `minBlock`.
+- Lag-type reverts (`UnknownBatch`, `NotPending`) are retried briefly.
+- For forced on-chain sends, the **receipt is the source of truth**, never the prediction.
+- Nonces are tracked per role, so a stale node can't hand back an old nonce.
+
+## 11. Deployment
 
 - **Contracts:** Hardhat, `pnpm --filter contracts deploy:sepolia`, then source verification on Etherscan.
 - **Seed:** register the verifier and installation, plus 3 historical issued batches (so the passport timeline and history aren't empty).
-- **Web:** Vercel. Env vars: `RPC_URL`, contract addresses, demo role keys, optional `ANTHROPIC_API_KEY`.
+- **Web:** Vercel (https://carbonpass.vercel.app). Env vars: `NETWORK`, `RPC_URL`, demo role keys, `VERIFIER_PQ_SEED`, optional `GEMINI_API_KEY` / `GEMINI_MODEL`. Contract addresses come from `web/lib/chain/deployments.json`.
