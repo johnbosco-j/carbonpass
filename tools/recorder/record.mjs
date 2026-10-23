@@ -32,6 +32,7 @@ const { values: a } = parseArgs({
     zoom: { type: "string", default: "1.25" },
     speed: { type: "string", default: String(DEFAULTS.speed) },
     "max-wait": { type: "string", default: String(DEFAULTS.maxWaitOut) },
+    "min-wait": { type: "string", default: String(DEFAULTS.minWait) },
     wps: { type: "string", default: String(DEFAULTS.wps) },
     pace: { type: "string", default: "1" },
     timeout: { type: "string", default: "240" },
@@ -49,7 +50,8 @@ if (a.help) {
   --base URL         deployment to record (default http://localhost:3104, env DEMO_BASE)
   --out DIR          where the mp4/srt/VOICEOVER.md go (default docs/video)
   --zoom 1.25        page zoom; the viewport is 1920/zoom × 1080/zoom CSS px, captured at 1920×1080
-  --speed 4          speed-up for transaction waits; --max-wait 4 caps any wait at 4 s in the cut
+  --speed 4          speed-up for transaction waits; --max-wait 4 caps any wait at 4 s in the cut;
+                     waits shorter than --min-wait 1.5 s play at normal speed
   --wps 2.6          narration pace (words/second) used to hold beats long enough for the voiceover
   --pace 1           multiplies deliberate reading pauses (0.5 for a quick dry run)
   --timeout 240      seconds to wait for any single confirmation
@@ -64,7 +66,7 @@ const base = a.base.replace(/\/$/, "");
 const work = path.resolve(a.work);
 const outDir = path.resolve(a.out);
 const zoom = Number(a.zoom);
-const o = { ...DEFAULTS, speed: Number(a.speed), maxWaitOut: Number(a["max-wait"]), wps: Number(a.wps) };
+const o = { ...DEFAULTS, speed: Number(a.speed), maxWaitOut: Number(a["max-wait"]), minWait: Number(a["min-wait"]), wps: Number(a.wps) };
 const log = (...m) => console.log(...m);
 fs.mkdirSync(work, { recursive: true });
 

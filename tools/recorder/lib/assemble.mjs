@@ -168,7 +168,8 @@ export const ts = (s, ms = true) => {
 /** Splits cue text into subtitle-sized chunks (≤ 2 lines of ~42 chars), timed by word share. */
 function chunks(text) {
   const out = [];
-  for (const sentence of text.match(/[^.!?]+[.!?]+["')]*|[^.!?]+$/g) ?? [text]) {
+  // Sentence ends are punctuation followed by whitespace, so "2.43" and "€2.2" stay whole.
+  for (const sentence of text.split(/(?<=[.!?]["'’”)]?)\s+/)) {
     let s = sentence.trim();
     while (s.length > 84) {
       let cut = s.lastIndexOf(", ", 84);
