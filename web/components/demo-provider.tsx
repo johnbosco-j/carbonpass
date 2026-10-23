@@ -72,6 +72,15 @@ export function DemoProvider({ children }: { children: ReactNode }) {
   const nextId = useRef(1);
   // Read-your-writes: never accept chain state older than the newest block this browser has seen.
   const lastBlock = useRef(0);
+  const bumpBlock = useCallback((n: number) => {
+    if (n <= lastBlock.current) return;
+    lastBlock.current = n;
+    try {
+      sessionStorage.setItem("carbonpass:lastBlock", String(n));
+    } catch {
+      /* storage unavailable */
+    }
+  }, []);
 
   const refresh = useCallback(async () => {
     try {
@@ -79,15 +88,20 @@ export function DemoProvider({ children }: { children: ReactNode }) {
       const json = await res.json();
       if (!res.ok) throw new Error(json.error ?? res.statusText);
       if (json.latestBlock < lastBlock.current) return;
-      lastBlock.current = json.latestBlock;
+      bumpBlock(json.latestBlock);
       setState(json);
       setError(null);
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e));
     }
-  }, []);
+  }, [bumpBlock]);
 
   useEffect(() => {
+    try {
+      lastBlock.current = Number(sessionStorage.getItem("carbonpass:lastBlock") ?? 0) || 0;
+    } catch {
+      /* storage unavailable */
+    }
     // Initial load + light polling; the first refresh runs on the next tick, not synchronously in the effect.
     const first = setTimeout(refresh, 0);
     const t = setInterval(refresh, 6000);
@@ -115,7 +129,7 @@ export function DemoProvider({ children }: { children: ReactNode }) {
           body: JSON.stringify({ ...(body as object), minBlock: lastBlock.current }),
         });
         const json = (await res.json()) as TxResponse;
-        if (json.blockNumber && json.blockNumber > lastBlock.current) lastBlock.current = json.blockNumber;
+        if (json.blockNumber) bumpBlock(json.blockNumber);
         if (json.ok) {
           update(id, { kind: "success", detail: `Confirmed in block #${json.blockNumber}`, hash: json.hash, explorer: json.explorer, block: json.blockNumber });
           setTimeout(() => dismiss(id), 9000);
@@ -137,7 +151,7 @@ export function DemoProvider({ children }: { children: ReactNode }) {
         return { ok: false, error: String(e) };
       }
     },
-    [push, update, dismiss, refresh],
+    [push, update, dismiss, refresh, bumpBlock],
   );
 
   // Keyed by deployment so a redeploy at the same address never picks up stale evidence.

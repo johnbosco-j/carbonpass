@@ -194,7 +194,9 @@ async function send(role: Role, functionName: PassportFn | RegistryFn, args: rea
     if (revert && opts.forceOnchain) {
       try {
         const { hash, receipt } = await broadcast(300_000n);
-        return { ok: false, hash, explorer: explorerTx(hash), blockNumber: Number(receipt.blockNumber), revert };
+        // The receipt is the source of truth: a lagging node can predict a revert that doesn't happen.
+        const ok = receipt.status === "success";
+        return { ok, hash, explorer: explorerTx(hash), blockNumber: Number(receipt.blockNumber), revert: ok ? undefined : revert };
       } catch {
         // Some nodes refuse to accept a transaction that reverts; the simulated revert is still the answer.
         return { ok: false, revert };
