@@ -86,7 +86,7 @@ const SPECS: Spec[] = [
     lines: [
       { label: "Hot-rolled coil output (prime)", value: "10,000.0 t" },
       { label: "Scrap charged", value: "9,640.0 t" },
-      { label: "Pig iron charged (supplier passport PI-UA-2026-117)", value: "1,300.0 t" },
+      { label: "Pig iron charged (Karadeniz Pig Iron A.S., TR-INST-0002, verified June 2026 lot)", value: "1,300.0 t" },
       { label: "Graphite electrodes consumed", value: "17.5 t" },
       { label: "Charge carbon (anthracite) consumed", value: "120.0 t" },
       { label: "Note", value: "Carbon-injection control system commissioned 18.06.2026" },
@@ -94,7 +94,7 @@ const SPECS: Spec[] = [
     footer: "Weighbridge and stock-take reconciled 31.07.2026. Demo document, fictional.",
     extract: [
       { key: "production_t", label: "HRC production", value: 10000, unit: "t", quoteLabel: "Hot-rolled coil output (prime)", confidence: 0.99 },
-      { key: "pig_iron_t", label: "Pig iron (precursor)", value: 1300, unit: "t", quoteLabel: "Pig iron charged (supplier passport PI-UA-2026-117)", confidence: 0.97 },
+      { key: "pig_iron_t", label: "Pig iron (precursor)", value: 1300, unit: "t", quoteLabel: "Pig iron charged (Karadeniz Pig Iron A.S., TR-INST-0002, verified June 2026 lot)", confidence: 0.97 },
       { key: "electrodes_t", label: "Graphite electrodes", value: 17.5, unit: "t", quoteLabel: "Graphite electrodes consumed", confidence: 0.98 },
       { key: "charge_carbon_t", label: "Charge carbon", value: 120, unit: "t", quoteLabel: "Charge carbon (anthracite) consumed", confidence: 0.97 },
     ],
