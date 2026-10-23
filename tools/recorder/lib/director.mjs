@@ -183,11 +183,39 @@ export class Director {
     return l;
   }
 
+  /** True if a real click at (x, y) would land on the element (not on a toast or anything else on top). */
+  async hits(l, x, y) {
+    return l.evaluate((el, [px, py]) => {
+      const top = document.elementFromPoint(px, py);
+      return !!top && (el === top || el.contains(top) || (el.labels && [...el.labels].some((lb) => lb.contains(top))));
+    }, [x, y]);
+  }
+
+  /** If something (usually a tx toast, bottom-right) covers the element, scroll it up, then dismiss toasts. */
+  async uncover(l, position) {
+    const at = async () => {
+      const b = await l.boundingBox();
+      return [b.x + (position?.x ?? b.width / 2), b.y + (position?.y ?? b.height / 2)];
+    };
+    if (await this.hits(l, ...(await at()))) return;
+    const b = await l.boundingBox();
+    const v = await this.viewport();
+    await this.scrollToY(v.y + b.y - this.topSafe - 60);
+    if (await this.hits(l, ...(await at()))) return;
+    const dismiss = this.page.getByRole("button", { name: "Dismiss" });
+    for (let i = 0; i < 6 && (await dismiss.count()); i++) {
+      await dismiss.first().click({ timeout: 2000 }).catch(() => {});
+      await sleep(150);
+      if (await this.hits(l, ...(await at()))) return;
+    }
+  }
+
   /** Moves the cursor to the element, then clicks it with a ripple. */
   async click(spec, { pause = 220, position } = {}) {
     const l = await this.waitFor(spec);
     await this.waitEnabled(l);
     await this.ensureInView(l);
+    await this.uncover(l, position);
     const b = await l.boundingBox();
     const x = b.x + (position?.x ?? b.width / 2);
     const y = b.y + (position?.y ?? b.height / 2);
@@ -242,7 +270,8 @@ export class Director {
     const b = await l.boundingBox();
     const v = await this.viewport();
     const x1 = b.x + b.width / 2, y1 = b.y + b.height / 2;
-    const x0 = clamp(x1 + 340, 40, v.w - 320), y0 = clamp(y1 - 170, this.topSafe + 20, v.h - 80);
+    // Start up and to the left: the ghost hangs to the right of the cursor, so this keeps it on screen.
+    const x0 = clamp(x1 - 360, 40, v.w - 420), y0 = clamp(y1 - 190, this.topSafe + 20, v.h - 80);
     this.mark("drop", { name, tag });
     await this.overlay("showCursor", true);
     await this.overlay("dragFile", { url: this.base + url, name, tag, tone, x0, y0, x1, y1, ms: 1100 });

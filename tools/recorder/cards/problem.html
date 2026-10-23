@@ -5,7 +5,7 @@
 <title>CarbonPass problem card</title>
 <link rel="stylesheet" href="card.css">
 <style>
-  .grid { display: grid; grid-template-columns: 1fr 420px; gap: 72px; margin-top: 64px; align-items: start; }
+  .grid { display: grid; grid-template-columns: minmax(0, 1fr) 400px; gap: 64px; margin-top: 64px; align-items: start; }
   .row + .row { margin-top: 52px; }
   .row .what { font-size: 24px; font-weight: 600; }
   .row .who { font-size: 19px; color: var(--ink-muted); margin-top: 4px; }
@@ -30,7 +30,7 @@
 </head>
 <body>
 <div class="frame">
-  <div class="label in" style="--i:0"><span class="n">01</span>The problem</div>
+  <div class="label in" style="--i:0">The problem</div>
   <h2 class="in" style="--i:1">A clean mill is priced like a dirty one.</h2>
   <div class="grid">
     <div>
@@ -38,7 +38,7 @@
         <div class="what">EU default value, Turkish hot-rolled steel <span class="mono muted" style="font-weight:400">CN 7208</span></div>
         <div class="who">What the importer pays for without verified data (direct emissions)</div>
         <div class="bar">
-          <div class="track"><div class="fill default" style="--w:1000px"></div><div class="fill markup" style="--w:100px"></div></div>
+          <div class="track"><div class="fill default" style="--w:700px"></div><div class="fill markup" style="--w:70px"></div></div>
           <div class="num">2.43<small>tCO₂e/t</small></div>
         </div>
         <div class="note">+10% mark-up in 2026 → 2.67 · 20% in 2027 · 30% from 2028</div>
@@ -47,7 +47,7 @@
         <div class="what">This electric-arc mill, verified</div>
         <div class="who">Anatolia Green Steel, İzmir (fictional demo entity), July 2026</div>
         <div class="bar">
-          <div class="track"><div class="fill verified" style="--w:146px"></div></div>
+          <div class="track"><div class="fill verified" style="--w:103px"></div></div>
           <div class="num molten">0.356<small>tCO₂e/t</small></div>
         </div>
       </div>

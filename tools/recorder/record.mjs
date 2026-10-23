@@ -13,7 +13,7 @@ import { fileURLToPath } from "node:url";
 import { parseArgs } from "node:util";
 import { TIMELINE } from "./beats.mjs";
 import { Director } from "./lib/director.mjs";
-import { installPlaywrightFfmpegShim, findFfmpeg } from "./lib/ffmpeg.mjs";
+import { findFfmpeg } from "./lib/ffmpeg.mjs";
 import { launch, recordedPage, browserPath, rel } from "./lib/capture.mjs";
 import { renderCard, renderTag } from "./lib/cards.mjs";
 import { assemble, fitCardDurations, narrationOf, ts } from "./lib/assemble.mjs";
@@ -102,9 +102,9 @@ async function warmup(browser) {
 
 async function recordApp(browser) {
   const viewport = { width: Math.round(1920 / zoom), height: Math.round(1080 / zoom) };
-  const rawDir = path.join(work, "raw");
-  fs.rmSync(rawDir, { recursive: true, force: true });
-  const rec = await recordedPage(browser, { dir: rawDir, viewport, deviceScaleFactor: zoom, initScript: path.join(HERE, "lib/overlay.js") });
+  const video = path.join(work, "raw", "app.mkv");
+  fs.rmSync(path.dirname(video), { recursive: true, force: true });
+  const rec = await recordedPage(browser, { file: video, viewport, deviceScaleFactor: zoom, initScript: path.join(HERE, "lib/overlay.js") });
   const d = new Director(rec.page, { base, log, timeoutMs: Number(a.timeout) * 1000, pace: Number(a.pace) });
   d.t0 = rec.tOpen;
   const consoleLog = [];
@@ -150,12 +150,10 @@ async function recordApp(browser) {
     log(`  ✓ ${it.id.padEnd(18)} raw ${(end - start).toFixed(1).padStart(5)} s → cut ${cutD.toFixed(1).padStart(5)} s${hold > 0 ? ` (held ${hold.toFixed(1)} s for narration)` : ""}${waits ? ` · ${waits}` : ""}`);
   }
   const fin = await rec.finish();
-  const video = path.join(work, "raw", "app.webm");
-  fs.renameSync(fin.file, video);
   const recording = { base, zoom, recordedAt: new Date().toISOString(), video, duration: fin.duration, offset: fin.offset, beats, ctx: d.ctx, events: d.events, consoleErrors: consoleLog };
   fs.writeFileSync(path.join(work, "recording.json"), JSON.stringify(recording, null, 2));
   if (consoleLog.length) fs.writeFileSync(path.join(work, "console-errors.log"), consoleLog.join("\n") + "\n");
-  log(`  raw video ${rel(ROOT, video)} (${fin.duration.toFixed(1)} s, clock offset ${fin.offset.toFixed(2)} s)`);
+  log(`  raw video ${rel(ROOT, video)} (${fin.duration.toFixed(1)} s, ${fin.frames} frames, clock drift ${fin.offset.toFixed(2)} s)`);
   if (failed) throw new Error(`Recording stopped at beat "${d.beat.id}". Fix the selector in tools/recorder/beats.mjs (see README) and re-run.`);
   return recording;
 }
@@ -198,7 +196,6 @@ const ff = findFfmpeg();
 log(`CarbonPass demo recorder → ${base}`);
 log(`  browser ${browserPath()}`);
 log(`  ffmpeg ${ff.ffmpeg}${ff.libDir ? ` (x265 fallback: ${ff.libDir})` : ""}`);
-installPlaywrightFfmpegShim(path.join(work, "pw-registry"));
 const { chromium } = await import("playwright-core");
 const browser = await launch(chromium, { headed: a.headed });
 try {

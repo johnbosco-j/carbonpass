@@ -93,7 +93,7 @@ export async function assemble({ timeline, rec, cardClips, tagFor, workDir, outD
     if (p.kind === "card") return p.file;
     const out = path.join(segDir, `seg_${String(i).padStart(3, "0")}_${p.item}.mp4`);
     const dur = Math.max(1 / FPS, Math.round(((p.b - p.a) / p.speed) * FPS) / FPS);
-    const from = Math.max(0, p.a + rec.offset);
+    const from = Math.max(0, p.a); // screencast video time == recorder clock (lib/screencast.mjs)
     let v = `[0:v]setpts=(PTS-STARTPTS)/${p.speed.toFixed(4)},fps=${FPS},format=yuv420p`;
     const inputs = ["-ss", from.toFixed(3), "-t", (p.b - p.a).toFixed(3), "-i", rec.video];
     let graph;

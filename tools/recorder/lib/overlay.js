@@ -69,7 +69,8 @@
   // Attach only after load so React hydration never sees a foreign node; re-attach if anything removes it.
   // Hides the Next.js dev-tools badge when recording against `next dev`.
   const hideDev = document.createElement("style");
-  hideDev.textContent = "nextjs-portal{display:none!important}";
+  // The spacer lets the last controls on a page scroll clear of the lower-third caption.
+  hideDev.textContent = 'nextjs-portal{display:none!important} body::after{content:"";display:block;height:220px}';
   function ensure(force) {
     if (!hideDev.isConnected && document.head) document.head.appendChild(hideDev);
     if (!force && document.readyState !== "complete") return;

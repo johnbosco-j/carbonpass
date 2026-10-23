@@ -2,7 +2,8 @@
 // Dev helper for re-recording against a local Hardhat node without redeploying:
 //   node tools/recorder/dev/chain-snapshot.mjs save      (after deploy + seed)
 //   node tools/recorder/dev/chain-snapshot.mjs restore   (before each recording; re-saves so it can be reused)
-// RPC_URL defaults to http://127.0.0.1:8547. Restart `next dev` after a restore if the app shows stale data.
+// RPC_URL defaults to http://127.0.0.1:8547. After reverting it mines past the old head, because the web app pins
+// reads to the newest block it has seen and would reject an older chain.
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -24,7 +25,10 @@ const cmd = process.argv[2];
 if (cmd === "save") await save();
 else if (cmd === "restore") {
   const { id } = JSON.parse(fs.readFileSync(file, "utf8"));
+  const head = parseInt(await rpc("eth_blockNumber"), 16);
   if (!(await rpc("evm_revert", [id]))) throw new Error(`evm_revert ${id} failed (node restarted?). Redeploy + seed, then save.`);
-  console.log(`reverted to ${id}, block #${parseInt(await rpc("eth_blockNumber"), 16)}`);
+  const now = parseInt(await rpc("eth_blockNumber"), 16);
+  if (head >= now) await rpc("hardhat_mine", [`0x${(head - now + 1).toString(16)}`]);
+  console.log(`reverted to ${id}, mined to block #${parseInt(await rpc("eth_blockNumber"), 16)}`);
   await save();
 } else console.log("usage: chain-snapshot.mjs save|restore");

@@ -10,18 +10,18 @@ const CARDS = path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "car
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 export async function renderCard(browser, card, workDir) {
-  const raw = path.join(workDir, "raw-cards");
+  const raw = path.join(workDir, "raw-cards", `${card.id}.mkv`);
   const out = path.join(workDir, "cards", `${card.id}.mp4`);
   fs.mkdirSync(path.dirname(out), { recursive: true });
-  const rec = await recordedPage(browser, { dir: raw, viewport: { width: 1920, height: 1080 } });
+  const rec = await recordedPage(browser, { file: raw, viewport: { width: 1920, height: 1080 } });
   await rec.page.goto(`${pathToFileURL(path.join(CARDS, card.file)).href}#d=${card.duration}`, { waitUntil: "load" });
   await rec.page.evaluate(() => window.cardReady);
   await sleep(300);
   const start = (performance.now() - rec.tOpen) / 1000;
   await rec.page.evaluate(() => window.play());
   await sleep(card.duration * 1000 + 400);
-  const { file, offset } = await rec.finish();
-  await ffmpeg(["-ss", (start + offset).toFixed(3), "-i", file, "-t", card.duration.toFixed(3), "-vf", "fps=25,format=yuv420p", ...ENCODE, out]);
+  const { file } = await rec.finish();
+  await ffmpeg(["-ss", start.toFixed(3), "-i", file, "-t", card.duration.toFixed(3), "-vf", "fps=25,format=yuv420p", ...ENCODE, out]);
   fs.rmSync(file, { force: true });
   return out;
 }

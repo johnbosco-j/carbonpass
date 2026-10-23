@@ -33,11 +33,15 @@ async function dismissToasts(d) {
   }
 }
 
+/** A metric block (label + value) found by its label text. */
+const metric = (label) => (p) => p.getByText(label, { exact: true }).first().locator("xpath=..");
+
 /** Reads the value printed under a metric label, e.g. "€46,340". */
 async function metricValue(d, label) {
   try {
-    const t = await d.page.getByText(label, { exact: true }).first().locator("xpath=..").innerText();
-    return t.replace(label, "").trim().split("\n")[0].trim();
+    // innerText applies the label's text-transform, so take the value line rather than stripping the label.
+    const lines = (await metric(label)(d.page).innerText()).split("\n").map((l) => l.trim()).filter(Boolean);
+    return lines.length > 1 ? lines.at(-1) : null;
   } catch {
     return null;
   }
@@ -76,11 +80,11 @@ export const TIMELINE = [
       await d.goto("/", { waitFor: { role: "heading", level: 1 } });
       await d.read(800);
       await d.caption("Verified carbon passports for CBAM steel: AI-prepared evidence, an accredited signature, tonnes that can't be counted twice.");
-      await d.read(3200);
+      await d.read(4500);
       await scrollToFirst(d, [{ text: /^The problem$/i }, { text: /problem/i }], { at: 0.05 });
-      await d.read(3800);
+      await d.read(4500);
       await scrollToFirst(d, [{ text: /^How it works$/i }], { at: 0.05 });
-      await d.read(3000);
+      await d.read(3500);
     },
   },
 
@@ -106,14 +110,14 @@ export const TIMELINE = [
       await d.read(2400);
       await d.tx({ role: "button", name: /Extract with AI/i }, { role: "button", name: /Confirm all/i }, { label: "AI extraction", kind: "ai" });
       ctx.extractMode = (await d.exists({ text: /Live extraction by Gemini/ }, 500)) ? "gemini" : "sample";
-      await d.scrollTo({ role: "columnheader", name: /Quantity/i }, { at: 0 });
+      await d.scrollTo({ text: /^Quantity$/i }, { at: 0 });
       await d.caption(
         ctx.extractMode === "gemini"
           ? "Gemini returns structured quantities, each with a <b>verbatim quote and page</b>. Nothing counts until a human confirms it."
           : "AI extraction (recorded sample output): every quantity with a <b>verbatim quote and page</b>. Nothing counts until a human confirms it.",
       );
       await d.read(1500);
-      await d.ring({ role: "columnheader", name: /Source/i }, 1600, 6);
+      await d.ring({ text: /^Source$/i }, 1600, 6);
       await d.read(1600);
       await d.click({ role: "button", name: /Confirm all/i });
       await d.caption("Human in the loop: values are confirmed by the compliance officer. <b>The AI never writes on-chain.</b>");
@@ -294,7 +298,7 @@ export const TIMELINE = [
           ? `Versus EU default values: <b>${y26}</b> saved in 2026 on this one month's output, <b>${y34}</b> a year by 2034.`
           : "Versus EU default values: the saving on this one month's output, 2026 → 2034.",
       );
-      await d.ring({ text: "Saving in 2026 vs default values" }, 2400, 10);
+      await d.ring(metric("Saving in 2026 vs default values"), 2400, 10);
       await d.read(3200);
     },
   },
