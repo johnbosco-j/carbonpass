@@ -97,4 +97,4 @@ Things to check after UI changes:
 2. **Producer**: the precursor step is optional. If the "Use the supplier's verified intensity" checkbox exists, the beat captions and rings it before Calculate.
 3. **Passport**: the "Supply chain" section is captioned if present. The tamper check finds its drop zone by the text "Drop an evidence file to check it" and sends a synthetic `drop` with a real `File` fetched from `/samples/…`.
 4. **Top-bar nav** links are found inside `role="navigation"` by name (Producer, Importer). If they're missing, the beat falls back to `page.goto`.
-5. **Hero number**: `web/components/hero/data.ts` computes the hero's "verified" figure without the supplier's precursor, so the hero shows 0.356 while the certified batch is 0.337. I flagged this to the hero session; worth fixing before the final recording.
+5. **Hero number**: the hero used to compute its "verified" figure without the supplier's precursor (0.356, against the batch's 0.337). This is fixed in `a8c2de1` on `claude/hero-3d-ad6f7b`, which now shows 0.337, −86% and €46,720. Merge and redeploy it before the final recording.
