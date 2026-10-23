@@ -10,14 +10,14 @@ _Status at Fri 23 Oct, 11:30 IST: **feature-complete and live.** All that's left
 |---|---|
 | Live demo | https://carbonpass.vercel.app (Sepolia, no wallet needed) |
 | Code | https://github.com/johnbosco-j/carbonpass |
-| CarbonPassport | `0xCd046Af6Ecbf5fe411949a4710A07ca25B6f63Ff` (Sepolia, Sourcify-verified) |
-| VerifierRegistry | `0x4F3b0C41339bd213AbBF73741deB7A368d4b7804` |
+| CarbonPassport | `0xcA4e491c54550b242f90f1c97a1C7612acf7b237` (Sepolia, Sourcify-verified) |
+| VerifierRegistry | `0xDB123272620e734a8feEfc776aC0a40E6Baabc69` |
 | Dossier PDF | `docs/CarbonPass-Dossier.pdf` (`node scripts/build-dossier.mjs`) |
 
 ## Done
 
 - [x] 12 docs, `design.md`, `CLAUDE.md`, README with real links
-- [x] Contracts + 16 tests (conservation, overlap, report reuse, self-verification, revocation, Merkle proofs)
+- [x] Contracts + 28 tests (conservation, overlap, report reuse, self-verification, revocation, Merkle proofs, precursor consumption)
 - [x] Deployed + seeded + source-verified on Sepolia (April–June history; July certified once in a live test)
 - [x] Web app: producer → verifier → shipments → importer → passport, live on Vercel
 - [x] Gemini extraction (falls back to labelled samples without a key)
