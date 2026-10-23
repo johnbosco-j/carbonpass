@@ -74,4 +74,4 @@ A pilot with 3–5 exporters in Türkiye and India alongside one accredited veri
 - GitHub: https://github.com/johnbosco-j/carbonpass
 - Live demo: https://carbonpass.vercel.app
 - Video: _TBD (YouTube)_
-- Contracts (Sepolia): CarbonPassport https://sepolia.etherscan.io/address/0xcA4e491c54550b242f90f1c97a1C7612acf7b237 · VerifierRegistry https://sepolia.etherscan.io/address/0xDB123272620e734a8feEfc776aC0a40E6Baabc69
+- Contracts (Sepolia): CarbonPassport https://sepolia.etherscan.io/address/0x2eD59Df13de482318Fa1dc61aAE5015cf7bE6a22 · VerifierRegistry https://sepolia.etherscan.io/address/0x52ca9d789B4A7819FF453b887BfcE558b340Ba54

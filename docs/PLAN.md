@@ -2,7 +2,7 @@
 
 **Deadline: Sun 25 Oct 2026, 19:30 IST.** Our hard stop is **16:00 IST Sunday**, leaving 3.5 hours of buffer.
 
-_Status at Fri 23 Oct, 11:30 IST: **feature-complete and live.** All that's left is your UI polish, the video, and the Devpost submission._
+_Status at Sat 24 Oct, 01:30 IST: **feature freeze reached.** Final contracts are deployed and verified, and the final 4:01 video was recorded on Sepolia (`docs/video/`). Left: your voiceover, the YouTube upload, and the Devpost submission._
 
 ## Live
 
@@ -10,8 +10,8 @@ _Status at Fri 23 Oct, 11:30 IST: **feature-complete and live.** All that's left
 |---|---|
 | Live demo | https://carbonpass.vercel.app (Sepolia, no wallet needed) |
 | Code | https://github.com/johnbosco-j/carbonpass |
-| CarbonPassport | `0xcA4e491c54550b242f90f1c97a1C7612acf7b237` (Sepolia, Sourcify-verified) |
-| VerifierRegistry | `0xDB123272620e734a8feEfc776aC0a40E6Baabc69` |
+| CarbonPassport | `0x2eD59Df13de482318Fa1dc61aAE5015cf7bE6a22` (Sepolia, Sourcify-verified) |
+| VerifierRegistry | `0x52ca9d789B4A7819FF453b887BfcE558b340Ba54` |
 | Dossier PDF | `docs/CarbonPass-Dossier.pdf` (`node scripts/build-dossier.mjs`) |
 
 ## Done
@@ -29,11 +29,13 @@ _Status at Fri 23 Oct, 11:30 IST: **feature-complete and live.** All that's left
 
 | When | Task |
 |---|---|
-| **Today** | Add your Gemini key locally + on Vercel (commands in chat). Then I can test live extraction |
-| **Today / Sat** | Claude Design: restyle using `design.md`; hand off to Claude Code with `docs/UI_HANDOFF.md` |
-| **Sat** | Click through the live site; rehearse `docs/DEMO_SCRIPT.md` out loud once |
-| **Sun morning** | Run `bash scripts/fresh-demo.sh` (fresh contracts so July 2026 is free), then **record the video** (about 3.5 min) and upload to YouTube |
-| **Sun by 16:00** | Devpost: paste `docs/DEVPOST.md`, upload `docs/CarbonPass-Dossier.pdf`, add the video + links + screenshots, then **Submit** |
+| **Sat** | Watch `docs/video/carbonpass-demo.mp4`. Record your voice reading `docs/video/VOICEOVER.md` in time with it (any phone or laptop mic). Then run `node tools/recorder/mux.mjs path/to/voice.m4a`, which writes `docs/video/carbonpass-demo-vo.mp4` |
+| **Sat** | Upload `carbonpass-demo-vo.mp4` to YouTube (public or unlisted). Use the title, description and chapters in `docs/video/YOUTUBE.md`, and upload `carbonpass-demo.srt` as captions |
+| **Sat** | Claim 0.05 Sepolia ETH to the deployer `0x67d7…e857` (Google Cloud faucet), then run `pnpm --filter contracts topup:sepolia` so the live demo stays funded through judging |
+| **Sun by 16:00** | Run the Devpost autofill prompt (`docs/DEVPOST_AUTOFILL_PROMPT.md`), add the YouTube link, check every field, then **Submit**. Check the project page says "Submitted" |
+| **After** | Rotate your Gemini API key (it was pasted in chat) |
+
+**Don't** run `fresh-demo.sh` again before submission: it replaces the contracts the video shows. Visitors' demo runs simply certify the next free month.
 
 ## If something breaks
 

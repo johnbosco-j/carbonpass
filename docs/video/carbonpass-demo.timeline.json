@@ -1,7 +1,7 @@
 {
-  "generated": "2026-10-23T19:06:12.954Z",
+  "generated": "2026-10-23T19:23:28.644Z",
   "base": "https://carbonpass.vercel.app",
-  "total": 244.92,
+  "total": 241.04,
   "items": [
     {
       "id": "title",
@@ -25,7 +25,7 @@
       "id": "landing",
       "kind": "app",
       "start": 16.92,
-      "duration": 22.2,
+      "duration": 22.24,
       "lead": 8,
       "screen": "Landing page: the pinned 3D story (carbon price → default vs verified → double counting → Run the demo)",
       "chapter": "CarbonPass in four steps"
@@ -33,8 +33,8 @@
     {
       "id": "producer-evidence",
       "kind": "app",
-      "start": 39.12,
-      "duration": 23.36,
+      "start": 39.16,
+      "duration": 20.48,
       "lead": 0.5,
       "screen": "Producer: load the 4 sample PDFs → AI extraction table with page citations → confirm all",
       "chapter": "Producer: AI extraction with page citations"
@@ -42,8 +42,8 @@
     {
       "id": "producer-calc",
       "kind": "app",
-      "start": 62.48,
-      "duration": 29.72,
+      "start": 59.64,
+      "duration": 29.96,
       "lead": 0.5,
       "screen": "Precursor passport card (supplier's pig iron) → Calculate → 0.337 tCO₂e/t, anomaly callout (amber) for one value",
       "chapter": "Precursor passport, CBAM calculation, anomaly check"
@@ -51,8 +51,8 @@
     {
       "id": "producer-submit",
       "kind": "app",
-      "start": 92.2,
-      "duration": 9.24,
+      "start": 89.6,
+      "duration": 9.76,
       "lead": 0.5,
       "screen": "Merkle root + report hash → Submit → tx toast → pending",
       "chapter": null
@@ -60,8 +60,8 @@
     {
       "id": "verifier",
       "kind": "app",
-      "start": 101.44,
-      "duration": 19.8,
+      "start": 99.36,
+      "duration": 20,
       "lead": 0.5,
       "screen": "Verifier: integrity badges ✓ → acknowledge the flag → Sign (ECDSA + ML-DSA) → stamp, 10,000 t issued",
       "chapter": "Verifier: post-quantum signature, 10,000 t minted"
@@ -69,8 +69,8 @@
     {
       "id": "shipments",
       "kind": "app",
-      "start": 121.24,
-      "duration": 19.96,
+      "start": 119.36,
+      "duration": 18.2,
       "lead": 0.5,
       "screen": "Ship 6,000 t → Hamburg, 4,000 t → Rotterdam; the gauge drains to 0",
       "chapter": "Shipping, and a double-count rejected on-chain"
@@ -78,8 +78,8 @@
     {
       "id": "overship",
       "kind": "app",
-      "start": 141.2,
-      "duration": 11.32,
+      "start": 137.56,
+      "duration": 11.28,
       "lead": 0.5,
       "screen": "Try 2,000 t more → red revert toast (ERC1155InsufficientBalance) + gauge shake",
       "chapter": null
@@ -87,7 +87,7 @@
     {
       "id": "importer",
       "kind": "app",
-      "start": 152.52,
+      "start": 148.84,
       "duration": 11.84,
       "lead": 0.5,
       "screen": "Importer (Hamburg) holds 6,000 t → Surrender for declaration → burned",
@@ -96,7 +96,7 @@
     {
       "id": "passport-pq",
       "kind": "app",
-      "start": 164.36,
+      "start": 160.68,
       "duration": 14.32,
       "lead": 0.5,
       "screen": "Passport card + QR → Verify signature → ✓ Valid, ML-DSA-65, 3,309 B",
@@ -105,17 +105,17 @@
     {
       "id": "passport-cost",
       "kind": "app",
-      "start": 178.68,
+      "start": 175,
       "duration": 22.64,
       "lead": 0.5,
-      "screen": "Supply chain (pig-iron passport consumed), conservation gauge, then cost model: €46,720 saved in 2026, €2,257,600 in 2034",
+      "screen": "Supply chain (pig-iron passport consumed), Conservation gauge, then cost model: €46,720 saved in 2026, €2,257,600 in 2034",
       "chapter": null
     },
     {
       "id": "passport-tamper",
       "kind": "app",
-      "start": 201.32,
-      "duration": 14.12,
+      "start": 197.64,
+      "duration": 13.92,
       "lead": 0.5,
       "screen": "Ledger timeline; drop the original invoice → ✓ Unchanged; drop the tampered copy → ✗ Altered",
       "chapter": null
@@ -123,7 +123,7 @@
     {
       "id": "why",
       "kind": "card",
-      "start": 215.44,
+      "start": 211.56,
       "duration": 7.96,
       "lead": 1,
       "screen": "Why blockchain: four reasons",
@@ -132,7 +132,7 @@
     {
       "id": "architecture",
       "kind": "card",
-      "start": 223.4,
+      "start": 219.52,
       "duration": 7.96,
       "lead": 1,
       "screen": "Architecture: evidence → AI + human → calculator & checks → verifier → contracts → public passport",
@@ -141,7 +141,7 @@
     {
       "id": "outro",
       "kind": "card",
-      "start": 231.36,
+      "start": 227.48,
       "duration": 13.56,
       "lead": 1.5,
       "screen": "Roadmap & outro: pilots in Türkiye and India, cement & fertiliser, COP31; links",
@@ -169,80 +169,80 @@
     },
     {
       "id": "producer-evidence",
-      "start": 39.12,
-      "end": 59.505,
+      "start": 39.16,
+      "end": 59.545,
       "text": "Here's Anatolia Green Steel, a fictional electric-arc mill in İzmir. Its compliance officer loads the month's gas and electricity invoices, production report and meter log. The AI extraction step pulls out every quantity and links each one to the page it came from. She confirms each value. The AI never writes anything on-chain."
     },
     {
       "id": "producer-calc",
-      "start": 62.48,
-      "end": 92.095,
+      "start": 59.895,
+      "end": 89.51,
       "text": "The mill's 1,300 tonnes of pig iron come with their own verified passport from the supplier, so the calculator reads that 1.70 straight from the chain instead of the 1.85 default. Those tonnes are burned when this batch is verified, so no other product can claim them. The result: 0.337 tonnes of CO₂ per tonne of steel. Our anomaly check compares it with the plant's own 12-month history and flags one value for the verifier to review."
     },
     {
       "id": "producer-submit",
-      "start": 92.445,
-      "end": 100.138,
+      "start": 89.86,
+      "end": 97.552,
       "text": "Submitting commits only a salted Merkle root and a report hash to the chain. Competitors see nothing about the process."
     },
     {
       "id": "verifier",
-      "start": 101.44,
-      "end": 117.978,
+      "start": 99.36,
+      "end": 115.898,
       "text": "An accredited verifier, registered on-chain, checks the evidence against those commitments, reviews the flag, and signs twice: with an Ethereum key, and with ML-DSA, a NIST post-quantum signature, because these records must stay valid for years. The contract then mints 10,000 verified tonnes."
     },
     {
       "id": "shipments",
-      "start": 121.24,
-      "end": 127.394,
+      "start": 119.36,
+      "end": 125.514,
       "text": "The mill ships 6,000 tonnes to an importer in Hamburg, and 4,000 to one in Rotterdam."
     },
     {
       "id": "overship",
-      "start": 141.2,
-      "end": 150.046,
+      "start": 137.56,
+      "end": 146.406,
       "text": "Now watch: if it tries to sell 2,000 more 'verified' tonnes, the smart contract rejects it. Double counting isn't discouraged here. It's impossible."
     },
     {
       "id": "importer",
-      "start": 152.52,
-      "end": 160.212,
+      "start": 148.84,
+      "end": 156.532,
       "text": "When the Hamburg importer files its CBAM declaration, it surrenders those tonnes. They're burned, so they can never be reused."
     },
     {
       "id": "passport-pq",
-      "start": 164.36,
-      "end": 178.591,
+      "start": 160.68,
+      "end": 174.911,
       "text": "Anyone can open the passport from the QR code on the shipping documents. It shows who verified the batch, checks the post-quantum signature using chain data alone, and traces the pig iron back to its own passport."
     },
     {
       "id": "passport-cost",
-      "start": 178.941,
-      "end": 201.248,
+      "start": 175.261,
+      "end": 197.568,
       "text": "The pig iron in this steel came with its own verified passport. Those 1,300 tonnes were consumed on-chain, so no other mill can ever claim them. And against the EU default for Turkish hot-rolled steel, this one month's output saves about 47,000 euros this year, rising to 2.3 million euros a year when CBAM is fully phased in."
     },
     {
       "id": "passport-tamper",
-      "start": 201.598,
-      "end": 209.675,
+      "start": 197.918,
+      "end": 205.995,
       "text": "Here's the full trail, block by block. The original invoice matches. Change a single figure in it, and the check fails."
     },
     {
       "id": "why",
-      "start": 215.44,
-      "end": 221.978,
+      "start": 211.56,
+      "end": 218.098,
       "text": "Why blockchain? Producer, verifier and importer are in different countries, and the core risk is a double-spend."
     },
     {
       "id": "architecture",
-      "start": 223.4,
-      "end": 231.477,
+      "start": 219.52,
+      "end": 227.597,
       "text": "Under the hood: AI with a human in the loop, a post-quantum verifier signature, and a contract that conserves every tonne."
     },
     {
       "id": "outro",
-      "start": 231.827,
-      "end": 243.75,
+      "start": 227.947,
+      "end": 239.87,
       "text": "Next: pilots with exporters in Türkiye and India, the same data feeding Türkiye's ETS and India's carbon market, then cement and fertiliser. CarbonPass, for the Carbon Markets and Emissions Transparency track."
     }
   ],
@@ -260,27 +260,27 @@
       "title": "Producer: AI extraction with page citations"
     },
     {
-      "start": 62,
+      "start": 59,
       "title": "Precursor passport, CBAM calculation, anomaly check"
     },
     {
-      "start": 101,
+      "start": 99,
       "title": "Verifier: post-quantum signature, 10,000 t minted"
     },
     {
-      "start": 121,
+      "start": 119,
       "title": "Shipping, and a double-count rejected on-chain"
     },
     {
-      "start": 152,
+      "start": 148,
       "title": "Importer surrenders at the CBAM declaration"
     },
     {
-      "start": 164,
+      "start": 160,
       "title": "Public passport: signature, supply chain, € saved, tamper check"
     },
     {
-      "start": 215,
+      "start": 211,
       "title": "Why blockchain, architecture, roadmap"
     }
   ],
@@ -309,251 +309,251 @@
       "item": "landing",
       "kind": "app",
       "rawStart": 0,
-      "rawEnd": 22.189,
+      "rawEnd": 22.236,
       "speed": 1,
       "wait": null,
       "cutStart": 16.92,
-      "cutEnd": 39.12
+      "cutEnd": 39.16
     },
     {
       "item": "producer-evidence",
       "kind": "app",
-      "rawStart": 22.189,
-      "rawEnd": 34.239,
+      "rawStart": 22.236,
+      "rawEnd": 31.273,
       "speed": 1,
       "wait": null,
-      "cutStart": 39.12,
-      "cutEnd": 51.16
+      "cutStart": 39.16,
+      "cutEnd": 48.2
     },
     {
       "item": "producer-evidence",
       "kind": "app",
-      "rawStart": 34.239,
-      "rawEnd": 44.056,
+      "rawStart": 31.273,
+      "rawEnd": 35.085,
       "speed": 4,
       "wait": "AI extraction",
-      "cutStart": 51.16,
-      "cutEnd": 53.6
+      "cutStart": 48.2,
+      "cutEnd": 49.16
     },
     {
       "item": "producer-evidence",
       "kind": "app",
-      "rawStart": 44.056,
-      "rawEnd": 52.94,
+      "rawStart": 35.085,
+      "rawEnd": 45.581,
       "speed": 1,
       "wait": null,
-      "cutStart": 53.6,
-      "cutEnd": 62.48
+      "cutStart": 49.16,
+      "cutEnd": 59.64
     },
     {
       "item": "producer-calc",
       "kind": "app",
-      "rawStart": 52.94,
-      "rawEnd": 82.656,
+      "rawStart": 45.582,
+      "rawEnd": 75.546,
       "speed": 1,
       "wait": null,
-      "cutStart": 62.48,
-      "cutEnd": 92.2
+      "cutStart": 59.64,
+      "cutEnd": 89.6
     },
     {
       "item": "producer-submit",
       "kind": "app",
-      "rawStart": 82.656,
-      "rawEnd": 86.806,
+      "rawStart": 75.546,
+      "rawEnd": 79.699,
       "speed": 1,
       "wait": null,
-      "cutStart": 92.2,
-      "cutEnd": 96.36
+      "cutStart": 89.6,
+      "cutEnd": 93.76
     },
     {
       "item": "producer-submit",
       "kind": "app",
-      "rawStart": 86.806,
-      "rawEnd": 100.661,
-      "speed": 4,
+      "rawStart": 79.699,
+      "rawEnd": 101.607,
+      "speed": 5.477,
       "wait": "submit batch",
-      "cutStart": 96.36,
-      "cutEnd": 99.84
+      "cutStart": 93.76,
+      "cutEnd": 97.76
     },
     {
       "item": "producer-submit",
       "kind": "app",
-      "rawStart": 100.661,
-      "rawEnd": 102.264,
+      "rawStart": 101.607,
+      "rawEnd": 103.211,
       "speed": 1,
       "wait": null,
-      "cutStart": 99.84,
-      "cutEnd": 101.44
+      "cutStart": 97.76,
+      "cutEnd": 99.36
     },
     {
       "item": "verifier",
       "kind": "app",
-      "rawStart": 102.264,
-      "rawEnd": 114.719,
+      "rawStart": 103.211,
+      "rawEnd": 115.85,
       "speed": 1,
       "wait": null,
-      "cutStart": 101.44,
-      "cutEnd": 113.88
+      "cutStart": 99.36,
+      "cutEnd": 112
     },
     {
       "item": "verifier",
       "kind": "app",
-      "rawStart": 114.719,
-      "rawEnd": 124.537,
+      "rawStart": 115.85,
+      "rawEnd": 125.671,
       "speed": 4,
       "wait": "attest + mint",
-      "cutStart": 113.88,
-      "cutEnd": 116.32
+      "cutStart": 112,
+      "cutEnd": 114.44
     },
     {
       "item": "verifier",
       "kind": "app",
-      "rawStart": 124.537,
-      "rawEnd": 129.453,
+      "rawStart": 125.671,
+      "rawEnd": 130.582,
       "speed": 1,
       "wait": null,
-      "cutStart": 116.32,
-      "cutEnd": 121.24
+      "cutStart": 114.44,
+      "cutEnd": 119.36
     },
     {
       "item": "shipments",
       "kind": "app",
-      "rawStart": 129.453,
-      "rawEnd": 135.42,
+      "rawStart": 130.582,
+      "rawEnd": 136.584,
       "speed": 1,
       "wait": null,
-      "cutStart": 121.24,
-      "cutEnd": 127.2
+      "cutStart": 119.36,
+      "cutEnd": 125.36
     },
     {
       "item": "shipments",
       "kind": "app",
-      "rawStart": 135.42,
-      "rawEnd": 168.352,
-      "speed": 8.233000000000004,
+      "rawStart": 136.584,
+      "rawEnd": 149.427,
+      "speed": 4,
       "wait": "ship 6,000 t → Hamburg",
-      "cutStart": 127.2,
-      "cutEnd": 131.2
+      "cutStart": 125.36,
+      "cutEnd": 128.56
     },
     {
       "item": "shipments",
       "kind": "app",
-      "rawStart": 168.352,
-      "rawEnd": 173.135,
+      "rawStart": 149.427,
+      "rawEnd": 154.214,
       "speed": 1,
       "wait": null,
-      "cutStart": 131.2,
-      "cutEnd": 136
+      "cutStart": 128.56,
+      "cutEnd": 133.36
     },
     {
       "item": "shipments",
       "kind": "app",
-      "rawStart": 173.135,
-      "rawEnd": 185.973,
+      "rawStart": 154.214,
+      "rawEnd": 163.039,
       "speed": 4,
       "wait": "ship 4,000 t → Rotterdam",
-      "cutStart": 136,
-      "cutEnd": 139.2
+      "cutStart": 133.36,
+      "cutEnd": 135.56
     },
     {
       "item": "shipments",
       "kind": "app",
-      "rawStart": 185.973,
-      "rawEnd": 187.976,
+      "rawStart": 163.039,
+      "rawEnd": 165.041,
       "speed": 1,
       "wait": null,
-      "cutStart": 139.2,
-      "cutEnd": 141.2
+      "cutStart": 135.56,
+      "cutEnd": 137.56
     },
     {
       "item": "overship",
       "kind": "app",
-      "rawStart": 187.976,
-      "rawEnd": 191.837,
+      "rawStart": 165.041,
+      "rawEnd": 168.899,
       "speed": 1,
       "wait": null,
-      "cutStart": 141.2,
-      "cutEnd": 145.08
+      "cutStart": 137.56,
+      "cutEnd": 141.4
     },
     {
       "item": "overship",
       "kind": "app",
-      "rawStart": 191.837,
-      "rawEnd": 196.644,
+      "rawStart": 168.899,
+      "rawEnd": 173.708,
       "speed": 4,
       "wait": "over-ship 2,000 t (reverts)",
-      "cutStart": 145.08,
-      "cutEnd": 146.28
+      "cutStart": 141.4,
+      "cutEnd": 142.6
     },
     {
       "item": "overship",
       "kind": "app",
-      "rawStart": 196.644,
-      "rawEnd": 202.866,
+      "rawStart": 173.708,
+      "rawEnd": 179.933,
       "speed": 1,
       "wait": null,
-      "cutStart": 146.28,
-      "cutEnd": 152.52
+      "cutStart": 142.6,
+      "cutEnd": 148.84
     },
     {
       "item": "importer",
       "kind": "app",
-      "rawStart": 202.867,
-      "rawEnd": 208.249,
+      "rawStart": 179.933,
+      "rawEnd": 185.316,
       "speed": 1,
       "wait": null,
-      "cutStart": 152.52,
-      "cutEnd": 157.92
+      "cutStart": 148.84,
+      "cutEnd": 154.24
     },
     {
       "item": "importer",
       "kind": "app",
-      "rawStart": 208.249,
-      "rawEnd": 221.572,
+      "rawStart": 185.316,
+      "rawEnd": 198.639,
       "speed": 4,
       "wait": "surrender (burn)",
-      "cutStart": 157.92,
-      "cutEnd": 161.24
+      "cutStart": 154.24,
+      "cutEnd": 157.56
     },
     {
       "item": "importer",
       "kind": "app",
-      "rawStart": 221.572,
-      "rawEnd": 224.682,
+      "rawStart": 198.639,
+      "rawEnd": 201.76,
       "speed": 1,
       "wait": null,
-      "cutStart": 161.24,
-      "cutEnd": 164.36
+      "cutStart": 157.56,
+      "cutEnd": 160.68
     },
     {
       "item": "passport-pq",
       "kind": "app",
-      "rawStart": 224.682,
-      "rawEnd": 239.012,
+      "rawStart": 201.761,
+      "rawEnd": 216.093,
       "speed": 1,
       "wait": null,
-      "cutStart": 164.36,
-      "cutEnd": 178.68
+      "cutStart": 160.68,
+      "cutEnd": 175
     },
     {
       "item": "passport-cost",
       "kind": "app",
-      "rawStart": 239.012,
-      "rawEnd": 261.671,
+      "rawStart": 216.094,
+      "rawEnd": 238.751,
       "speed": 1,
       "wait": null,
-      "cutStart": 178.68,
-      "cutEnd": 201.32
+      "cutStart": 175,
+      "cutEnd": 197.64
     },
     {
       "item": "passport-tamper",
       "kind": "app",
-      "rawStart": 261.671,
-      "rawEnd": 275.802,
+      "rawStart": 238.751,
+      "rawEnd": 252.68,
       "speed": 1,
       "wait": null,
-      "cutStart": 201.32,
-      "cutEnd": 215.44
+      "cutStart": 197.64,
+      "cutEnd": 211.56
     },
     {
       "item": "why",
@@ -562,8 +562,8 @@
       "rawEnd": null,
       "speed": 1,
       "wait": null,
-      "cutStart": 215.44,
-      "cutEnd": 223.4
+      "cutStart": 211.56,
+      "cutEnd": 219.52
     },
     {
       "item": "architecture",
@@ -572,8 +572,8 @@
       "rawEnd": null,
       "speed": 1,
       "wait": null,
-      "cutStart": 223.4,
-      "cutEnd": 231.36
+      "cutStart": 219.52,
+      "cutEnd": 227.48
     },
     {
       "item": "outro",
@@ -582,25 +582,25 @@
       "rawEnd": null,
       "speed": 1,
       "wait": null,
-      "cutStart": 231.36,
-      "cutEnd": 244.92
+      "cutStart": 227.48,
+      "cutEnd": 241.04
     }
   ],
   "rawBeats": [
     {
       "id": "landing",
       "start": 0,
-      "end": 22.189,
+      "end": 22.236,
       "waits": []
     },
     {
       "id": "producer-evidence",
-      "start": 22.189,
-      "end": 52.94,
+      "start": 22.236,
+      "end": 45.581,
       "waits": [
         {
-          "start": 34.239,
-          "end": 44.056,
+          "start": 31.273,
+          "end": 35.085,
           "label": "AI extraction",
           "kind": "ai",
           "beat": "producer-evidence"
@@ -609,18 +609,18 @@
     },
     {
       "id": "producer-calc",
-      "start": 52.94,
-      "end": 82.656,
+      "start": 45.582,
+      "end": 75.546,
       "waits": []
     },
     {
       "id": "producer-submit",
-      "start": 82.656,
-      "end": 102.264,
+      "start": 75.546,
+      "end": 103.211,
       "waits": [
         {
-          "start": 86.806,
-          "end": 100.661,
+          "start": 79.699,
+          "end": 101.607,
           "label": "submit batch",
           "kind": "chain",
           "beat": "producer-submit"
@@ -629,12 +629,12 @@
     },
     {
       "id": "verifier",
-      "start": 102.264,
-      "end": 129.453,
+      "start": 103.211,
+      "end": 130.582,
       "waits": [
         {
-          "start": 114.719,
-          "end": 124.537,
+          "start": 115.85,
+          "end": 125.671,
           "label": "attest + mint",
           "kind": "chain",
           "beat": "verifier"
@@ -643,19 +643,19 @@
     },
     {
       "id": "shipments",
-      "start": 129.453,
-      "end": 187.976,
+      "start": 130.582,
+      "end": 165.041,
       "waits": [
         {
-          "start": 135.42,
-          "end": 168.352,
+          "start": 136.584,
+          "end": 149.427,
           "label": "ship 6,000 t → Hamburg",
           "kind": "chain",
           "beat": "shipments"
         },
         {
-          "start": 173.135,
-          "end": 185.973,
+          "start": 154.214,
+          "end": 163.039,
           "label": "ship 4,000 t → Rotterdam",
           "kind": "chain",
           "beat": "shipments"
@@ -664,12 +664,12 @@
     },
     {
       "id": "overship",
-      "start": 187.976,
-      "end": 202.866,
+      "start": 165.041,
+      "end": 179.933,
       "waits": [
         {
-          "start": 191.837,
-          "end": 196.644,
+          "start": 168.899,
+          "end": 173.708,
           "label": "over-ship 2,000 t (reverts)",
           "kind": "chain",
           "beat": "overship"
@@ -678,12 +678,12 @@
     },
     {
       "id": "importer",
-      "start": 202.867,
-      "end": 224.682,
+      "start": 179.933,
+      "end": 201.76,
       "waits": [
         {
-          "start": 208.249,
-          "end": 221.572,
+          "start": 185.316,
+          "end": 198.639,
           "label": "surrender (burn)",
           "kind": "chain",
           "beat": "importer"
@@ -692,12 +692,12 @@
     },
     {
       "id": "passport-pq",
-      "start": 224.682,
-      "end": 239.012,
+      "start": 201.761,
+      "end": 216.093,
       "waits": [
         {
-          "start": 230.168,
-          "end": 230.951,
+          "start": 207.183,
+          "end": 207.972,
           "label": "verify ML-DSA signature",
           "kind": "read",
           "beat": "passport-pq"
@@ -706,14 +706,14 @@
     },
     {
       "id": "passport-cost",
-      "start": 239.012,
-      "end": 261.671,
+      "start": 216.094,
+      "end": 238.751,
       "waits": []
     },
     {
       "id": "passport-tamper",
-      "start": 261.671,
-      "end": 275.802,
+      "start": 238.751,
+      "end": 252.68,
       "waits": []
     }
   ]

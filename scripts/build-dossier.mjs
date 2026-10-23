@@ -95,8 +95,8 @@ const html = `<!doctype html>
     <table>
       <tr><td>Live demo</td><td>https://carbonpass.vercel.app (Ethereum Sepolia testnet)</td></tr>
       <tr><td>Source code</td><td>https://github.com/johnbosco-j/carbonpass</td></tr>
-      <tr><td>CarbonPassport</td><td><code>0xcA4e491c54550b242f90f1c97a1C7612acf7b237</code> (Sepolia, source verified on Sourcify)</td></tr>
-      <tr><td>VerifierRegistry</td><td><code>0xDB123272620e734a8feEfc776aC0a40E6Baabc69</code></td></tr>
+      <tr><td>CarbonPassport</td><td><code>0x2eD59Df13de482318Fa1dc61aAE5015cf7bE6a22</code> (Sepolia, source verified on Sourcify)</td></tr>
+      <tr><td>VerifierRegistry</td><td><code>0x52ca9d789B4A7819FF453b887BfcE558b340Ba54</code></td></tr>
       <tr><td>Stack</td><td>Solidity / OpenZeppelin (ERC-1155), Hardhat, Next.js, viem, Google Gemini, ML-DSA-65 (FIPS 204), Merkle commitments</td></tr>
     </table>
     <ol class="toc">

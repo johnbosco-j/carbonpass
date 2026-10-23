@@ -9,7 +9,7 @@
 |---|---|
 | Demo video | _TBD (YouTube link)_ |
 | **Live demo** | **https://carbonpass.vercel.app** (Ethereum Sepolia testnet, no wallet needed) |
-| Contracts | [CarbonPassport](https://sepolia.etherscan.io/address/0xcA4e491c54550b242f90f1c97a1C7612acf7b237) · [VerifierRegistry](https://sepolia.etherscan.io/address/0xDB123272620e734a8feEfc776aC0a40E6Baabc69), source verified on [Sourcify](https://repo.sourcify.dev/11155111/0xcA4e491c54550b242f90f1c97a1C7612acf7b237) |
+| Contracts | [CarbonPassport](https://sepolia.etherscan.io/address/0x2eD59Df13de482318Fa1dc61aAE5015cf7bE6a22) · [VerifierRegistry](https://sepolia.etherscan.io/address/0x52ca9d789B4A7819FF453b887BfcE558b340Ba54), source verified on [Sourcify](https://repo.sourcify.dev/11155111/0x2eD59Df13de482318Fa1dc61aAE5015cf7bE6a22) |
 | Dossier (PDF) | [`docs/CarbonPass-Dossier.pdf`](docs/CarbonPass-Dossier.pdf): problem, architecture, security, impact, roadmap |
 
 ---
@@ -101,8 +101,8 @@ pnpm dev                      # http://localhost:3000
 
 | Contract | Network | Address |
 |---|---|---|
-| VerifierRegistry | Sepolia (11155111) | [`0xDB123272620e734a8feEfc776aC0a40E6Baabc69`](https://sepolia.etherscan.io/address/0xDB123272620e734a8feEfc776aC0a40E6Baabc69) |
-| CarbonPassport | Sepolia (11155111) | [`0xcA4e491c54550b242f90f1c97a1C7612acf7b237`](https://sepolia.etherscan.io/address/0xcA4e491c54550b242f90f1c97a1C7612acf7b237) |
+| VerifierRegistry | Sepolia (11155111) | [`0x52ca9d789B4A7819FF453b887BfcE558b340Ba54`](https://sepolia.etherscan.io/address/0x52ca9d789B4A7819FF453b887BfcE558b340Ba54) |
+| CarbonPassport | Sepolia (11155111) | [`0x2eD59Df13de482318Fa1dc61aAE5015cf7bE6a22`](https://sepolia.etherscan.io/address/0x2eD59Df13de482318Fa1dc61aAE5015cf7bE6a22) |
 
 Both contracts are verified on Sourcify (exact match). Every attestation's ML-DSA-65 signature and the verifier's public key are in the event logs, so anyone can re-verify them from chain data alone.
 

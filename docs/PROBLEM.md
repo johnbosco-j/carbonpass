@@ -36,12 +36,13 @@ The same data gap blocks **Türkiye's ETS pilot** (monitoring, reporting and ver
 3. **Check (AI).** Robust statistical anomaly detection compares the month against the plant's own history and physical bounds, e.g. "intensity 38% below the 12-month median → verifier must review".
 4. **Commit (blockchain).** The evidence is hashed into a salted Merkle tree. Only the root and the report hash go on-chain, so process data stays confidential.
 5. **Attest (blockchain + cryptography).** An accredited verifier from the on-chain registry signs. This is a hybrid signature: the ECDSA transaction plus a **post-quantum ML-DSA** signature over the report, so it stays valid over multi-year record-keeping obligations. The contract then mints the batch: N tonnes at X kgCO₂e/t, as ERC-1155 tokens.
-6. **Ship and surrender (blockchain).** Tonnes move to importers with shipments. When an importer files its CBAM declaration, it **burns** those tonnes. The contract makes double counting impossible:
+6. **Supply chain (blockchain).** Precursors carry their own passports. The mill's pig iron comes from a supplier's verified batch, and at issuance the contract **consumes (burns) those precursor tonnes** into the steel batch. It refuses a steel intensity lower than its own inputs' emissions. Embedded emissions propagate across companies on-chain, and precursor tonnes can't be claimed twice.
+7. **Ship and surrender (blockchain).** Tonnes move to importers with shipments. When an importer files its CBAM declaration, it **burns** those tonnes. The contract makes double counting impossible:
    - you can't ship more tonnes than were verified
    - you can't certify an overlapping period twice
    - you can't reuse a report
    - you can't surrender tonnes you don't hold
-7. **Prove.** A public passport page (from a QR code on the shipping documents) shows the verified intensity, the verifier, the full on-chain history, a **tamper check** for any evidence file, and the **cost saved versus default values**.
+8. **Prove.** A public passport page (from a QR code on the shipping documents) shows the verified intensity, the verifier, the full on-chain history, a **tamper check** for any evidence file, and the **cost saved versus default values**.
 
 ## Why blockchain is necessary here
 
