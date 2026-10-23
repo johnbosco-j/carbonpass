@@ -1,14 +1,17 @@
 "use client";
 
 import { useMemo, useState, type ReactNode } from "react";
-import { calculate, defaultValue, fmtEur, fmtNum, type Country } from "@/lib/cbam";
+import { calculate, defaultValue, fmtEur, fmtNum, type Country, type PrecursorLink } from "@/lib/cbam";
 import { ETS_PRICE, MARGINAL_CUT, fmtEurShort, simulate, type AbatementTiming, type Scenario } from "@/lib/impact";
-import { CN_CODE, PLANT } from "@/lib/demo";
+import { CN_CODE, PLANT, SUPPLIER } from "@/lib/demo";
 import { Card, Metric, cx } from "../ui";
 import { AvoidedChart, BillChart, MarginalChart } from "./charts";
 
+/** The supplier's verified pig-iron passport, linked as in the demo (the seed mints it with this intensity). */
+const SUPPLIER_PASSPORT: PrecursorLink = { batchId: 0, directKgPerT: PLANT.supplier.batch.directKgPerT, supplier: `${SUPPLIER.name} (fictional)` };
+
 /** The demo mill's verified intensity, computed from its sample evidence (not typed in). */
-const DEMO_SEE = calculate(PLANT.demoMonth, "TR").seeDirect;
+const DEMO_SEE = calculate(PLANT.demoMonth, "TR", SUPPLIER_PASSPORT).seeDirect;
 
 const INITIAL: Scenario = {
   mills: 5,
