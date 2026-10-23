@@ -11,6 +11,7 @@ const LINKS = [
   { href: "/shipments", label: "Shipments", step: "3" },
   { href: "/importer", label: "Importer", step: "4" },
   { href: "/passport", label: "Passports", step: "5" },
+  { href: "/impact", label: "Impact", step: "" },
 ];
 
 export function TopBar() {
@@ -35,7 +36,7 @@ export function TopBar() {
                   active ? "bg-ink text-paper" : "text-ink-muted hover:bg-sunken hover:text-ink",
                 )}
               >
-                <span className="mr-1.5 font-mono text-[0.7rem] opacity-70">{l.step}</span>
+                {l.step && <span className="mr-1.5 font-mono text-[0.7rem] opacity-70">{l.step}</span>}
                 {l.label}
               </Link>
             );
