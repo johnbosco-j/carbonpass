@@ -283,10 +283,13 @@ export const TIMELINE = [
     id: "passport-cost",
     n: "09",
     label: "Public passport · value",
-    screen: "Conservation gauge, then cost model: €46,340 saved in 2026, €2.24M in 2034",
+    screen: "Supply chain (pig-iron passport consumed), conservation gauge, then cost model: €46,340 saved in 2026, €2.24M in 2034",
     narration:
-      "Against the EU default for Turkish hot-rolled steel, this one month's output saves 46,000 euros this year, rising to 2.2 million when CBAM is fully phased in.",
+      "The pig iron in this steel came with its own verified passport. Those 1,300 tonnes were consumed on-chain, so no other mill can ever claim them. And against the EU default for Turkish hot-rolled steel, this one month's output saves 46,000 euros this year, rising to 2.2 million when CBAM is fully phased in.",
     async run(d) {
+      await d.scrollTo({ role: "heading", level: 2, name: /Supply chain/i }, { at: 0 });
+      await d.caption("Supply chain, on-chain: <b>1,300 t of verified pig iron</b> (its own passport) consumed into this batch and burned, so no other mill can claim it.");
+      await d.read(3400);
       await d.scrollTo({ role: "heading", level: 2, name: /Conservation of verified tonnes/i }, { at: 0 });
       await d.caption("Conservation, enforced by the contract: supply + surrendered = issued tonnes.");
       await d.read(2200);
