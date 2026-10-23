@@ -33,7 +33,7 @@ export function CostModel({ tonnes, see, cnCode, country }: { tonnes: number; se
         </div>
       </div>
 
-      <svg viewBox={`0 0 ${W} ${H + 28}`} className="w-full" role="img" aria-label="CBAM cost per year on default values versus verified data">
+      <svg viewBox={`0 0 ${W} ${H + 28}`} className="max-h-72 w-full" role="img" aria-label="CBAM cost per year on default values versus verified data">
         {rows.map((r, i) => {
           const x = i * bw;
           const hd = max ? (r.defaultCost / max) * H : 0;

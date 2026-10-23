@@ -79,7 +79,8 @@ function decodeRevert(err: unknown): RevertInfo | null {
   if (!(err instanceof BaseError)) return null;
   const revert = err.walk((e) => e instanceof ContractFunctionRevertedError);
   if (revert instanceof ContractFunctionRevertedError && revert.data) {
-    return { name: revert.data.errorName, args: (revert.data.args ?? []) as unknown[], message: revert.shortMessage };
+    const args = ((revert.data.args ?? []) as unknown[]).map((a) => (typeof a === "bigint" ? a.toString() : a));
+    return { name: revert.data.errorName, args, message: revert.shortMessage };
   }
   return null;
 }

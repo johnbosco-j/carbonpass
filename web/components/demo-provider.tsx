@@ -45,7 +45,9 @@ const fmt = (x: unknown) => Number(x).toLocaleString("en-US");
 export function explainRevert(r: { name: string; args: unknown[] }): string {
   switch (r.name) {
     case "ERC1155InsufficientBalance":
-      return `${fmt(r.args[2])} t requested, only ${fmt(r.args[1])} t verified tonnes remaining. Double counting blocked.`;
+      return Number(r.args[1]) === 0
+        ? `${fmt(r.args[2])} t requested, but every verified tonne of this batch is already allocated. Double counting blocked.`
+        : `${fmt(r.args[2])} t requested, only ${fmt(r.args[1])} verified tonnes remaining. Double counting blocked.`;
     case "PeriodOverlap":
       return "This reporting period is already certified for this installation and product.";
     case "ReportAlreadyUsed":
