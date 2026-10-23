@@ -48,3 +48,26 @@ Every page is a client component using `useDemo()` from `web/components/demo-pro
 - [ ] The passport "Verify signature" button shows ✓ Valid. The tampered invoice shows ✗ Altered.
 - [ ] Phone width (375 px) has no horizontal scroll. Light and dark mode are both readable.
 - [ ] "fictional demo entity" labels are still visible.
+
+## Hero (landing page)
+
+The landing page (`web/app/page.tsx`) opens with a pinned scroll story in `web/components/hero/`. It has four beats: the carbon price since 1 Jan 2026, default 2.43 vs verified 0.356 tCO₂e/t, the double-counting revert, and a "Run the demo" CTA. The numbers come from `data/factors.json` and `plant.json` through `lib/cbam.ts` (`hero/data.ts`), so they track the calculator. Nothing in `lib/` changed.
+
+- **Background layer:** a real-time three.js scene (`hero/scene/`). A molten coil crosses a stylised EU border, its CO₂ cloud thins to the verified share, and the particles condense into the verification stamp on a passport card. It is loaded with `next/dynamic` (`ssr: false`), DPR is capped at 1.5, and it stops rendering when off-screen or when the tab is hidden.
+- **Reduced motion or no WebGL:** a static hero over `public/hero/poster.webp`, with no canvas and no three.js download.
+- **Tuning:** beat windows and key moments live in `hero/timeline.ts`. Camera keyframes are at the top of `hero/scene/create-scene.ts`.
+
+### Dropping in a Google Flow clip
+
+1. Export the clip from Flow as MP4 (16:9, 5–10 s works well; keep the subject right of centre because the copy sits on the left).
+2. From the repo root, run:
+   ```bash
+   scripts/flow-to-frames.sh ~/Downloads/flow-intro.mp4
+   ```
+   Optional arguments are `[frames=120] [width=1600] [quality=70]`. This writes `web/public/hero/frames/frame_001.webp …` plus `manifest.json` (a 120-frame clip is a few MB).
+3. That's it. When `manifest.json` exists, `page.tsx` swaps the 3D scene for `<FrameSequence>`, which scrubs the frames with scroll (Apple-style). The copy, HUD and CTA stay the same, and the first frame becomes the reduced-motion poster.
+4. To go back to the 3D scene, run `rm -rf web/public/hero/frames`.
+
+The script needs `ffmpeg` and `ffprobe`. If your ffmpeg build lacks the libwebp encoder, it encodes through `cwebp` (`brew install webp`). If ffmpeg won't start after a `brew upgrade` (a missing `libx265…dylib`), run `brew reinstall ffmpeg`.
+
+Before committing frames, check the folder size. Keep it under ~6 MB, or lower the frame count and quality.
