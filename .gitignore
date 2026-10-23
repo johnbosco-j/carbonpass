@@ -13,3 +13,4 @@ contracts/typechain-types/
 *.log
 .vercel
 .claude/
+docs/dossier.html
