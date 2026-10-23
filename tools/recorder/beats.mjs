@@ -8,6 +8,7 @@
 //   narration         string, or (ctx) => string; read by the voiceover artist
 //   params            cards only: (ctx) => values shown on the card (e.g. the verified intensity just recorded)
 //   lead              seconds the previous narration may run into this item (default 0.5)
+//   chapter           starts a YouTube chapter here (items without one continue the previous chapter)
 //   card: file        HTML in cards/, duration (seconds) or fit: { min, max } to size it to its narration
 //   app:  run(d, ctx) async function using the Director API
 
@@ -75,6 +76,7 @@ export const TIMELINE = [
   {
     kind: "card",
     id: "title",
+    chapter: "The problem: clean steel priced like dirty steel",
     file: "title.html",
     duration: 7,
     screen: "Title card: CarbonPass, verified carbon passports for the EU border",
@@ -95,6 +97,7 @@ export const TIMELINE = [
   {
     kind: "app",
     id: "landing",
+    chapter: "CarbonPass in four steps",
     n: "00",
     label: "CarbonPass",
     lead: 8,
@@ -129,6 +132,7 @@ export const TIMELINE = [
   {
     kind: "app",
     id: "producer-evidence",
+    chapter: "Producer: AI extraction with page citations",
     n: "01",
     label: "Producer · evidence",
     screen: "Producer: load the 4 sample PDFs → AI extraction table with page citations → confirm all",
@@ -167,6 +171,7 @@ export const TIMELINE = [
   {
     kind: "app",
     id: "producer-calc",
+    chapter: "Precursor passport, CBAM calculation, anomaly check",
     n: "02",
     label: "Producer · calculation & checks",
     screen: (ctx) =>
@@ -232,6 +237,7 @@ export const TIMELINE = [
   {
     kind: "app",
     id: "verifier",
+    chapter: "Verifier: post-quantum signature, 10,000 t minted",
     n: "04",
     label: "Verifier · sign & issue",
     screen: "Verifier: integrity badges ✓ → acknowledge the flag → Sign (ECDSA + ML-DSA) → stamp, 10,000 t issued",
@@ -263,6 +269,7 @@ export const TIMELINE = [
   {
     kind: "app",
     id: "shipments",
+    chapter: "Shipping, and a double-count rejected on-chain",
     n: "05",
     label: "Shipments",
     screen: "Ship 6,000 t → Hamburg, 4,000 t → Rotterdam; the gauge drains to 0",
@@ -309,6 +316,7 @@ export const TIMELINE = [
   {
     kind: "app",
     id: "importer",
+    chapter: "Importer surrenders at the CBAM declaration",
     n: "07",
     label: "Importer · CBAM declaration",
     screen: "Importer (Hamburg) holds 6,000 t → Surrender for declaration → burned",
@@ -330,6 +338,7 @@ export const TIMELINE = [
   {
     kind: "app",
     id: "passport-pq",
+    chapter: "Public passport: signature, supply chain, € saved, tamper check",
     n: "08",
     label: "Public passport",
     screen: "Passport card + QR → Verify signature → ✓ Valid, ML-DSA-65, 3,309 B",
@@ -417,6 +426,7 @@ export const TIMELINE = [
   {
     kind: "card",
     id: "why",
+    chapter: "Why blockchain, architecture, roadmap",
     file: "why.html",
     duration: 8,
     lead: 1,

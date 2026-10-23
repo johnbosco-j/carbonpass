@@ -68,6 +68,7 @@ const outDir = path.resolve(a.out);
 const zoom = Number(a.zoom);
 const o = { ...DEFAULTS, speed: Number(a.speed), maxWaitOut: Number(a["max-wait"]), minWait: Number(a["min-wait"]), wps: Number(a.wps) };
 const log = (...m) => console.log(...m);
+let network = null;
 fs.mkdirSync(work, { recursive: true });
 
 // ------------------------------------------------------------------ preflight
@@ -83,6 +84,7 @@ async function preflight() {
   const lastMonth = last ? new Date(last * 1000).toISOString().slice(0, 7) : "none";
   log(`  ${state.network} (chain ${state.chainId}), block #${state.latestBlock}, ${state.batches.length} batches, last certified month ${lastMonth}`);
   if (lastMonth !== "2026-06") log("  ⚠ The narration assumes July 2026 is the next free month (fresh deploy + seed). Recording anyway.");
+  network = state.network;
   return state;
 }
 
@@ -152,7 +154,7 @@ async function recordApp(browser) {
     log(`  ✓ ${it.id.padEnd(18)} raw ${(end - start).toFixed(1).padStart(5)} s → cut ${cutD.toFixed(1).padStart(5)} s${hold > 0 ? ` (held ${hold.toFixed(1)} s for narration)` : ""}${waits ? ` · ${waits}` : ""}`);
   }
   const fin = await rec.finish();
-  const recording = { base, zoom, recordedAt: new Date().toISOString(), video, duration: fin.duration, offset: fin.offset, beats, ctx: d.ctx, events: d.events, consoleErrors: consoleLog };
+  const recording = { base, network, zoom, recordedAt: new Date().toISOString(), video, duration: fin.duration, offset: fin.offset, beats, ctx: d.ctx, events: d.events, consoleErrors: consoleLog };
   fs.writeFileSync(path.join(work, "recording.json"), JSON.stringify(recording, null, 2));
   if (consoleLog.length) fs.writeFileSync(path.join(work, "console-errors.log"), consoleLog.join("\n") + "\n");
   log(`  raw video ${rel(ROOT, video)} (${fin.duration.toFixed(1)} s, ${fin.frames} frames, clock drift ${fin.offset.toFixed(2)} s)`);
