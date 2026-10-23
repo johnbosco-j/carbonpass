@@ -1,0 +1,18 @@
+{
+  "file": "electricity_invoice_2026-07.pdf",
+  "kind": "electricity_invoice",
+  "values": [
+    {
+      "key": "electricity_mwh",
+      "label": "Grid electricity",
+      "value": 4630.4,
+      "unit": "MWh",
+      "confidence": 0.99,
+      "source": {
+        "file": "electricity_invoice_2026-07.pdf",
+        "page": 1,
+        "quote": "Active energy consumption: 4,630.4 MWh"
+      }
+    }
+  ]
+}

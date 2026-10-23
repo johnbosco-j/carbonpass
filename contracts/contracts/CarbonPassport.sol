@@ -90,7 +90,8 @@ contract CarbonPassport is ERC1155Supply, AccessControl {
         bytes32 dataRoot,
         bytes32 reportHash
     );
-    event BatchIssued(uint256 indexed batchId, address indexed verifier, bytes32 pqSignatureHash);
+    /// @dev The full ML-DSA-65 signature is emitted so the post-quantum attestation is verifiable from chain data alone.
+    event BatchIssued(uint256 indexed batchId, address indexed verifier, bytes32 pqSignatureHash, bytes pqSignature);
     event BatchRejected(uint256 indexed batchId, address indexed verifier, bytes32 reasonHash);
     event BatchRevoked(uint256 indexed batchId, address indexed by, bytes32 reasonHash);
     event Shipped(uint256 indexed batchId, address indexed from, address indexed to, uint64 tonnes, bytes32 shipmentRef);
@@ -170,7 +171,9 @@ contract CarbonPassport is ERC1155Supply, AccessControl {
         );
     }
 
-    function attestAndIssue(uint256 batchId, bytes32 pqSignatureHash) external {
+    /// @param pqSignature ML-DSA-65 signature (context "CarbonPass/v1") over
+    ///        abi.encode(chainId, address(this), batchId, dataRoot, reportHash). Verified off-chain.
+    function attestAndIssue(uint256 batchId, bytes calldata pqSignature) external {
         Batch storage b = _pendingBatch(batchId);
         _requireIndependentVerifier(b);
         bytes32 key = _periodKey(b.installationId, b.cnCode);
@@ -178,13 +181,14 @@ contract CarbonPassport is ERC1155Supply, AccessControl {
         if (b.periodStart <= lastCertifiedEnd[key]) revert PeriodOverlap(b.periodStart, lastCertifiedEnd[key]);
 
         lastCertifiedEnd[key] = b.periodEnd;
+        bytes32 pqSignatureHash = keccak256(pqSignature);
         b.verifier = msg.sender;
         b.pqSignatureHash = pqSignatureHash;
         b.issuedAt = uint64(block.timestamp);
         b.status = Status.Issued;
 
         _mint(b.producer, batchId, b.tonnes, "");
-        emit BatchIssued(batchId, msg.sender, pqSignatureHash);
+        emit BatchIssued(batchId, msg.sender, pqSignatureHash, pqSignature);
     }
 
     function rejectBatch(uint256 batchId, bytes32 reasonHash) external {

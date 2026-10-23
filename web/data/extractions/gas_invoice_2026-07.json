@@ -1,0 +1,18 @@
+{
+  "file": "gas_invoice_2026-07.pdf",
+  "kind": "gas_invoice",
+  "values": [
+    {
+      "key": "natural_gas_gj",
+      "label": "Natural gas (NCV)",
+      "value": 13200,
+      "unit": "GJ",
+      "confidence": 0.98,
+      "source": {
+        "file": "gas_invoice_2026-07.pdf",
+        "page": 1,
+        "quote": "Energy delivered (NCV basis): 13,200.0 GJ"
+      }
+    }
+  ]
+}

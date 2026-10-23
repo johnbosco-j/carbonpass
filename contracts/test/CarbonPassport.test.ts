@@ -3,6 +3,8 @@ import { ethers } from "hardhat";
 import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 import { StandardMerkleTree } from "@openzeppelin/merkle-tree";
 
+const PQ_PK = ethers.hexlify(ethers.randomBytes(1952));
+const PQ_SIG = ethers.hexlify(ethers.randomBytes(3309));
 const STATUS = { None: 0n, Pending: 1n, Issued: 2n, Rejected: 3n, Revoked: 4n };
 const CN_HRC = 72083900;
 const INSTALLATION = ethers.id("TR-INST-0001");
@@ -48,7 +50,7 @@ async function deployFixture() {
     "https://carbonpass.example/api/metadata/{id}",
     admin.address,
   ]);
-  await registry.accredit(verifier.address, "EuroVerify (fictional)", ethers.id("ACC-REF-1"), ethers.id("pq-pk"));
+  await registry.accredit(verifier.address, "EuroVerify (fictional)", ethers.id("ACC-REF-1"), PQ_PK);
   await passport.registerInstallation(INSTALLATION, producer.address, "Anatolia Green Steel (fictional)");
   return { registry, passport, admin, producer, verifier, importerA, importerB, outsider };
 }
@@ -56,7 +58,7 @@ async function deployFixture() {
 async function issuedFixture() {
   const f = await deployFixture();
   await f.passport.connect(f.producer).submitBatch(batchInput());
-  await f.passport.connect(f.verifier).attestAndIssue(1, ethers.id("pq-sig"));
+  await f.passport.connect(f.verifier).attestAndIssue(1, PQ_SIG);
   return f;
 }
 
@@ -70,12 +72,13 @@ describe("CarbonPassport", () => {
       expect((await passport.getBatch(1)).status).to.equal(STATUS.Pending);
       expect(await passport.balanceOf(producer.address, 1)).to.equal(0);
 
-      await expect(passport.connect(verifier).attestAndIssue(1, ethers.id("pq-sig")))
+      await expect(passport.connect(verifier).attestAndIssue(1, PQ_SIG))
         .to.emit(passport, "BatchIssued")
-        .withArgs(1, verifier.address, ethers.id("pq-sig"));
+        .withArgs(1, verifier.address, ethers.keccak256(PQ_SIG), PQ_SIG);
       const b = await passport.getBatch(1);
       expect(b.status).to.equal(STATUS.Issued);
       expect(b.verifier).to.equal(verifier.address);
+      expect(b.pqSignatureHash).to.equal(ethers.keccak256(PQ_SIG));
       expect(await passport.balanceOf(producer.address, 1)).to.equal(10_000);
       expect(await passport["totalSupply(uint256)"](1)).to.equal(10_000);
     });
@@ -102,16 +105,16 @@ describe("CarbonPassport", () => {
     it("rejects attestations from non-accredited addresses", async () => {
       const { passport, producer, outsider } = await loadFixture(deployFixture);
       await passport.connect(producer).submitBatch(batchInput());
-      await expect(passport.connect(outsider).attestAndIssue(1, ethers.id("x")))
+      await expect(passport.connect(outsider).attestAndIssue(1, PQ_SIG))
         .to.be.revertedWithCustomError(passport, "NotActiveVerifier")
         .withArgs(outsider.address);
     });
 
     it("blocks a producer from verifying its own batch, even if accredited", async () => {
       const { registry, passport, producer } = await loadFixture(deployFixture);
-      await registry.accredit(producer.address, "Self", ethers.id("r"), ethers.id("k"));
+      await registry.accredit(producer.address, "Self", ethers.id("r"), PQ_PK);
       await passport.connect(producer).submitBatch(batchInput());
-      await expect(passport.connect(producer).attestAndIssue(1, ethers.id("x")))
+      await expect(passport.connect(producer).attestAndIssue(1, PQ_SIG))
         .to.be.revertedWithCustomError(passport, "SelfVerification");
     });
 
@@ -119,7 +122,7 @@ describe("CarbonPassport", () => {
       const { registry, passport, producer, verifier } = await loadFixture(deployFixture);
       await registry.revoke(verifier.address, ethers.id("audit finding"));
       await passport.connect(producer).submitBatch(batchInput());
-      await expect(passport.connect(verifier).attestAndIssue(1, ethers.id("x")))
+      await expect(passport.connect(verifier).attestAndIssue(1, PQ_SIG))
         .to.be.revertedWithCustomError(passport, "NotActiveVerifier");
     });
 
@@ -128,7 +131,7 @@ describe("CarbonPassport", () => {
       await passport.connect(producer).submitBatch(batchInput());
       await expect(passport.connect(verifier).rejectBatch(1, ethers.id("missing meter log")))
         .to.emit(passport, "BatchRejected");
-      await expect(passport.connect(verifier).attestAndIssue(1, ethers.id("x")))
+      await expect(passport.connect(verifier).attestAndIssue(1, PQ_SIG))
         .to.be.revertedWithCustomError(passport, "NotPending");
     });
   });
@@ -153,8 +156,8 @@ describe("CarbonPassport", () => {
       const { passport, producer, verifier } = await loadFixture(deployFixture);
       await passport.connect(producer).submitBatch(batchInput());
       await passport.connect(producer).submitBatch(batchInput({ periodStart: Q3_START + day, reportHash: ethers.id("dup") }));
-      await passport.connect(verifier).attestAndIssue(1, ethers.id("a"));
-      await expect(passport.connect(verifier).attestAndIssue(2, ethers.id("b")))
+      await passport.connect(verifier).attestAndIssue(1, PQ_SIG);
+      await expect(passport.connect(verifier).attestAndIssue(2, PQ_SIG))
         .to.be.revertedWithCustomError(passport, "PeriodOverlap");
     });
 

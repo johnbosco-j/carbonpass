@@ -1,0 +1,93 @@
+{
+  "_readme": "Every factor used by the CBAM calculator and cost model. Values marked ILLUSTRATIVE are demo placeholders: replace them with the official figure before quoting numbers publicly.",
+  "fuels": {
+    "natural_gas": {
+      "unit": "GJ",
+      "ef_tco2_per_unit": 0.0561,
+      "source": "IPCC 2006 Guidelines Vol. 2 Ch. 2, Table 2.2: natural gas default CO2 factor 56,100 kg/TJ",
+      "verify": "Use the installation's monitoring plan factor where one exists"
+    }
+  },
+  "process_inputs": {
+    "electrodes": {
+      "unit": "t",
+      "ef_tco2_per_unit": 3.0,
+      "source": "EU MRR (Implementing Reg. 2018/2066) Annex VI standard factor for EAF electrodes",
+      "verify": "Check the current MRR / CBAM implementing regulation value"
+    },
+    "charge_carbon": {
+      "unit": "t",
+      "ef_tco2_per_unit": 3.04,
+      "source": "EU MRR (Implementing Reg. 2018/2066) Annex VI standard factor for EAF charge carbon",
+      "verify": "Check the current MRR / CBAM implementing regulation value"
+    }
+  },
+  "precursors": {
+    "pig_iron": {
+      "unit": "t",
+      "see_tco2_per_unit": 1.85,
+      "source": "ILLUSTRATIVE: supplier-declared embedded emissions of purchased pig iron",
+      "verify": "In production this comes from the supplier's own CarbonPass passport (precursor chaining)"
+    }
+  },
+  "grid": {
+    "TR": {
+      "ef_tco2_per_mwh": 0.44,
+      "source": "ILLUSTRATIVE: Türkiye grid average",
+      "verify": "Replace with the official national grid factor / CBAM default for electricity"
+    },
+    "IN": {
+      "ef_tco2_per_mwh": 0.71,
+      "source": "ILLUSTRATIVE: India grid average",
+      "verify": "Replace with the CEA CO2 Baseline Database figure"
+    }
+  },
+  "default_values": {
+    "72083900": {
+      "description": "Hot-rolled flat products of iron or non-alloy steel (CN 7208 39 00)",
+      "sector": "iron_steel",
+      "TR": 1.8,
+      "IN": 2.4,
+      "source": "ILLUSTRATIVE PLACEHOLDER",
+      "verify": "Replace with the EU default values implementing regulation figure for this CN code and country of origin"
+    }
+  },
+  "chargeable_scope": {
+    "iron_steel": "direct",
+    "aluminium": "direct",
+    "hydrogen": "direct",
+    "cement": "direct+indirect",
+    "fertilisers": "direct+indirect",
+    "_source": "Reg. (EU) 2023/956 Annex II: indirect emissions are covered for cement and fertilisers only. Verify before quoting."
+  },
+  "default_markup": {
+    "2026": 0.1,
+    "_source": "Aither / Alalea guidance: 10% markup on default values in 2026",
+    "_note": "Later years are held at the 2026 level in this model (conservative); verify the official schedule"
+  },
+  "cbam_factor": {
+    "2026": 0.025,
+    "2027": 0.05,
+    "2028": 0.1,
+    "2029": 0.225,
+    "2030": 0.485,
+    "2031": 0.61,
+    "2032": 0.735,
+    "2033": 0.86,
+    "2034": 1.0,
+    "_source": "Phase-out of free allocation for CBAM sectors (EU ETS Directive Art. 10a(1a)); CBAM obligation = 1 minus the free-allocation share"
+  },
+  "eu_ets_price_eur": {
+    "value": 80,
+    "source": "ASSUMPTION: adjustable in the app's cost model"
+  },
+  "physical_bounds": {
+    "eaf_hot_rolled": {
+      "electricity_mwh_per_t": [0.35, 0.75],
+      "natural_gas_gj_per_t": [0.3, 2.5],
+      "electrodes_kg_per_t": [0.8, 3.5],
+      "charge_carbon_kg_per_t": [5, 30],
+      "_source": "ILLUSTRATIVE plausibility ranges for scrap-based EAF + hot rolling"
+    }
+  }
+}

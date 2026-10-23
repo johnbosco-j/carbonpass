@@ -1,0 +1,18 @@
+{
+  "file": "meter_log_2026-07.pdf",
+  "kind": "meter_log",
+  "values": [
+    {
+      "key": "electricity_meter_mwh",
+      "label": "Check-meter electricity",
+      "value": 4612.8,
+      "unit": "MWh",
+      "confidence": 0.98,
+      "source": {
+        "file": "meter_log_2026-07.pdf",
+        "page": 1,
+        "quote": "Metered consumption: 4,612.8 MWh"
+      }
+    }
+  ]
+}

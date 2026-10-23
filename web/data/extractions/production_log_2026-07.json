@@ -1,0 +1,54 @@
+{
+  "file": "production_log_2026-07.pdf",
+  "kind": "production_log",
+  "values": [
+    {
+      "key": "production_t",
+      "label": "HRC production",
+      "value": 10000,
+      "unit": "t",
+      "confidence": 0.99,
+      "source": {
+        "file": "production_log_2026-07.pdf",
+        "page": 1,
+        "quote": "Hot-rolled coil output (prime): 10,000.0 t"
+      }
+    },
+    {
+      "key": "pig_iron_t",
+      "label": "Pig iron (precursor)",
+      "value": 1300,
+      "unit": "t",
+      "confidence": 0.97,
+      "source": {
+        "file": "production_log_2026-07.pdf",
+        "page": 1,
+        "quote": "Pig iron charged (supplier passport PI-UA-2026-117): 1,300.0 t"
+      }
+    },
+    {
+      "key": "electrodes_t",
+      "label": "Graphite electrodes",
+      "value": 17.5,
+      "unit": "t",
+      "confidence": 0.98,
+      "source": {
+        "file": "production_log_2026-07.pdf",
+        "page": 1,
+        "quote": "Graphite electrodes consumed: 17.5 t"
+      }
+    },
+    {
+      "key": "charge_carbon_t",
+      "label": "Charge carbon",
+      "value": 120,
+      "unit": "t",
+      "confidence": 0.97,
+      "source": {
+        "file": "production_log_2026-07.pdf",
+        "page": 1,
+        "quote": "Charge carbon (anthracite) consumed: 120.0 t"
+      }
+    }
+  ]
+}

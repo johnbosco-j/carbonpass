@@ -1,0 +1,45 @@
+{
+  "_readme": "Fictional demo installation. 12 months of verified history (Jul 2025 – Jun 2026) used as the anomaly baseline, plus the live demo month (Jul 2026).",
+  "installation": {
+    "code": "TR-INST-0001",
+    "name": "Anatolia Green Steel A.Ş.",
+    "fictional": true,
+    "country": "TR",
+    "city": "İzmir",
+    "route": "eaf_hot_rolled",
+    "routeLabel": "Electric arc furnace + hot rolling (scrap, ~13% pig iron)",
+    "product": { "cnCode": 72083900, "name": "Hot-rolled coil (HRC)" }
+  },
+  "history": [
+    { "month": "2025-07", "production_t": 9650, "natural_gas_gj": 12640, "electricity_mwh": 4565, "electrodes_t": 17.6, "charge_carbon_t": 155, "pig_iron_t": 1250 },
+    { "month": "2025-08", "production_t": 8900, "natural_gas_gj": 11560, "electricity_mwh": 4190, "electrodes_t": 16.2, "charge_carbon_t": 141, "pig_iron_t": 1160 },
+    { "month": "2025-09", "production_t": 10120, "natural_gas_gj": 13050, "electricity_mwh": 4770, "electrodes_t": 18.4, "charge_carbon_t": 163, "pig_iron_t": 1320 },
+    { "month": "2025-10", "production_t": 10480, "natural_gas_gj": 13730, "electricity_mwh": 4900, "electrodes_t": 18.8, "charge_carbon_t": 167, "pig_iron_t": 1370 },
+    { "month": "2025-11", "production_t": 9870, "natural_gas_gj": 13100, "electricity_mwh": 4660, "electrodes_t": 17.9, "charge_carbon_t": 159, "pig_iron_t": 1280 },
+    { "month": "2025-12", "production_t": 9310, "natural_gas_gj": 12480, "electricity_mwh": 4400, "electrodes_t": 17.1, "charge_carbon_t": 150, "pig_iron_t": 1210 },
+    { "month": "2026-01", "production_t": 9540, "natural_gas_gj": 12950, "electricity_mwh": 4510, "electrodes_t": 17.4, "charge_carbon_t": 152, "pig_iron_t": 1240 },
+    { "month": "2026-02", "production_t": 9020, "natural_gas_gj": 12010, "electricity_mwh": 4250, "electrodes_t": 16.3, "charge_carbon_t": 146, "pig_iron_t": 1170 },
+    { "month": "2026-03", "production_t": 10260, "natural_gas_gj": 13440, "electricity_mwh": 4810, "electrodes_t": 18.3, "charge_carbon_t": 164, "pig_iron_t": 1340 },
+    { "month": "2026-04", "production_t": 10050, "natural_gas_gj": 13010, "electricity_mwh": 4700, "electrodes_t": 17.8, "charge_carbon_t": 160, "pig_iron_t": 1300 },
+    { "month": "2026-05", "production_t": 10390, "natural_gas_gj": 13580, "electricity_mwh": 4860, "electrodes_t": 18.6, "charge_carbon_t": 168, "pig_iron_t": 1350 },
+    { "month": "2026-06", "production_t": 9980, "natural_gas_gj": 12990, "electricity_mwh": 4690, "electrodes_t": 17.8, "charge_carbon_t": 159, "pig_iron_t": 1300 }
+  ],
+  "demoMonth": {
+    "month": "2026-07",
+    "periodStart": "2026-07-01T00:00:00Z",
+    "periodEnd": "2026-07-31T23:59:59Z",
+    "production_t": 10000,
+    "natural_gas_gj": 13200,
+    "electricity_mwh": 4630.4,
+    "electricity_meter_mwh": 4612.8,
+    "electrodes_t": 17.5,
+    "charge_carbon_t": 120,
+    "pig_iron_t": 1300,
+    "anomalyExplanation": "New carbon-injection control system commissioned 18 Jun 2026 (commissioning report CR-2026-06-18). Lower charge-carbon use is expected."
+  },
+  "importers": [
+    { "key": "importerA", "name": "Hanse Stahlhandel GmbH", "city": "Hamburg", "country": "DE", "fictional": true },
+    { "key": "importerB", "name": "Rijnmond Metals B.V.", "city": "Rotterdam", "country": "NL", "fictional": true }
+  ],
+  "verifier": { "name": "EuroVerify Accredited Verification", "accreditation": "EU-ACC-DE-2026-0042", "fictional": true }
+}

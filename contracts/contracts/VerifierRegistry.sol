@@ -21,7 +21,10 @@ contract VerifierRegistry is AccessControl {
     mapping(address => Verifier) private _verifiers;
     address[] private _verifierList;
 
-    event VerifierAccredited(address indexed verifier, string name, bytes32 accreditationRef, bytes32 pqPublicKeyHash);
+    /// @dev The full ML-DSA-65 public key is emitted so anyone can verify attestations from chain data alone.
+    event VerifierAccredited(
+        address indexed verifier, string name, bytes32 accreditationRef, bytes32 pqPublicKeyHash, bytes pqPublicKey
+    );
     event VerifierRevoked(address indexed verifier, bytes32 reasonHash);
 
     error ZeroAddress();
@@ -33,14 +36,15 @@ contract VerifierRegistry is AccessControl {
         _grantRole(ACCREDITOR_ROLE, admin);
     }
 
-    function accredit(address verifier, string calldata name, bytes32 accreditationRef, bytes32 pqPublicKeyHash)
+    function accredit(address verifier, string calldata name, bytes32 accreditationRef, bytes calldata pqPublicKey)
         external
         onlyRole(ACCREDITOR_ROLE)
     {
         if (verifier == address(0)) revert ZeroAddress();
         if (_verifiers[verifier].since == 0) _verifierList.push(verifier);
+        bytes32 pqPublicKeyHash = keccak256(pqPublicKey);
         _verifiers[verifier] = Verifier(name, accreditationRef, pqPublicKeyHash, true, uint64(block.timestamp));
-        emit VerifierAccredited(verifier, name, accreditationRef, pqPublicKeyHash);
+        emit VerifierAccredited(verifier, name, accreditationRef, pqPublicKeyHash, pqPublicKey);
     }
 
     function revoke(address verifier, bytes32 reasonHash) external onlyRole(ACCREDITOR_ROLE) {

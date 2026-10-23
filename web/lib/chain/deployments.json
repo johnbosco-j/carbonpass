@@ -1,0 +1,24 @@
+{
+  "localhost": {
+    "network": "localhost",
+    "chainId": 31337,
+    "deployBlock": 1,
+    "deployedAt": "2026-10-23T03:55:03.490Z",
+    "registry": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+    "passport": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
+    "registrar": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+    "roles": {
+      "producer": "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
+      "verifier": "0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC",
+      "importerA": "0x90F79bf6EB2c4f870365E785982E1f101E93b906",
+      "importerB": "0x15d34AAf54267DB7D7c367839AAf71A00a2C6A65"
+    },
+    "installation": {
+      "id": "0xf85a4308a22bf57dd8743fbd435c2bf617b36c61489b85d707201daf2b8256c6",
+      "code": "TR-INST-0001",
+      "name": "Anatolia Green Steel A.Ş. — EAF mill, İzmir (fictional)"
+    },
+    "verifierName": "EuroVerify Accredited Verification (fictional)",
+    "explorer": null
+  }
+}
