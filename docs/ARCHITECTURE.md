@@ -75,7 +75,7 @@ sequenceDiagram
   actor P as Steel mill
   actor V as Verifier
 
-  S->>C: submitBatch(pig iron, 5,000 t, 1,700 kg/t)
+  S->>C: submitBatch(pig iron, 5,000 t, 1,850 kg/t)
   V->>C: attestAndIssue(#4)  → 5,000 t to the supplier
   S->>C: ship(mill, #4, 1,300 t)
   P->>C: submitBatch(HRC, 10,000 t, 337 kg/t, precursors=[{#4, 1,300 t}])  (checked, nothing burned)

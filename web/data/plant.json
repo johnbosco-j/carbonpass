@@ -52,7 +52,7 @@
     "batch": {
       "month": "2026-06",
       "production_t": 5000,
-      "directKgPerT": 1700,
+      "directKgPerT": 1850,
       "indirectKgPerT": 60,
       "shippedToMill_t": 1300,
       "evidence": [
@@ -62,7 +62,7 @@
         { "key": "activity.electricity_mwh", "value": "690", "unit": "MWh" },
         { "key": "activity.production_t", "value": "5000", "unit": "t" }
       ],
-      "_note": "Illustrative supplier figures, not derived from factors.json: the supplier's own verified report states 1,700 kgCO2e/t direct."
+      "_note": "Illustrative supplier figures: the supplier's own verified report states 1,850 kgCO2e/t direct, equal to the EU CBAM default for Turkish pig iron (CN 7201), so the steel demo stays at 0.356 tCO2e/t."
     }
   },
   "importers": [
