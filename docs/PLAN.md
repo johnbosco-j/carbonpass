@@ -28,20 +28,22 @@
 
 ## Task board
 
+_Status at Fri 23 Oct, 09:45 IST: the full demo flow works end to end on a local chain. Next: Sepolia, Vercel, dossier PDF, video._
+
 ### Must have (the demo breaks without these)
 
 - [x] Docs skeleton (this folder), `design.md`, `CLAUDE.md`
-- [ ] Repo + pnpm workspace + git
-- [ ] `VerifierRegistry.sol`: accredit / revoke verifiers
-- [ ] `CarbonPassport.sol`: installations, submit → attest → mint, ship, surrender, revoke, disclosure check
-- [ ] Contract tests: happy path, over-ship revert, duplicate report, overlapping period, non-accredited verifier, self-verification, revoked freeze, Merkle proof
-- [ ] Deploy + seed script: registry, verifier, installation, a history of already-issued batches
-- [ ] `data/` fixtures: sample invoices (PDF/PNG), 12-month plant history, `factors.json`
-- [ ] CBAM calculator + cost model (`web/lib/cbam.ts`)
-- [ ] Anomaly checks: robust z-score vs history, physical bounds
-- [ ] Merkle evidence tree with salted leaves (`@openzeppelin/merkle-tree`)
-- [ ] Web: producer → verifier → shipments → passport → importer surrender
-- [ ] Server-side demo role wallets (API routes) + explorer links
+- [x] Repo + pnpm workspace + git
+- [x] `VerifierRegistry.sol`: accredit / revoke verifiers
+- [x] `CarbonPassport.sol`: installations, submit → attest → mint, ship, surrender, revoke, disclosure check
+- [x] Contract tests: happy path, over-ship revert, duplicate report, overlapping period, non-accredited verifier, self-verification, revoked freeze, Merkle proof
+- [x] Deploy + seed script: registry, verifier, installation, a history of already-issued batches
+- [x] `data/` fixtures: sample invoices (PDF/PNG), 12-month plant history, `factors.json`
+- [x] CBAM calculator + cost model (`web/lib/cbam.ts`)
+- [x] Anomaly checks: robust z-score vs history, physical bounds
+- [x] Merkle evidence tree with salted leaves (`@openzeppelin/merkle-tree`)
+- [x] Web: producer → verifier → shipments → passport → importer surrender
+- [x] Server-side demo role wallets (API routes) + explorer links
 - [ ] Sepolia deploy + Vercel deploy
 - [ ] README final, architecture diagram
 - [ ] Dossier PDF (the Devpost file upload) compiled from `docs/`
@@ -50,11 +52,11 @@
 
 ### Should have (big rubric value, cheap)
 
-- [ ] AI extraction via Claude API with source/page citations, plus a fixture fallback
-- [ ] ML-DSA (post-quantum) verifier signature, hybrid with ECDSA
-- [ ] Tamper check: drop a file on the passport page, re-hash, match or mismatch against the chain
-- [ ] QR code on the passport
-- [ ] 2026→2034 savings chart
+- [x] AI extraction via Claude API with source/page citations, plus a fixture fallback (**live path untested until an API key is set**)
+- [x] ML-DSA (post-quantum) verifier signature, hybrid with ECDSA
+- [x] Tamper check: drop a file on the passport page, re-hash, match or mismatch against the chain
+- [x] QR code on the passport
+- [x] 2026→2034 savings chart
 
 ### Nice to have (only if ahead of schedule)
 
