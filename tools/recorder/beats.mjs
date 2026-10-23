@@ -343,7 +343,10 @@ export const TIMELINE = [
     label: "Public passport",
     screen: "Passport card + QR → Verify signature → ✓ Valid, ML-DSA-65, 3,309 B",
     narration:
-      "Anyone can open the passport from the QR code on the shipping documents. It shows who verified the batch, checks the post-quantum signature using chain data alone, and traces the pig iron back to its own passport.",
+      (ctx) =>
+      `Anyone can open the passport from the QR code on the shipping documents. It shows who verified the batch${
+        ctx.pigIronT ? ", checks the post-quantum signature using chain data alone, and traces the pig iron back to its own passport." : ", and checks the post-quantum signature using chain data alone."
+      }`,
     async run(d, ctx) {
       await d.goto(`/passport/${ctx.batchId}`, { waitFor: { text: "CBAM carbon passport" } });
       await d.caption("The public passport: what the QR code on the shipping documents opens. No wallet needed.");
@@ -360,7 +363,7 @@ export const TIMELINE = [
     n: "09",
     label: "Public passport · value",
     screen: (ctx) =>
-      `Supply chain (pig-iron passport consumed), conservation gauge, then cost model: ${ctx.saving26 ?? "€46,720"} saved in 2026, ${ctx.saving34 ?? "€2.26M"} in 2034`,
+      `${ctx.pigIronT ? "Supply chain (pig-iron passport consumed), " : ""}Conservation gauge, then cost model: ${ctx.saving26 ?? "€46,720"} saved in 2026, ${ctx.saving34 ?? "€2.26M"} in 2034`,
     narration: (ctx) =>
       `${
         ctx.pigIronT
@@ -371,11 +374,13 @@ export const TIMELINE = [
         "2.3 million euros",
       )} a year when CBAM is fully phased in.`,
     async run(d, ctx) {
+      // Only when this batch linked the supplier's passport (see producer-calc); otherwise the section says
+      // "No precursor passport" and a consumption caption would be false.
       const chain = { role: "heading", level: 2, name: /supply chain/i };
-      if (await d.exists(chain, 1000)) {
+      if (ctx.pigIronT && (await d.exists(chain, 1000))) {
         await d.scrollTo(chain, { at: 0 });
         await d.caption(
-          `Supply chain, on-chain: <b>${ctx.pigIronT ?? "1,300"} t of verified pig iron</b> (its own passport) consumed into this batch and burned, so no other mill can claim it.`,
+          `Supply chain, on-chain: <b>${ctx.pigIronT} t of verified pig iron</b> (its own passport) consumed into this batch and burned, so no other mill can claim it.`,
         );
         await d.read(3400);
       }
@@ -403,9 +408,11 @@ export const TIMELINE = [
     label: "Public passport · tamper check",
     screen: "Ledger timeline; drop the original invoice → ✓ Unchanged; drop the tampered copy → ✗ Altered",
     narration: "Here's the full trail, block by block. The original invoice matches. Change a single figure in it, and the check fails.",
-    async run(d) {
+    async run(d, ctx) {
       await d.scrollTo({ text: "Drop an evidence file to check it" }, { at: 0.2 });
-      await d.caption("The full trail, block by block, from the precursor to the surrender. Now a tamper check with the <b>original invoice</b>.");
+      await d.caption(
+        `The full trail, block by block, from the ${ctx.pigIronT ? "precursor" : "submission"} to the surrender. Now a tamper check with the <b>original invoice</b>.`,
+      );
       await d.read(1500);
       const target = { text: /Drop an evidence file to check it|Checking…/ };
       const name = "electricity_invoice_2026-07.pdf";
