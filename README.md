@@ -111,7 +111,7 @@ Both contracts are verified on Sourcify (exact match). Every attestation's ML-DS
 | Component | Status |
 |---|---|
 | Smart contracts + 16 tests | **Working**, deployed and source-verified on Sepolia |
-| AI extraction | Implemented with Google Gemini (`gemini-3.8-flash`, JSON-schema structured output, verbatim citations). **Without an API key the demo shows pre-recorded sample outputs, which were hand-prepared rather than produced by a live model run, and the UI says so.** |
+| AI extraction | Implemented with Google Gemini (`gemini-3.5-flash-lite`, JSON-schema structured output, verbatim citations). **Without an API key the demo shows pre-recorded sample outputs, which were hand-prepared rather than produced by a live model run, and the UI says so.** |
 | Anomaly checks, CBAM calculator, Merkle commitments, ML-DSA-65 signatures | **Working**, and verifiable from chain data alone |
 | Emission factors and CBAM default values | Default values and mark-ups come from Implementing Reg. 2025/2621 (Türkiye HRC 2.43 tCO₂e/t, via a secondary source; check against the 2026/1740 corrections). Grid factors and plausibility bounds are **illustrative**. Every value's source is listed in `web/data/factors.json` |
 | Companies, installations, verifiers | **Fictional demo entities** |
