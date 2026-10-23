@@ -53,6 +53,8 @@ export function roleAccount(role: Role): Account {
 }
 
 export function roleAddress(role: Role): Address {
+  // The registrar (deployer) never signs from the web app, so its key doesn't need to be deployed.
+  if (role === "registrar" && NETWORK !== "localhost") return deployment.registrar as Address;
   return roleAccount(role).address;
 }
 
