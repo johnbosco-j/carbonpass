@@ -6,17 +6,19 @@ import { HashChip, cx } from "./ui";
 export function Toasts() {
   const { toasts, dismiss } = useDemo();
   return (
-    <div aria-live="polite" className="fixed bottom-4 right-4 z-50 flex w-[min(420px,calc(100vw-2rem))] flex-col gap-2">
+    <div role="log" aria-live="polite" aria-label="Transactions" className="fixed bottom-4 right-4 z-50 flex w-[min(420px,calc(100vw-2rem))] flex-col gap-2">
       {toasts.map((t) => (
         <div
           key={t.id}
+          role="article"
+          aria-labelledby={`toast-${t.id}-title`}
           className={cx(
             "animate-fade-up rounded-[4px] border bg-surface p-4 shadow-[0_8px_24px_rgba(16,32,58,0.12)]",
             t.kind === "error" ? "border-revoked" : t.kind === "success" ? "border-verified" : "border-rule",
           )}
         >
           <div className="flex items-start justify-between gap-3">
-            <div className="flex items-center gap-2 text-sm font-semibold">
+            <div id={`toast-${t.id}-title`} className="flex items-center gap-2 text-sm font-semibold">
               <span
                 className={cx(
                   "inline-block h-2 w-2 rounded-full",

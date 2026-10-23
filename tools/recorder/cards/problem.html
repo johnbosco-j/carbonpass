@@ -47,11 +47,11 @@
         <div class="what">This electric-arc mill, verified</div>
         <div class="who">Anatolia Green Steel, İzmir (fictional demo entity), July 2026</div>
         <div class="bar">
-          <div class="track"><div class="fill verified" style="--w:103px"></div></div>
-          <div class="num molten">0.356<small>tCO₂e/t</small></div>
+          <div class="track"><div class="fill verified" id="vbar" style="--w:97px"></div></div>
+          <div class="num molten"><span data-bind="verified">0.337</span><small>tCO₂e/t</small></div>
         </div>
       </div>
-      <p class="ratio in" style="--i:7">Default values overstate this mill <b>~7×</b>, and nothing stops verified tonnes being sold twice.</p>
+      <p class="ratio in" style="--i:7">Default values overstate this mill <b id="ratio">~7×</b>, and nothing stops verified tonnes being sold twice.</p>
     </div>
     <div class="side in" style="--i:9">
       <div class="big">~70%</div>
@@ -63,5 +63,13 @@
 </div>
 <div class="veil"></div>
 <script src="card.js"></script>
+<script>
+  // Bar length and ratio follow the verified value passed by the recorder (default bar: 700 px = 2.43).
+  const v = Number(document.querySelector('[data-bind="verified"]').textContent);
+  if (v > 0) {
+    document.getElementById("vbar").style.setProperty("--w", `${Math.round((700 * v) / 2.43)}px`);
+    document.getElementById("ratio").textContent = `~${Math.round(2.43 / v)}×`;
+  }
+</script>
 </body>
 </html>

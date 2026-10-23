@@ -14,7 +14,8 @@ export async function renderCard(browser, card, workDir) {
   const out = path.join(workDir, "cards", `${card.id}.mp4`);
   fs.mkdirSync(path.dirname(out), { recursive: true });
   const rec = await recordedPage(browser, { file: raw, viewport: { width: 1920, height: 1080 } });
-  await rec.page.goto(`${pathToFileURL(path.join(CARDS, card.file)).href}#d=${card.duration}`, { waitUntil: "load" });
+  const hash = new URLSearchParams({ d: String(card.duration), ...Object.fromEntries(Object.entries(card.params ?? {}).filter(([, v]) => v != null)) });
+  await rec.page.goto(`${pathToFileURL(path.join(CARDS, card.file)).href}#${hash}`, { waitUntil: "load" });
   await rec.page.evaluate(() => window.cardReady);
   await sleep(300);
   const start = (performance.now() - rec.tOpen) / 1000;

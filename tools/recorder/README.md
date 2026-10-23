@@ -10,7 +10,7 @@ It produces, in `docs/video/`:
 
 | File | What it is |
 |---|---|
-| `carbonpass-demo.mp4` | H.264 1920×1080, 25 fps, no audio. About 3:15 locally and about 3:30 on Sepolia |
+| `carbonpass-demo.mp4` | H.264 1920×1080, 25 fps, no audio. About 3:45 locally and 4:00 on Sepolia, at about 40 MB (the 3D hero costs bits) |
 | `carbonpass-demo.srt` | The narration as subtitles, timed to the cut (upload it to YouTube as captions) |
 | `VOICEOVER.md` | The narration from `docs/DEMO_SCRIPT.md`, re-timed to the cut: start and end time, what's on screen, what to say. It also has the mux command |
 | `carbonpass-demo.timeline.json` | The cut list: every segment's raw and cut times, speed-ups, and each beat's raw timestamps |
@@ -77,16 +77,24 @@ bash tools/recorder/dev/local-stack.sh                  # deploy + seed + snapsh
 node tools/recorder/record.mjs --base http://localhost:3104
 ```
 
-`dev/hardhat.local.config.ts` wraps `contracts/hardhat.config.ts`, so `--network localhost` follows `RPC_URL` without editing the tracked config. Deploying rewrites the `localhost` entry of `web/lib/chain/deployments.json`; don't commit that change. To record again from the same seeded state, run `node tools/recorder/dev/chain-snapshot.mjs restore` (it reverts, then mines past the old head), then **restart `next dev`**. The server caches account nonces and would otherwise send stale ones. `--pace 0.4 --record-only --timeout 30` gives a quick selector check.
+`local-stack.sh` deploys with `LOCAL_RPC_URL` (read by `contracts/hardhat.config.ts`), so `--network localhost` points at port 8547. Deploying rewrites the `localhost` entry of `web/lib/chain/deployments.json`; don't commit that change. To record again from the same seeded state, run `node tools/recorder/dev/chain-snapshot.mjs restore` (it reverts, then mines past the old head), then **restart `next dev`**. The server caches account nonces and would otherwise send stale ones. `--pace 0.4 --record-only --timeout 30` gives a quick selector check.
 
 ## Notes for the main session (selectors and app hooks)
 
-These work today but are the most likely to break in the restyle. Small, stable hooks in `web/` would make them sturdier:
+The app has small accessibility hooks the recorder relies on. The beats fall back to older selectors when a hook is missing:
 
-1. **Tx toasts** are found as `[aria-live="polite"] > div` filtered by text (the toast title, then "Confirmed in block" or "Rejected by contract"). This is the only attribute selector the recorder uses. Better: `role="status"` on each toast, with the title in its accessible name.
-2. **Table headers** (`<th>`) come out as `cell`, not `columnheader`, so the extraction table is found by its header text "Quantity". Adding `scope="col"` would make `getByRole("columnheader")` work.
-3. **Metric values** (€ saved in 2026 and 2034) are read from the parent of the metric's label text (`xpath=..`). If `Metric` changes structure, the caption falls back to a version without numbers. Better: a `role="group"` with `aria-label` set to the label.
-4. **Tamper check**: the drop zone is found by "Drop an evidence file to check it", and the file is delivered as a synthetic `drop` event with a real `File` fetched from `/samples/…`. Keep `onDrop` on that zone and keep the text, or update `beats.mjs`.
-5. **Landing**: the beat scrolls to "The problem" and then "How it works" if those labels exist; otherwise it scrolls down 500 px. After the hero redesign, check the landing beat's scroll stops and caption.
-6. **Producer**: if the precursor-consumption step adds a control (a confirm or a picker), add a `d.click(…)` for it in the `producer-evidence` or `producer-calc` beat.
-7. **Top-bar nav** links are found inside `role="navigation"` by name (Producer, Importer). If they're missing, the beat falls back to `page.goto`.
+| Hook | Where | Used for |
+|---|---|---|
+| Toast stack is `role="log"` named "Transactions"; each toast is `role="article"` named by its title | `web/components/toasts.tsx` | Waiting for "Confirmed in block" / "Rejected by contract" on a specific transaction |
+| `<th scope="col">` | `web/app/producer/page.tsx` | Finding the extraction table by its "Quantity" / "Source" column headers |
+| `<Metric>` is `role="group"` named by its label | `web/components/ui.tsx` | Reading the verified intensity and the € savings for captions, narration and cards |
+
+The beats also read the numbers they show from the page, so the cards, captions and VOICEOVER.md always match the run being recorded. That covers the verified intensity, the pig-iron precursor (tonnes, verified vs default), and the 2026 and 2034 savings. Captured values are in `out/recording.json` under `ctx`.
+
+Things to check after UI changes:
+
+1. **Landing**: the beat scrolls the pinned 3D story (`role="region"` named "…story in four steps") to the beat windows in `web/components/hero/timeline.ts`, then clicks "Run the demo". It stops the CTA beat at p = 0.96, because focusing the CTA scrolls the story to the end when it's more than 0.08 away. Without the story, it scrolls to "The problem" and "How it works".
+2. **Producer**: the precursor step is optional. If the "Use the supplier's verified intensity" checkbox exists, the beat captions and rings it before Calculate.
+3. **Passport**: the "Supply chain" section is captioned if present. The tamper check finds its drop zone by the text "Drop an evidence file to check it" and sends a synthetic `drop` with a real `File` fetched from `/samples/…`.
+4. **Top-bar nav** links are found inside `role="navigation"` by name (Producer, Importer). If they're missing, the beat falls back to `page.goto`.
+5. **Hero number**: `web/components/hero/data.ts` computes the hero's "verified" figure without the supplier's precursor, so the hero shows 0.356 while the certified batch is 0.337. I flagged this to the hero session; worth fixing before the final recording.

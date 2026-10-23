@@ -90,7 +90,7 @@ export function Button({ variant = "primary", className, ...props }: ButtonHTMLA
 
 export function Metric({ value, unit, label, accent }: { value: ReactNode; unit?: string; label: string; accent?: boolean }) {
   return (
-    <div>
+    <div role="group" aria-label={label}>
       <div className="label">{label}</div>
       <div className={cx("mt-1 font-mono text-3xl font-semibold leading-none tnum sm:text-4xl", accent && "text-molten")}>
         {value}
